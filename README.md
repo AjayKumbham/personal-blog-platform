@@ -60,8 +60,8 @@ A modern, full-featured blogging platform built with React, TypeScript, Tailwind
 
 ### 1. Clone and Install
 ```bash
-git clone <your-repo>
-cd professional-blog
+git clone personal-blog-platform
+cd personal-blog-platform
 npm install
 ```
 
@@ -243,4 +243,4 @@ If you encounter any issues:
 
 ---
 
-Built with ❤️ by developers, for developers.
+Built with ❤️ by developer, for developers.
