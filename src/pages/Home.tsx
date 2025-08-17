@@ -54,7 +54,7 @@ const Home: React.FC = () => {
               </span>
             </h1>
             <p className="text-xl md:text-2xl text-gray-300 mb-8 leading-relaxed">
-              {settings?.siteDescription || 'Welcome to my developer journey. Sharing insights on modern web development, programming techniques, and the latest industry trends.'}
+              {settings?.siteDescription || 'A comprehensive space to explore software development, emerging technologies, programming techniques, and industry trends—empowering developers to learn, build, and evolve.'}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="text-lg px-8 py-4">

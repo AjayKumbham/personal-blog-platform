@@ -16,7 +16,7 @@ const Footer: React.FC = () => {
               </div>
             </div>
             <p className="text-gray-300 mb-4">
-              Sharing insights on modern web development, programming techniques, and industry trends.
+              Sharing insights on software development, emerging technologies, programming techniques, and industry trends.
             </p>
             <div className="flex space-x-4">
               <a href="https://github.com/AjayKumbham" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-400 transition-colors">
