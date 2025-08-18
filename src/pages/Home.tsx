@@ -56,7 +56,7 @@ const Home: React.FC = () => {
               </span>
             </h1>
             <p className="text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed backdrop-blur-sm bg-white/5 rounded-lg p-4 border border-white/10">
-              {settings?.siteDescription || 'Welcome to my developer journey. Sharing insights on modern web development, programming techniques, and the latest industry trends.'}
+              {settings?.siteDescription || 'A comprehensive space to explore software development, emerging technologies, programming techniques, and industry trends—empowering developers to learn, build, and evolve.'}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center relative z-20">
               <Button size="lg" className="text-lg px-8 py-4 bg-blue-600 hover:bg-blue-700 transform hover:scale-105 transition-all duration-300 shadow-2xl hover:shadow-blue-500/25">
