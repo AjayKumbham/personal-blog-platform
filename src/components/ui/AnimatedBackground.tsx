@@ -82,7 +82,7 @@ const AnimatedBackground: React.FC = () => {
       }
 
       // Update and draw particles with simple 3D effect
-      particles.forEach((particle, index) => {
+      particles.forEach((particle) => {
         // Update position
         particle.x += particle.vx;
         particle.y += particle.vy;
