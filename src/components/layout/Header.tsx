@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, BookOpen } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,8 +18,12 @@ const Header: React.FC = () => {
     <header className="bg-white shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-                    <Link to="/" className="flex items-center space-x-2 group">
-            <BookOpen className="w-6 h-6 text-blue-600 relative top-0.5" />
+                    <Link to="/" className="flex items-center space-x-3 group">
+            <img 
+              src="/personal-logo.jpg" 
+              alt="Kumbham Ajay Goud" 
+              className="w-8 h-8 rounded-full object-cover border-2 border-blue-600 shadow-sm"
+            />
             <div className="relative">
               <span className="font-bold text-xl bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent">
                 Kumbham Ajay Goud

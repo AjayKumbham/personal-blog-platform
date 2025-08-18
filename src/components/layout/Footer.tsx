@@ -1,5 +1,5 @@
 import React from 'react';
-import { Github, Mail, BookOpen, Globe } from 'lucide-react';
+import { Github, Mail, Globe } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
@@ -7,8 +7,12 @@ const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <div className="flex items-center space-x-2 mb-4">
-              <BookOpen className="w-6 h-6 text-blue-400 relative top-0.5" />
+            <div className="flex items-center space-x-3 mb-4">
+              <img 
+                src="/personal-logo.jpg" 
+                alt="Kumbham Ajay Goud" 
+                className="w-8 h-8 rounded-full object-cover border-2 border-blue-400 shadow-sm"
+              />
               <div className="relative">
                 <span className="font-bold text-xl bg-gradient-to-r from-blue-400 via-purple-400 to-blue-600 bg-clip-text text-transparent">
                   Kumbham Ajay Goud
