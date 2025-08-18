@@ -1,12 +1,13 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Code2, Lightbulb, TrendingUp } from 'lucide-react';
+import { ArrowRight, Code2, Lightbulb, Zap } from 'lucide-react';
 import { blogService } from '../services/blogService';
 import { settingsService } from '../services/settingsService';
 import { BlogPost, SiteSettings } from '../types';
 import BlogCard from '../components/blog/BlogCard';
 import Button from '../components/ui/Button';
+import AnimatedBackground from '../components/ui/AnimatedBackground';
 
 const Home: React.FC = () => {
   const [recentPosts, setRecentPosts] = useState<BlogPost[]>([]);
@@ -43,32 +44,39 @@ const Home: React.FC = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white min-h-screen flex items-center">
+      <section className="relative bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white min-h-screen flex items-center overflow-hidden">
+        <AnimatedBackground />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+          <div className="relative z-10 text-center max-w-4xl mx-auto">
+             <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
               Learn<span className="text-[0.6em]">.</span>{' '}
               Build<span className="text-[0.6em]">.</span>{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
                 Evolve<span className="text-[0.6em]">.</span>
               </span>
             </h1>
-            <p className="text-xl md:text-2xl text-gray-300 mb-8 leading-relaxed">
-              {settings?.siteDescription || 'A comprehensive space to explore software development, emerging technologies, programming techniques, and industry trends—empowering developers to learn, build, and evolve.'}
+            <p className="text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed backdrop-blur-sm bg-white/5 rounded-lg p-4 border border-white/10">
+              {settings?.siteDescription || 'Welcome to my developer journey. Sharing insights on modern web development, programming techniques, and the latest industry trends.'}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="text-lg px-8 py-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center relative z-20">
+              <Button size="lg" className="text-lg px-8 py-4 bg-blue-600 hover:bg-blue-700 transform hover:scale-105 transition-all duration-300 shadow-2xl hover:shadow-blue-500/25">
                 <Link to="/blog" className="flex items-center">
                   Read Latest Posts
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Link>
               </Button>
-              <Button variant="outline" size="lg" className="text-lg px-8 py-4 border-white text-white hover:bg-white hover:text-slate-900">
+              <Button variant="outline" size="lg" className="text-lg px-8 py-4 border-white/30 text-white hover:bg-white/10 hover:border-white/50 backdrop-blur-sm transform hover:scale-105 transition-all duration-300">
                 <Link to="/about">Learn About Me</Link>
               </Button>
             </div>
           </div>
         </div>
+        
+        {/* Floating elements */}
+        <div className="absolute top-20 left-10 w-20 h-20 border border-blue-400/30 rounded-full animate-bounce" style={{ animationDelay: '0s', animationDuration: '3s' }}></div>
+        <div className="absolute top-40 right-20 w-16 h-16 border border-purple-400/30 rounded-lg rotate-45 animate-bounce" style={{ animationDelay: '1s', animationDuration: '4s' }}></div>
+        <div className="absolute bottom-40 left-20 w-12 h-12 border border-blue-300/30 rounded-full animate-bounce" style={{ animationDelay: '2s', animationDuration: '5s' }}></div>
+        <div className="absolute bottom-20 right-40 w-14 h-14 border border-purple-300/30 rounded-lg rotate-12 animate-bounce" style={{ animationDelay: '0.5s', animationDuration: '3.5s' }}></div>
       </section>
 
       {/* Features Section */}
@@ -85,7 +93,7 @@ const Home: React.FC = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center p-6">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 transform hover:scale-110 transition-transform duration-300">
                 <Code2 className="w-8 h-8 text-blue-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Technical Deep Dives</h3>
@@ -95,7 +103,7 @@ const Home: React.FC = () => {
             </div>
             
             <div className="text-center p-6">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 transform hover:scale-110 transition-transform duration-300">
                 <Lightbulb className="w-8 h-8 text-purple-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Best Practices</h3>
@@ -105,8 +113,8 @@ const Home: React.FC = () => {
             </div>
             
             <div className="text-center p-6">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="w-8 h-8 text-green-600" />
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 transform hover:scale-110 transition-transform duration-300">
+                <Zap className="w-8 h-8 text-green-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Performance Tips</h3>
               <p className="text-gray-600">
