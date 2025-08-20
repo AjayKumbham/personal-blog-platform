@@ -6,7 +6,7 @@ export const publishToHashnode = async (post: BlogPost, apiKey: string, publicat
       throw new Error('Hashnode API key and publication ID are required');
     }
 
-    const response = await fetch('https://api.hashnode.com', {
+    const response = await fetch('https://gql.hashnode.com', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ export const publishToHashnode = async (post: BlogPost, apiKey: string, publicat
   }
 };
 
-export const publishToDevTo = async (post: BlogPost, apiKey: string) => {
+export const publishToDevTo = async (post: BlogPost, apiKey: string, siteUrl?: string) => {
   try {
     if (!apiKey) {
       throw new Error('Dev.to API key is required');
@@ -66,7 +66,7 @@ export const publishToDevTo = async (post: BlogPost, apiKey: string) => {
           tags: post.tags,
           published: true,
           main_image: post.coverImage,
-          canonical_url: `${window.location.origin}/blog/${post.slug}`
+          canonical_url: siteUrl ? `${siteUrl}/blog/${post.slug}` : undefined
         }
       })
     });

@@ -223,7 +223,8 @@ const NewPost: React.FC = () => {
                 published: data.published,
                 coverImage: finalCoverImageUrl || undefined,
               },
-              settings.devToApiKey
+              settings.devToApiKey,
+              settings.siteUrl
             );
           } catch (error) {
             console.error('Failed to publish to Dev.to:', error);
