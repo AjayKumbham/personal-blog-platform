@@ -37,24 +37,24 @@ export const settingsService = {
   async updateSiteSettings(settings: Partial<SiteSettings>) {
     const updateData: any = {};
     
-    if (settings.siteName) updateData.site_name = settings.siteName;
-    if (settings.siteDescription) updateData.site_description = settings.siteDescription;
-    if (settings.siteUrl) updateData.site_url = settings.siteUrl;
+    if (settings.siteName !== undefined) updateData.site_name = settings.siteName;
+    if (settings.siteDescription !== undefined) updateData.site_description = settings.siteDescription;
+    if (settings.siteUrl !== undefined) updateData.site_url = settings.siteUrl;
     if (settings.hashnodeApiKey !== undefined) updateData.hashnode_api_key = settings.hashnodeApiKey;
     if (settings.hashnodePublicationId !== undefined) updateData.hashnode_publication_id = settings.hashnodePublicationId;
     if (settings.devToApiKey !== undefined) updateData.dev_to_api_key = settings.devToApiKey;
     
     if (settings.author) {
-      if (settings.author.name) updateData.author_name = settings.author.name;
-      if (settings.author.bio) updateData.author_bio = settings.author.bio;
-      if (settings.author.avatar) updateData.author_avatar = settings.author.avatar;
-      if (settings.author.title) updateData.author_title = settings.author.title;
-      if (settings.author.location) updateData.author_location = settings.author.location;
-      if (settings.author.email) updateData.author_email = settings.author.email;
-      if (settings.author.github) updateData.author_github = settings.author.github;
-      if (settings.author.twitter) updateData.author_twitter = settings.author.twitter;
-      if (settings.author.linkedin) updateData.author_linkedin = settings.author.linkedin;
-      if (settings.author.website) updateData.author_website = settings.author.website;
+      if (settings.author.name !== undefined) updateData.author_name = settings.author.name;
+      if (settings.author.bio !== undefined) updateData.author_bio = settings.author.bio;
+      if (settings.author.avatar !== undefined) updateData.author_avatar = settings.author.avatar;
+      if (settings.author.title !== undefined) updateData.author_title = settings.author.title;
+      if (settings.author.location !== undefined) updateData.author_location = settings.author.location;
+      if (settings.author.email !== undefined) updateData.author_email = settings.author.email;
+      if (settings.author.github !== undefined) updateData.author_github = settings.author.github;
+      if (settings.author.twitter !== undefined) updateData.author_twitter = settings.author.twitter;
+      if (settings.author.linkedin !== undefined) updateData.author_linkedin = settings.author.linkedin;
+      if (settings.author.website !== undefined) updateData.author_website = settings.author.website;
     }
 
     const { data, error } = await supabase

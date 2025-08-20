@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { BarChart3, FileText, Settings, Users, PlusCircle, LogOut, Eye, Edit, Trash2 } from 'lucide-react';
 import { BlogPost } from '../../types';
 import { useAuth } from '../../hooks/useAuth';
+import { useToast } from '../../hooks/useToast';
 import { blogService } from '../../services/blogService';
 import { settingsService } from '../../services/settingsService';
 import Card from '../../components/ui/Card';
@@ -11,9 +12,11 @@ import Button from '../../components/ui/Button';
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const { signOut } = useAuth();
+  const { showSuccess, showError } = useToast();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [loading, setLoading] = useState(true);
+  const [savingSettings, setSavingSettings] = useState(false);
   const [settings, setSettings] = useState({
     siteName: '',
     siteDescription: '',
@@ -43,15 +46,16 @@ const AdminDashboard: React.FC = () => {
     try {
       const data = await settingsService.getSiteSettings();
       setSettings({
-        siteName: data.siteName,
-        siteDescription: data.siteDescription,
-        siteUrl: data.siteUrl,
-        hashnodeApiKey: data.hashnodeApiKey,
-        hashnodePublicationId: data.hashnodePublicationId,
-        devToApiKey: data.devToApiKey,
+        siteName: data.siteName || '',
+        siteDescription: data.siteDescription || '',
+        siteUrl: data.siteUrl || '',
+        hashnodeApiKey: data.hashnodeApiKey || '',
+        hashnodePublicationId: data.hashnodePublicationId || '',
+        devToApiKey: data.devToApiKey || '',
       });
     } catch (error) {
       console.error('Error loading settings:', error);
+      showError('Failed to load settings', 'Please refresh the page and try again.');
     }
   };
 
@@ -69,9 +73,10 @@ const AdminDashboard: React.FC = () => {
       try {
         await blogService.deletePost(id);
         setPosts(posts.filter(post => post.id !== id));
+        showSuccess('Post deleted', 'The post has been successfully deleted.');
       } catch (error) {
         console.error('Error deleting post:', error);
-        alert('Error deleting post');
+        showError('Failed to delete post', 'Please try again later.');
       }
     }
   };
@@ -84,20 +89,27 @@ const AdminDashboard: React.FC = () => {
         setPosts(posts.map(p => 
           p.id === id ? { ...p, published: !p.published } : p
         ));
+        showSuccess(
+          `Post ${post.published ? 'unpublished' : 'published'}`,
+          `"${post.title}" has been ${post.published ? 'unpublished' : 'published'}.`
+        );
       }
     } catch (error) {
       console.error('Error updating post:', error);
-      alert('Error updating post');
+      showError('Failed to update post', 'Please try again later.');
     }
   };
 
   const handleSaveSettings = async () => {
+    setSavingSettings(true);
     try {
       await settingsService.updateSiteSettings(settings);
-      alert('Settings saved successfully!');
+      showSuccess('Settings saved', 'Your settings have been successfully updated.');
     } catch (error) {
       console.error('Error saving settings:', error);
-      alert('Error saving settings');
+      showError('Failed to save settings', 'Please check your inputs and try again.');
+    } finally {
+      setSavingSettings(false);
     }
   };
 
@@ -351,7 +363,9 @@ const AdminDashboard: React.FC = () => {
                       placeholder="Enter Dev.to API key"
                     />
                   </div>
-                  <Button onClick={handleSaveSettings}>Save API Keys</Button>
+                  <Button onClick={handleSaveSettings} disabled={savingSettings}>
+                    {savingSettings ? 'Saving...' : 'Save API Keys'}
+                  </Button>
                 </div>
               </Card>
 
@@ -391,7 +405,9 @@ const AdminDashboard: React.FC = () => {
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
-                  <Button onClick={handleSaveSettings}>Save Settings</Button>
+                  <Button onClick={handleSaveSettings} disabled={savingSettings}>
+                    {savingSettings ? 'Saving...' : 'Save Settings'}
+                  </Button>
                 </div>
               </Card>
             </div>

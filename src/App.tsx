@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ToastProvider } from './hooks/useToast';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
@@ -14,9 +15,10 @@ import EditPost from './pages/admin/EditPost';
 
 function App() {
   return (
-    <Router>
-      <div className="min-h-screen flex flex-col">
-        <Routes>
+    <ToastProvider>
+      <Router>
+        <div className="min-h-screen flex flex-col">
+          <Routes>
           {/* Admin routes without header/footer */}
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={
@@ -50,9 +52,10 @@ function App() {
               <Footer />
             </>
           } />
-        </Routes>
-      </div>
-    </Router>
+          </Routes>
+        </div>
+      </Router>
+    </ToastProvider>
   );
 }
 
