@@ -76,21 +76,20 @@ const AdminLogin: React.FC = () => {
 
   if (!isAuthorized) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md p-8 bg-white/10 backdrop-blur-lg border-white/20">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-6">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8">
+          {/* Clean Access Interface */}
           <div className="text-center mb-8">
-            <div className="mx-auto w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mb-4">
-              <Shield className="w-8 h-8 text-red-400" />
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-6">
+              <Lock className="w-7 h-7 text-gray-600" />
             </div>
-            <h1 className="text-2xl font-bold text-white mb-2">Restricted Access</h1>
-            <p className="text-gray-300 text-sm">
-              This area is restricted. Please enter the access key to continue.
-            </p>
+            <h1 className="text-2xl font-semibold text-gray-900 mb-2">Access Required</h1>
+            <p className="text-gray-600 text-sm">Please enter your access key to continue</p>
           </div>
 
           <form onSubmit={handleAccessKeySubmit} className="space-y-6">
             <div>
-              <label htmlFor="accessKey" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="accessKey" className="block text-sm font-medium text-gray-700 mb-2">
                 Access Key
               </label>
               <input
@@ -98,7 +97,7 @@ const AdminLogin: React.FC = () => {
                 id="accessKey"
                 value={accessKey}
                 onChange={(e) => setAccessKey(e.target.value)}
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-mono tracking-wider"
                 placeholder="Enter access key"
                 required
                 disabled={isBlocked}
@@ -106,31 +105,31 @@ const AdminLogin: React.FC = () => {
             </div>
 
             {error && (
-              <div className="flex items-center gap-2 p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
-                <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0" />
-                <p className="text-red-300 text-sm">{error}</p>
+              <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0" />
+                  <p className="text-red-700 text-sm font-medium">{error}</p>
+                </div>
               </div>
             )}
 
-            <Button
+            <button
               type="submit"
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3"
               disabled={isBlocked}
+              className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400"
             >
               {isBlocked ? 'Access Blocked' : 'Verify Access'}
-            </Button>
+            </button>
           </form>
 
-          <div className="mt-6 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-            <div className="flex items-start gap-2">
-              <AlertTriangle className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
-              <div className="text-xs text-yellow-300">
-                <p className="font-medium mb-1">Security Notice:</p>
-                <p>Unauthorized access attempts are logged and monitored. This system is protected by multiple security layers.</p>
-              </div>
+          {/* Security Notice */}
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <div className="flex items-center justify-center gap-2 text-gray-500 text-xs">
+              <Shield className="w-3 h-3" />
+              <span>Secure • Monitored • Protected</span>
             </div>
           </div>
-        </Card>
+        </div>
       </div>
     );
   }
