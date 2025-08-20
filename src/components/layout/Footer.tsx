@@ -8,9 +8,9 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <div className="flex items-center space-x-3 mb-4">
-              <img 
-                src="/personal-logo.jpg" 
-                alt="Kumbham Ajay Goud" 
+              <img
+                src="/personal-logo.jpg"
+                alt="Kumbham Ajay Goud"
                 className="w-8 h-8 rounded-full object-cover border-2 border-blue-400 shadow-sm"
               />
               <div className="relative">
@@ -34,7 +34,7 @@ const Footer: React.FC = () => {
               </a>
             </div>
           </div>
-          
+
           <div>
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
@@ -43,7 +43,7 @@ const Footer: React.FC = () => {
               <li><a href="/about" className="text-gray-300 hover:text-white transition-colors">About</a></li>
             </ul>
           </div>
-          
+
           <div>
             <h3 className="text-lg font-semibold mb-4">Categories</h3>
             <ul className="space-y-2">
@@ -54,12 +54,12 @@ const Footer: React.FC = () => {
             </ul>
           </div>
         </div>
-        
-                  <div className="border-t border-gray-700 mt-8 pt-8 text-center">
-            <p className="text-gray-400">
-              © 2025 Kumbham Ajay Goud. Built with ❤️ and lots of ☕
-            </p>
-          </div>
+
+        <div className="border-t border-gray-700 mt-8 pt-8 text-center">
+          <p className="text-gray-400">
+            © 2025 Kumbham Ajay Goud. Built with ❤️ and lots of ☕
+          </p>
+        </div>
       </div>
     </footer>
   );

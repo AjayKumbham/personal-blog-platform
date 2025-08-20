@@ -80,7 +80,7 @@ const Home: React.FC = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-12 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
@@ -126,7 +126,7 @@ const Home: React.FC = () => {
       </section>
 
       {/* Recent Posts */}
-      <section className="py-20 bg-gray-50">
+      <section className="pt-8 pb-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Recent Posts</h2>
@@ -168,7 +168,7 @@ const Home: React.FC = () => {
           <p className="text-xl text-blue-100 mb-8">
             Get notified when I publish new articles about web development and programming.
           </p>
-          <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-blue-600">
+          <Button variant="outline" size="lg" className="border-white text-white hover:!bg-white hover:!text-blue-600 hover:!border-white">
             <Link to="/about">Get In Touch</Link>
           </Button>
         </div>

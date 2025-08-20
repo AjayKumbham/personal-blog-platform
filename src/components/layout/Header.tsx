@@ -5,23 +5,23 @@ import { Menu, X } from 'lucide-react';
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-  
+
   const navigation = [
     { name: 'Home', href: '/' },
     { name: 'Blog', href: '/blog' },
     { name: 'About', href: '/about' },
   ];
-  
+
   const isActive = (href: string) => location.pathname === href;
-  
+
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-                    <Link to="/" className="flex items-center space-x-3 group">
-            <img 
-              src="/personal-logo.jpg" 
-              alt="Kumbham Ajay Goud" 
+          <Link to="/" className="flex items-center space-x-3 group">
+            <img
+              src="/personal-logo.jpg"
+              alt="Kumbham Ajay Goud"
               className="w-8 h-8 rounded-full object-cover border-2 border-blue-600 shadow-sm"
             />
             <div className="relative">
@@ -31,24 +31,23 @@ const Header: React.FC = () => {
               <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600 transition-all duration-300 group-hover:w-full"></div>
             </div>
           </Link>
-          
+
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
-                className={`px-3 py-2 text-sm font-medium transition-colors duration-200 ${
-                  isActive(item.href)
-                    ? 'text-blue-600 border-b-2 border-blue-600'
-                    : 'text-gray-700 hover:text-blue-600'
-                }`}
+                className={`px-3 py-2 text-sm font-medium transition-colors duration-200 ${isActive(item.href)
+                  ? 'text-blue-600 border-b-2 border-blue-600'
+                  : 'text-gray-700 hover:text-blue-600'
+                  }`}
               >
                 {item.name}
               </Link>
             ))}
           </nav>
-          
+
           {/* Mobile menu button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -57,7 +56,7 @@ const Header: React.FC = () => {
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
-        
+
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-gray-200">
@@ -67,11 +66,10 @@ const Header: React.FC = () => {
                   key={item.name}
                   to={item.href}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`px-3 py-2 text-base font-medium transition-colors duration-200 ${
-                    isActive(item.href)
-                      ? 'text-blue-600 bg-blue-50 rounded-md'
-                      : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md'
-                  }`}
+                  className={`px-3 py-2 text-base font-medium transition-colors duration-200 ${isActive(item.href)
+                    ? 'text-blue-600 bg-blue-50 rounded-md'
+                    : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md'
+                    }`}
                 >
                   {item.name}
                 </Link>
