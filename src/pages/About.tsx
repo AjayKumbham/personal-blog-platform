@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { Mail, Github, Twitter, Linkedin, MapPin, Code2, Award, Users, Coffee } from 'lucide-react';
+import { Mail, Github, Twitter, Linkedin, MapPin, Code2, Award, Users, Coffee, Globe } from 'lucide-react';
 import { settingsService } from '../services/settingsService';
 import { SiteSettings } from '../types';
 import Card from '../components/ui/Card';
@@ -78,19 +78,19 @@ const About: React.FC = () => {
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button size="lg">
-                  <a href={`mailto:${author.email}`} className="flex items-center">
-                    <Mail className="w-5 h-5 mr-2" />
-                    Get In Touch
+                  <a href={author.website} target="_blank" rel="noopener noreferrer" className="flex items-center">
+                    <Globe className="w-5 h-5 mr-2" />
+                    View Portfolio
                   </a>
                 </Button>
-                <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-slate-900">
+                <Button variant="outline" size="lg" className="border-white text-white hover:!bg-white hover:!text-slate-900">
                   <a href="#" className="flex items-center">
                     Download Resume
                   </a>
                 </Button>
               </div>
             </div>
-            
+
             <div className="flex-shrink-0">
               <div className="relative">
                 <img
@@ -131,18 +131,18 @@ const About: React.FC = () => {
               <h3 className="text-2xl font-bold text-gray-900 mb-6">My Story</h3>
               <div className="space-y-4 text-gray-700">
                 <p>
-                  I started my journey in web development over 5 years ago, driven by a passion for creating 
-                  digital experiences that make a difference. What began as curiosity about how websites work 
+                  I started my journey in web development over 5 years ago, driven by a passion for creating
+                  digital experiences that make a difference. What began as curiosity about how websites work
                   has evolved into a career dedicated to building scalable, user-centric applications.
                 </p>
                 <p>
-                  Throughout my career, I've had the privilege of working with startups and established companies, 
-                  helping them transform ideas into robust digital solutions. I specialize in modern JavaScript 
+                  Throughout my career, I've had the privilege of working with startups and established companies,
+                  helping them transform ideas into robust digital solutions. I specialize in modern JavaScript
                   frameworks and have a deep appreciation for clean, maintainable code.
                 </p>
                 <p>
-                  When I'm not coding, you can find me contributing to open source projects, writing technical 
-                  articles, or exploring the latest web technologies. I believe in continuous learning and 
+                  When I'm not coding, you can find me contributing to open source projects, writing technical
+                  articles, or exploring the latest web technologies. I believe in continuous learning and
                   sharing knowledge with the developer community.
                 </p>
               </div>
@@ -170,10 +170,10 @@ const About: React.FC = () => {
       <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h3 className="text-3xl font-bold text-gray-900 mb-12 text-center">My Journey</h3>
-          
+
           <div className="relative">
             <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-blue-200"></div>
-            
+
             <div className="space-y-12">
               <div className="relative flex items-center">
                 <div className="flex-1 pr-8 text-right">
@@ -186,7 +186,7 @@ const About: React.FC = () => {
                   <p className="text-gray-500">2023 - Present</p>
                 </div>
               </div>
-              
+
               <div className="relative flex items-center">
                 <div className="flex-1 pr-8 text-right">
                   <p className="text-gray-500">2022 - 2023</p>
@@ -198,7 +198,7 @@ const About: React.FC = () => {
                   <p className="text-gray-600">Started sharing technical insights and tutorials with the developer community</p>
                 </div>
               </div>
-              
+
               <div className="relative flex items-center">
                 <div className="flex-1 pr-8 text-right">
                   <h4 className="text-xl font-bold text-gray-900">First Full-Stack Project</h4>
@@ -210,7 +210,7 @@ const About: React.FC = () => {
                   <p className="text-gray-500">2021 - 2022</p>
                 </div>
               </div>
-              
+
               <div className="relative flex items-center">
                 <div className="flex-1 pr-8 text-right">
                   <p className="text-gray-500">2020 - 2021</p>
@@ -234,7 +234,7 @@ const About: React.FC = () => {
           <p className="text-xl text-blue-100 mb-8">
             I'm always interested in new opportunities and interesting projects.
           </p>
-          
+
           <div className="flex justify-center gap-6 mb-8">
             <a
               href={author.github}
@@ -267,7 +267,7 @@ const About: React.FC = () => {
               <Mail className="w-6 h-6" />
             </a>
           </div>
-          
+
           <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-blue-600">
             <a href={`mailto:${author.email}`}>
               Send me an email
