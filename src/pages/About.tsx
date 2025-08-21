@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { Mail, Github, Twitter, Linkedin, MapPin, Calendar, Code2, Award, Users, Coffee } from 'lucide-react';
+import { Mail, Github, Twitter, Linkedin, MapPin, Code2, Award, Users, Coffee } from 'lucide-react';
 import { settingsService } from '../services/settingsService';
 import { SiteSettings } from '../types';
 import Card from '../components/ui/Card';
