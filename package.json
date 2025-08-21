@@ -3,7 +3,13 @@
   "private": true,
   "version": "1.0.0",
   "description": "A modern, full-featured blogging platform for developers",
-  "keywords": ["blog", "react", "typescript", "supabase", "tailwind"],
+  "keywords": [
+    "blog",
+    "react",
+    "typescript",
+    "supabase",
+    "tailwind"
+  ],
   "author": "Your Name",
   "license": "MIT",
   "type": "module",
