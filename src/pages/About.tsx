@@ -315,10 +315,6 @@ const About: React.FC = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium text-gray-600 mb-4">
-              <Trophy className="w-4 h-4 text-yellow-500" />
-              <span>Professional Journey</span>
-            </div>
             <h3 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Career <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Highlights</span>
             </h3>
@@ -413,26 +409,6 @@ const About: React.FC = () => {
               </div>
               <span className="text-lg">Ready to create something amazing together?</span>
               <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full group-hover:scale-150 transition-transform duration-300"></div>
-            </div>
-
-            {/* Stats summary */}
-            <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
-              <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 text-center">
-                <div className="text-2xl font-bold text-gray-900">6</div>
-                <div className="text-sm text-gray-600 font-medium">Key Areas</div>
-              </div>
-              <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 text-center">
-                <div className="text-2xl font-bold text-gray-900">50+</div>
-                <div className="text-sm text-gray-600 font-medium">Projects</div>
-              </div>
-              <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 text-center">
-                <div className="text-2xl font-bold text-gray-900">98%</div>
-                <div className="text-sm text-gray-600 font-medium">Success Rate</div>
-              </div>
-              <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 text-center">
-                <div className="text-2xl font-bold text-gray-900">5+</div>
-                <div className="text-sm text-gray-600 font-medium">Years Exp</div>
-              </div>
             </div>
           </div>
         </div>
