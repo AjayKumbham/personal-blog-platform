@@ -308,12 +308,7 @@ const About: React.FC = () => {
       </section>
 
       {/* Career Highlights */}
-<section className="py-20 bg-gradient-to-br from-gray-50 via-slate-50 to-gray-100 relative overflow-hidden">
-  {/* Modern background elements */}
-  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5"></div>
-  <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-br from-blue-400/10 to-transparent rounded-full blur-3xl"></div>
-  <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-gradient-to-tl from-purple-400/10 to-transparent rounded-full blur-3xl"></div>
-
+<section className="py-20 bg-gray-50 relative">
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
     <div className="text-center mb-16">
       <h3 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
@@ -325,70 +320,93 @@ const About: React.FC = () => {
     </div>
 
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {highlights.map((highlight) => {
+      {highlights.map((highlight, index) => {
+        // Define distinct gradient backgrounds for each card
+        const gradients = [
+          'from-blue-500 to-blue-600',
+          'from-emerald-500 to-green-600', 
+          'from-orange-500 to-red-500',
+          'from-violet-500 to-purple-600',
+          'from-cyan-500 to-teal-600',
+          'from-pink-500 to-rose-500'
+        ];
+        
+        const textColors = [
+          'text-blue-100',
+          'text-emerald-100',
+          'text-orange-100', 
+          'text-violet-100',
+          'text-cyan-100',
+          'text-pink-100'
+        ];
+        
+        const lightTextColors = [
+          'text-blue-200',
+          'text-emerald-200',
+          'text-orange-200',
+          'text-violet-200', 
+          'text-cyan-200',
+          'text-pink-200'
+        ];
+        
+        const currentGradient = gradients[index % gradients.length];
+        const currentTextColor = textColors[index % textColors.length];
+        const currentLightColor = lightTextColors[index % lightTextColors.length];
+        
         return (
           <div
             key={highlight.id}
-            className="group relative overflow-hidden bg-white border border-gray-200 p-8 rounded-xl shadow-sm hover:shadow-xl transition-all duration-700 ease-out cursor-pointer"
+            className={`group relative overflow-hidden bg-gradient-to-br ${currentGradient} text-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-700 ease-out cursor-pointer hover:scale-[1.02]`}
           >
-            {/* Animated border effect */}
-            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/0 via-purple-500/0 to-blue-500/0 group-hover:from-blue-500/20 group-hover:via-purple-500/20 group-hover:to-blue-500/20 transition-all duration-700 ease-out"></div>
-            
-            {/* Subtle hover overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-gray-50/0 to-gray-100/0 group-hover:from-gray-50/50 group-hover:to-gray-100/30 transition-all duration-700 ease-out rounded-xl"></div>
-
             <div className="relative z-10">
-              {/* Header with subtitle and status indicator */}
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center space-x-3">
-                  <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full group-hover:scale-125 transition-transform duration-500"></div>
-                  <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              {/* Header with logo and subtitle */}
+              <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center space-x-4">
+                  {/* Logo placeholder */}
+                  <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                    <img 
+                      src={`/api/placeholder/48/48`} 
+                      alt="Achievement Logo" 
+                      className="w-8 h-8 object-contain"
+                    />
+                  </div>
+                  <span className="text-sm font-semibold text-white/90 uppercase tracking-wide">
                     {highlight.subtitle}
                   </span>
-                </div>
-                <div className="flex space-x-1">
-                  <div className="w-1 h-8 bg-gray-200 rounded-full group-hover:bg-gradient-to-b group-hover:from-blue-400 group-hover:to-purple-400 transition-all duration-500"></div>
-                  <div className="w-1 h-6 bg-gray-200 rounded-full group-hover:bg-gradient-to-b group-hover:from-blue-400 group-hover:to-purple-400 transition-all duration-600" style={{ transitionDelay: '100ms' }}></div>
-                  <div className="w-1 h-4 bg-gray-200 rounded-full group-hover:bg-gradient-to-b group-hover:from-blue-400 group-hover:to-purple-400 transition-all duration-700" style={{ transitionDelay: '200ms' }}></div>
                 </div>
               </div>
 
               {/* Title */}
-              <h4 className="text-2xl font-bold mb-5 text-gray-900 leading-tight group-hover:translate-x-2 transition-transform duration-500 ease-out">
+              <h4 className="text-2xl font-bold mb-4 text-white leading-tight group-hover:translate-x-2 transition-transform duration-500 ease-out">
                 {highlight.title}
               </h4>
 
               {/* Key Points - Show 3 points */}
-              <div className="text-gray-600 mb-7 space-y-4">
-                {highlight.points.slice(0, 3).map((point, index) => (
-                  <div key={index} className="flex items-start opacity-90 group-hover:opacity-100 group-hover:translate-x-2 transition-all duration-500 ease-out" style={{ transitionDelay: `${index * 150}ms` }}>
-                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2.5 mr-4 flex-shrink-0 group-hover:bg-gradient-to-r group-hover:from-blue-500 group-hover:to-purple-500 group-hover:scale-125 transition-all duration-400"></div>
+              <div className={`${currentTextColor} mb-6 space-y-3`}>
+                {highlight.points.slice(0, 3).map((point, pointIndex) => (
+                  <div key={pointIndex} className="flex items-start opacity-90 group-hover:opacity-100 group-hover:translate-x-2 transition-all duration-500 ease-out" style={{ transitionDelay: `${pointIndex * 150}ms` }}>
+                    <div className="w-2 h-2 bg-white/60 rounded-full mt-2 mr-3 flex-shrink-0 group-hover:bg-white group-hover:scale-125 transition-all duration-400"></div>
                     <span className="leading-relaxed font-medium text-sm">{point}</span>
                   </div>
                 ))}
               </div>
 
               {/* Metrics */}
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                {highlight.metrics.map((metric, index) => (
-                  <div key={index} className="text-center bg-gray-50 rounded-lg p-4 group-hover:bg-gray-100 group-hover:scale-105 transition-all duration-500 ease-out" style={{ transitionDelay: `${index * 100}ms` }}>
-                    <div className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors duration-400">{metric.value}</div>
-                    <div className="text-xs text-gray-500 font-medium mt-1">
+              <div className="grid grid-cols-3 gap-4 mb-5">
+                {highlight.metrics.map((metric, metricIndex) => (
+                  <div key={metricIndex} className="text-center bg-white/20 backdrop-blur-sm rounded-lg p-3 group-hover:bg-white/30 group-hover:scale-105 transition-all duration-500 ease-out" style={{ transitionDelay: `${metricIndex * 100}ms` }}>
+                    <div className="text-xl font-bold text-white group-hover:scale-110 transition-transform duration-400">{metric.value}</div>
+                    <div className="text-xs text-white/80 font-medium mt-1">
                       {metric.label}
                     </div>
                   </div>
                 ))}
               </div>
 
-              {/* Period and Progress Indicators */}
-              <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                <div className="text-gray-500 text-sm font-medium group-hover:text-gray-700 transition-colors duration-400">
+              {/* Period */}
+              <div className="pt-4 border-t border-white/20">
+                <div className={`${currentLightColor} text-sm font-medium group-hover:text-white transition-colors duration-400`}>
                   <span>{highlight.period}</span>
-                </div>
-                <div className="flex space-x-1">
-                  <div className="w-8 h-1 bg-gray-200 rounded-full group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-400 transition-all duration-500"></div>
-                  <div className="w-4 h-1 bg-gray-200 rounded-full group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-400 transition-all duration-600" style={{ transitionDelay: '100ms' }}></div>
-                  <div className="w-2 h-1 bg-gray-200 rounded-full group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-400 transition-all duration-700" style={{ transitionDelay: '200ms' }}></div>
                 </div>
               </div>
             </div>
