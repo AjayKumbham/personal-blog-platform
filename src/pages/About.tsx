@@ -58,6 +58,147 @@ const About: React.FC = () => {
     { icon: Coffee, label: 'Cups of Coffee', value: '∞' }
   ];
 
+  const highlights = [
+    {
+      id: 1,
+      icon: Rocket,
+      title: 'Projects Delivered',
+      subtitle: 'Full-Stack Development',
+      points: [
+        'E-commerce platforms for startups',
+        'SaaS solutions for enterprises',
+        'Mobile-responsive web apps',
+        'API integrations & databases'
+      ],
+      metrics: [
+        { label: 'Projects', value: '50+' },
+        { label: 'Success Rate', value: '98%' },
+        { label: 'On-Time', value: '95%' }
+      ],
+      period: '2020 - Present',
+      gradient: 'from-blue-500 to-blue-600',
+      textColors: {
+        light: 'text-blue-100',
+        lighter: 'text-blue-200'
+      }
+    },
+    {
+      id: 2,
+      icon: Trophy,
+      title: 'Open Source',
+      subtitle: 'Community Impact',
+      points: [
+        'React library contributions',
+        'GitHub community engagement',
+        'Technical blog writing',
+        'Developer mentoring'
+      ],
+      metrics: [
+        { label: 'Stars', value: '1K+' },
+        { label: 'Commits', value: '500+' },
+        { label: 'Repos', value: '25+' }
+      ],
+      period: '2022 - Present',
+      gradient: 'from-purple-500 to-purple-600',
+      textColors: {
+        light: 'text-purple-100',
+        lighter: 'text-purple-200'
+      }
+    },
+    {
+      id: 3,
+      icon: Target,
+      title: 'Performance',
+      subtitle: 'Technical Excellence',
+      points: [
+        'Code optimization techniques',
+        'Lazy loading implementation',
+        'Bundle size reduction',
+        'Modern build tools'
+      ],
+      metrics: [
+        { label: 'Speed', value: '+60%' },
+        { label: 'Load Time', value: '-40%' },
+        { label: 'Bundle', value: '-35%' }
+      ],
+      period: 'Ongoing',
+      gradient: 'from-green-500 to-green-600',
+      textColors: {
+        light: 'text-green-100',
+        lighter: 'text-green-200'
+      }
+    },
+    {
+      id: 4,
+      icon: Briefcase,
+      title: 'Leadership',
+      subtitle: 'Team Management',
+      points: [
+        'Cross-functional team lead',
+        'Agile methodology implementation',
+        'Junior developer mentoring',
+        'Project planning & execution'
+      ],
+      metrics: [
+        { label: 'Team Size', value: '5-8' },
+        { label: 'Projects', value: '15+' },
+        { label: 'Mentored', value: '20+' }
+      ],
+      period: '2023 - Present',
+      gradient: 'from-orange-500 to-red-500',
+      textColors: {
+        light: 'text-orange-100',
+        lighter: 'text-orange-200'
+      }
+    },
+    {
+      id: 5,
+      icon: Zap,
+      title: 'Innovation',
+      subtitle: 'Modern Solutions',
+      points: [
+        'Modern framework adoption',
+        'Development workflow optimization',
+        'Code quality improvements',
+        'Best practices implementation'
+      ],
+      metrics: [
+        { label: 'Time Saved', value: '40%' },
+        { label: 'Quality', value: '+85%' },
+        { label: 'Bugs', value: '-50%' }
+      ],
+      period: 'Continuous',
+      gradient: 'from-indigo-500 to-indigo-600',
+      textColors: {
+        light: 'text-indigo-100',
+        lighter: 'text-indigo-200'
+      }
+    },
+    {
+      id: 6,
+      icon: Users,
+      title: 'Client Relations',
+      subtitle: 'Satisfaction & Growth',
+      points: [
+        'High-quality solution delivery',
+        'On-time project completion',
+        'Budget-conscious development',
+        'Long-term partnerships'
+      ],
+      metrics: [
+        { label: 'Satisfaction', value: '98%' },
+        { label: 'Retention', value: '85%' },
+        { label: 'Referrals', value: '70%' }
+      ],
+      period: 'Proven Record',
+      gradient: 'from-pink-500 to-rose-500',
+      textColors: {
+        light: 'text-pink-100',
+        lighter: 'text-pink-200'
+      }
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
@@ -167,130 +308,131 @@ const About: React.FC = () => {
       </section>
 
       {/* Career Highlights */}
-      <section className="py-20 bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 relative overflow-hidden">
+        {/* Background decorations */}
+        <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-200/20 to-purple-200/20 rounded-full -translate-x-48 -translate-y-48"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-purple-200/20 to-pink-200/20 rounded-full translate-x-48 translate-y-48"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-16">
-            <h3 className="text-4xl font-bold text-gray-900 mb-4">Career Highlights</h3>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Key achievements and milestones that define my professional journey
+            <div className="inline-flex items-center gap-2 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium text-gray-600 mb-4">
+              <Trophy className="w-4 h-4 text-yellow-500" />
+              <span>Professional Journey</span>
+            </div>
+            <h3 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              Career <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Highlights</span>
+            </h3>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Key achievements and milestones that define my professional journey and showcase the impact I've made
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Highlight 1 */}
-            <div className="group relative overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 text-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
-              <div className="relative z-10">
-                <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Rocket className="w-8 h-8 text-white" />
-                </div>
-                <h4 className="text-2xl font-bold mb-3">50+ Projects Delivered</h4>
-                <p className="text-blue-100 mb-4 leading-relaxed">
-                  Successfully delivered complex web applications for startups and enterprises, ranging from e-commerce platforms to SaaS solutions.
-                </p>
-                <div className="flex items-center text-blue-200 text-sm">
-                  <Star className="w-4 h-4 mr-1" />
-                  <span>2020 - Present</span>
-                </div>
-              </div>
-            </div>
+            {highlights.map((highlight) => {
+              const IconComponent = highlight.icon;
+              return (
+                <div
+                  key={highlight.id}
+                  className={`group relative overflow-hidden bg-gradient-to-br ${highlight.gradient} text-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 hover:rotate-1 cursor-pointer`}
+                >
+                  {/* Background decorations */}
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16 group-hover:scale-125 transition-transform duration-500"></div>
+                  <div className="absolute bottom-0 left-0 w-20 h-20 bg-white/5 rounded-full translate-y-10 -translate-x-10 group-hover:scale-150 transition-transform duration-700"></div>
 
-            {/* Highlight 2 */}
-            <div className="group relative overflow-hidden bg-gradient-to-br from-purple-500 to-purple-600 text-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
-              <div className="relative z-10">
-                <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Trophy className="w-8 h-8 text-white" />
-                </div>
-                <h4 className="text-2xl font-bold mb-3">Open Source Contributor</h4>
-                <p className="text-purple-100 mb-4 leading-relaxed">
-                  Active contributor to popular React libraries with 1000+ GitHub stars. Passionate about giving back to the developer community.
-                </p>
-                <div className="flex items-center text-purple-200 text-sm">
-                  <Star className="w-4 h-4 mr-1" />
-                  <span>2022 - Present</span>
-                </div>
-              </div>
-            </div>
+                  <div className="relative z-10">
+                    {/* Header with icon and title */}
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-lg">
+                        <IconComponent className="w-7 h-7 text-white drop-shadow-sm" />
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xs font-semibold text-white/90 uppercase tracking-wider bg-white/10 px-2 py-1 rounded-full">
+                          {highlight.subtitle}
+                        </div>
+                      </div>
+                    </div>
 
-            {/* Highlight 3 */}
-            <div className="group relative overflow-hidden bg-gradient-to-br from-green-500 to-green-600 text-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
-              <div className="relative z-10">
-                <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Target className="w-8 h-8 text-white" />
-                </div>
-                <h4 className="text-2xl font-bold mb-3">Performance Optimization</h4>
-                <p className="text-green-100 mb-4 leading-relaxed">
-                  Improved application performance by 60% on average through code optimization, lazy loading, and modern build techniques.
-                </p>
-                <div className="flex items-center text-green-200 text-sm">
-                  <Star className="w-4 h-4 mr-1" />
-                  <span>Ongoing Excellence</span>
-                </div>
-              </div>
-            </div>
+                    {/* Title */}
+                    <h4 className="text-xl font-bold mb-3 leading-tight group-hover:text-white transition-colors duration-300">
+                      {highlight.title}
+                    </h4>
 
-            {/* Highlight 4 */}
-            <div className="group relative overflow-hidden bg-gradient-to-br from-orange-500 to-red-500 text-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
-              <div className="relative z-10">
-                <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Briefcase className="w-8 h-8 text-white" />
-                </div>
-                <h4 className="text-2xl font-bold mb-3">Team Leadership</h4>
-                <p className="text-orange-100 mb-4 leading-relaxed">
-                  Led cross-functional teams of 5-8 developers, implementing agile methodologies and mentoring junior developers.
-                </p>
-                <div className="flex items-center text-orange-200 text-sm">
-                  <Star className="w-4 h-4 mr-1" />
-                  <span>2023 - Present</span>
-                </div>
-              </div>
-            </div>
+                    {/* Key Points */}
+                    <div className={`${highlight.textColors.light} mb-4 text-sm space-y-2`}>
+                      {highlight.points.slice(0, 2).map((point, index) => (
+                        <div key={index} className="flex items-start group-hover:translate-x-1 transition-transform duration-300" style={{ transitionDelay: `${index * 50}ms` }}>
+                          <div className="w-1.5 h-1.5 bg-white/70 rounded-full mt-2 mr-3 flex-shrink-0 group-hover:bg-white transition-colors duration-300"></div>
+                          <span className="leading-relaxed font-medium">{point}</span>
+                        </div>
+                      ))}
+                      {highlight.points.length > 2 && (
+                        <div className={`text-xs ${highlight.textColors.lighter} font-semibold bg-white/10 px-2 py-1 rounded-full inline-block`}>
+                          +{highlight.points.length - 2} more achievements
+                        </div>
+                      )}
+                    </div>
 
-            {/* Highlight 5 */}
-            <div className="group relative overflow-hidden bg-gradient-to-br from-indigo-500 to-indigo-600 text-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
-              <div className="relative z-10">
-                <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Zap className="w-8 h-8 text-white" />
-                </div>
-                <h4 className="text-2xl font-bold mb-3">Technical Innovation</h4>
-                <p className="text-indigo-100 mb-4 leading-relaxed">
-                  Pioneered the adoption of modern frameworks and tools, reducing development time by 40% and improving code quality.
-                </p>
-                <div className="flex items-center text-indigo-200 text-sm">
-                  <Star className="w-4 h-4 mr-1" />
-                  <span>Continuous Innovation</span>
-                </div>
-              </div>
-            </div>
+                    {/* Metrics */}
+                    <div className="grid grid-cols-3 gap-3 mb-4">
+                      {highlight.metrics.map((metric, index) => (
+                        <div key={index} className="text-center bg-white/10 backdrop-blur-sm rounded-lg p-2 group-hover:bg-white/20 transition-all duration-300" style={{ transitionDelay: `${index * 100}ms` }}>
+                          <div className="text-lg font-bold text-white drop-shadow-sm">{metric.value}</div>
+                          <div className={`text-xs ${highlight.textColors.lighter} font-semibold`}>
+                            {metric.label}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
 
-            {/* Highlight 6 */}
-            <div className="group relative overflow-hidden bg-gradient-to-br from-pink-500 to-rose-500 text-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
-              <div className="relative z-10">
-                <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Users className="w-8 h-8 text-white" />
+                    {/* Period and Status */}
+                    <div className="flex items-center justify-between">
+                      <div className={`flex items-center ${highlight.textColors.lighter} text-sm font-medium`}>
+                        <Star className="w-3 h-3 mr-1 group-hover:text-yellow-300 transition-colors duration-300" />
+                        <span>{highlight.period}</span>
+                      </div>
+                      <div className="flex space-x-1">
+                        <div className="w-2 h-2 bg-white/40 rounded-full group-hover:bg-white/80 transition-colors duration-300"></div>
+                        <div className="w-2 h-2 bg-white/20 rounded-full group-hover:bg-white/60 transition-colors duration-300" style={{ transitionDelay: '100ms' }}></div>
+                        <div className="w-2 h-2 bg-white/10 rounded-full group-hover:bg-white/40 transition-colors duration-300" style={{ transitionDelay: '200ms' }}></div>
+                      </div>
+                    </div>
+
+                    {/* Hover overlay */}
+                    <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
+                  </div>
                 </div>
-                <h4 className="text-2xl font-bold mb-3">Client Satisfaction</h4>
-                <p className="text-pink-100 mb-4 leading-relaxed">
-                  Maintained 98% client satisfaction rate with consistent delivery of high-quality solutions on time and within budget.
-                </p>
-                <div className="flex items-center text-pink-200 text-sm">
-                  <Star className="w-4 h-4 mr-1" />
-                  <span>Proven Track Record</span>
-                </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
 
           {/* Bottom CTA */}
           <div className="text-center mt-16">
-            <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-6 py-3 rounded-full text-gray-700 font-medium shadow-lg">
-              <Trophy className="w-5 h-5 text-yellow-500" />
-              <span>Ready to create something amazing together?</span>
+            <div className="inline-flex items-center gap-3 bg-white/90 backdrop-blur-sm px-8 py-4 rounded-full text-gray-700 font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer group">
+              <div className="w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
+                <Trophy className="w-4 h-4 text-white" />
+              </div>
+              <span className="text-lg">Ready to create something amazing together?</span>
+              <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full group-hover:scale-150 transition-transform duration-300"></div>
+            </div>
+
+            {/* Stats summary */}
+            <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
+              <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 text-center">
+                <div className="text-2xl font-bold text-gray-900">6</div>
+                <div className="text-sm text-gray-600 font-medium">Key Areas</div>
+              </div>
+              <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 text-center">
+                <div className="text-2xl font-bold text-gray-900">50+</div>
+                <div className="text-sm text-gray-600 font-medium">Projects</div>
+              </div>
+              <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 text-center">
+                <div className="text-2xl font-bold text-gray-900">98%</div>
+                <div className="text-sm text-gray-600 font-medium">Success Rate</div>
+              </div>
+              <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 text-center">
+                <div className="text-2xl font-bold text-gray-900">5+</div>
+                <div className="text-sm text-gray-600 font-medium">Years Exp</div>
+              </div>
             </div>
           </div>
         </div>
