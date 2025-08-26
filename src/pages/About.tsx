@@ -308,111 +308,107 @@ const About: React.FC = () => {
       </section>
 
       {/* Career Highlights */}
-      <section className="py-20 bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 relative overflow-hidden">
-        {/* Background decorations */}
-        <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-200/20 to-purple-200/20 rounded-full -translate-x-48 -translate-y-48"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-purple-200/20 to-pink-200/20 rounded-full translate-x-48 translate-y-48"></div>
+<section className="py-20 bg-gradient-to-br from-gray-50 via-slate-50 to-gray-100 relative overflow-hidden">
+  {/* Modern background elements */}
+  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5"></div>
+  <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-br from-blue-400/10 to-transparent rounded-full blur-3xl"></div>
+  <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-gradient-to-tl from-purple-400/10 to-transparent rounded-full blur-3xl"></div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-16">
-            <h3 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Career <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Highlights</span>
-            </h3>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Key achievements and milestones that define my professional journey and showcase the impact I've made
-            </p>
-          </div>
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <div className="text-center mb-16">
+      <h3 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+        Career <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Highlights</span>
+      </h3>
+      <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+        Key achievements and milestones that define my professional journey and showcase the impact I've made
+      </p>
+    </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {highlights.map((highlight) => {
-              const IconComponent = highlight.icon;
-              return (
-                <div
-                  key={highlight.id}
-                  className={`group relative overflow-hidden bg-gradient-to-br ${highlight.gradient} text-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 hover:rotate-1 cursor-pointer`}
-                >
-                  {/* Background decorations */}
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16 group-hover:scale-125 transition-transform duration-500"></div>
-                  <div className="absolute bottom-0 left-0 w-20 h-20 bg-white/5 rounded-full translate-y-10 -translate-x-10 group-hover:scale-150 transition-transform duration-700"></div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {highlights.map((highlight) => {
+        return (
+          <div
+            key={highlight.id}
+            className="group relative overflow-hidden bg-white border border-gray-200 p-8 rounded-xl shadow-sm hover:shadow-xl transition-all duration-700 ease-out cursor-pointer"
+          >
+            {/* Animated border effect */}
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/0 via-purple-500/0 to-blue-500/0 group-hover:from-blue-500/20 group-hover:via-purple-500/20 group-hover:to-blue-500/20 transition-all duration-700 ease-out"></div>
+            
+            {/* Subtle hover overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-gray-50/0 to-gray-100/0 group-hover:from-gray-50/50 group-hover:to-gray-100/30 transition-all duration-700 ease-out rounded-xl"></div>
 
-                  <div className="relative z-10">
-                    {/* Header with icon and title */}
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-lg">
-                        <IconComponent className="w-7 h-7 text-white drop-shadow-sm" />
-                      </div>
-                      <div className="text-right">
-                        <div className="text-xs font-semibold text-white/90 uppercase tracking-wider bg-white/10 px-2 py-1 rounded-full">
-                          {highlight.subtitle}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Title */}
-                    <h4 className="text-xl font-bold mb-3 leading-tight group-hover:text-white transition-colors duration-300">
-                      {highlight.title}
-                    </h4>
-
-                    {/* Key Points */}
-                    <div className={`${highlight.textColors.light} mb-4 text-sm space-y-2`}>
-                      {highlight.points.slice(0, 2).map((point, index) => (
-                        <div key={index} className="flex items-start group-hover:translate-x-1 transition-transform duration-300" style={{ transitionDelay: `${index * 50}ms` }}>
-                          <div className="w-1.5 h-1.5 bg-white/70 rounded-full mt-2 mr-3 flex-shrink-0 group-hover:bg-white transition-colors duration-300"></div>
-                          <span className="leading-relaxed font-medium">{point}</span>
-                        </div>
-                      ))}
-                      {highlight.points.length > 2 && (
-                        <div className={`text-xs ${highlight.textColors.lighter} font-semibold bg-white/10 px-2 py-1 rounded-full inline-block`}>
-                          +{highlight.points.length - 2} more achievements
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Metrics */}
-                    <div className="grid grid-cols-3 gap-3 mb-4">
-                      {highlight.metrics.map((metric, index) => (
-                        <div key={index} className="text-center bg-white/10 backdrop-blur-sm rounded-lg p-2 group-hover:bg-white/20 transition-all duration-300" style={{ transitionDelay: `${index * 100}ms` }}>
-                          <div className="text-lg font-bold text-white drop-shadow-sm">{metric.value}</div>
-                          <div className={`text-xs ${highlight.textColors.lighter} font-semibold`}>
-                            {metric.label}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Period and Status */}
-                    <div className="flex items-center justify-between">
-                      <div className={`flex items-center ${highlight.textColors.lighter} text-sm font-medium`}>
-                        <Star className="w-3 h-3 mr-1 group-hover:text-yellow-300 transition-colors duration-300" />
-                        <span>{highlight.period}</span>
-                      </div>
-                      <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-white/40 rounded-full group-hover:bg-white/80 transition-colors duration-300"></div>
-                        <div className="w-2 h-2 bg-white/20 rounded-full group-hover:bg-white/60 transition-colors duration-300" style={{ transitionDelay: '100ms' }}></div>
-                        <div className="w-2 h-2 bg-white/10 rounded-full group-hover:bg-white/40 transition-colors duration-300" style={{ transitionDelay: '200ms' }}></div>
-                      </div>
-                    </div>
-
-                    {/* Hover overlay */}
-                    <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
-                  </div>
+            <div className="relative z-10">
+              {/* Header with subtitle and status indicator */}
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center space-x-3">
+                  <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full group-hover:scale-125 transition-transform duration-500"></div>
+                  <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    {highlight.subtitle}
+                  </span>
                 </div>
-              );
-            })}
-          </div>
-
-          {/* Bottom CTA */}
-          <div className="text-center mt-16">
-            <div className="inline-flex items-center gap-3 bg-white/90 backdrop-blur-sm px-8 py-4 rounded-full text-gray-700 font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer group">
-              <div className="w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
-                <Trophy className="w-4 h-4 text-white" />
+                <div className="flex space-x-1">
+                  <div className="w-1 h-8 bg-gray-200 rounded-full group-hover:bg-gradient-to-b group-hover:from-blue-400 group-hover:to-purple-400 transition-all duration-500"></div>
+                  <div className="w-1 h-6 bg-gray-200 rounded-full group-hover:bg-gradient-to-b group-hover:from-blue-400 group-hover:to-purple-400 transition-all duration-600" style={{ transitionDelay: '100ms' }}></div>
+                  <div className="w-1 h-4 bg-gray-200 rounded-full group-hover:bg-gradient-to-b group-hover:from-blue-400 group-hover:to-purple-400 transition-all duration-700" style={{ transitionDelay: '200ms' }}></div>
+                </div>
               </div>
-              <span className="text-lg">Ready to create something amazing together?</span>
-              <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full group-hover:scale-150 transition-transform duration-300"></div>
+
+              {/* Title */}
+              <h4 className="text-2xl font-bold mb-5 text-gray-900 leading-tight group-hover:translate-x-2 transition-transform duration-500 ease-out">
+                {highlight.title}
+              </h4>
+
+              {/* Key Points - Show 3 points */}
+              <div className="text-gray-600 mb-7 space-y-4">
+                {highlight.points.slice(0, 3).map((point, index) => (
+                  <div key={index} className="flex items-start opacity-90 group-hover:opacity-100 group-hover:translate-x-2 transition-all duration-500 ease-out" style={{ transitionDelay: `${index * 150}ms` }}>
+                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2.5 mr-4 flex-shrink-0 group-hover:bg-gradient-to-r group-hover:from-blue-500 group-hover:to-purple-500 group-hover:scale-125 transition-all duration-400"></div>
+                    <span className="leading-relaxed font-medium text-sm">{point}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Metrics */}
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                {highlight.metrics.map((metric, index) => (
+                  <div key={index} className="text-center bg-gray-50 rounded-lg p-4 group-hover:bg-gray-100 group-hover:scale-105 transition-all duration-500 ease-out" style={{ transitionDelay: `${index * 100}ms` }}>
+                    <div className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors duration-400">{metric.value}</div>
+                    <div className="text-xs text-gray-500 font-medium mt-1">
+                      {metric.label}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Period and Progress Indicators */}
+              <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                <div className="text-gray-500 text-sm font-medium group-hover:text-gray-700 transition-colors duration-400">
+                  <span>{highlight.period}</span>
+                </div>
+                <div className="flex space-x-1">
+                  <div className="w-8 h-1 bg-gray-200 rounded-full group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-400 transition-all duration-500"></div>
+                  <div className="w-4 h-1 bg-gray-200 rounded-full group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-400 transition-all duration-600" style={{ transitionDelay: '100ms' }}></div>
+                  <div className="w-2 h-1 bg-gray-200 rounded-full group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-400 transition-all duration-700" style={{ transitionDelay: '200ms' }}></div>
+                </div>
+              </div>
             </div>
           </div>
+        );
+      })}
+    </div>
+
+    {/* Bottom CTA */}
+    <div className="text-center mt-16">
+      <div className="inline-flex items-center gap-4 bg-white/90 backdrop-blur-sm border border-gray-200/50 px-10 py-5 rounded-2xl text-gray-700 font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer group">
+        <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center group-hover:rotate-3 transition-transform duration-300">
+          <Trophy className="w-5 h-5 text-white" />
         </div>
-      </section>
+        <span className="text-lg">Ready to create something amazing together?</span>
+        <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full group-hover:scale-125 transition-transform duration-300"></div>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* Contact Section */}
       <section className="py-16 bg-blue-600 text-white">
