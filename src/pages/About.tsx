@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { Mail, Github, Twitter, Linkedin, MapPin, Code2, Award, Users, Coffee, Globe, Briefcase, Trophy, Rocket, Star, Target, Zap } from 'lucide-react';
+import { Mail, Github, Twitter, Linkedin, MapPin, Code2, Award, Users, Coffee, Globe, Briefcase, Trophy, Rocket, Target, Zap } from 'lucide-react';
 import { settingsService } from '../services/settingsService';
 import { SiteSettings } from '../types';
 import Card from '../components/ui/Card';
@@ -362,12 +362,12 @@ const About: React.FC = () => {
               {/* Header with logo and subtitle */}
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center space-x-4">
-                  {/* Logo placeholder */}
+                  {/* Personal Logo */}
                   <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
                     <img 
-                      src={`/api/placeholder/48/48`} 
-                      alt="Achievement Logo" 
-                      className="w-8 h-8 object-contain"
+                      src="/personal-logo.jpg" 
+                      alt="Personal Logo" 
+                      className="w-8 h-8 object-contain rounded-lg"
                     />
                   </div>
                   <span className="text-sm font-semibold text-white/90 uppercase tracking-wide">
