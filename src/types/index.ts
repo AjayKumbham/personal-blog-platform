@@ -39,6 +39,11 @@ export interface Author {
   website: string;
   skills?: string[];
   careerHighlights?: CareerHighlight[];
+  stats?: Array<{
+    icon: any; // React component
+    label: string;
+    value: string;
+  }>;
 }
 
 export interface SiteSettings {

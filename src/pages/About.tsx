@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { Mail, Github, Twitter, Linkedin, MapPin, Code2, Award, Users, Coffee, Globe, Briefcase, Trophy, Rocket, Target, Zap } from 'lucide-react';
+import { Mail, Github, Twitter, Linkedin, MapPin, Code2, Award, Users, Globe, Briefcase, Trophy, Rocket, Target, Zap } from 'lucide-react';
 import { settingsService } from '../services/settingsService';
 import { SiteSettings } from '../types';
 import Card from '../components/ui/Card';
@@ -20,9 +20,8 @@ const About: React.FC = () => {
       setSettings(data);
     } catch (error) {
       console.error('Error loading settings:', error);
-      // If settings fail to load, use default settings
-      const defaultSettings = settingsService.getDefaultSettings();
-      setSettings(defaultSettings);
+      // If settings fail to load, set to null to show empty state
+      setSettings(null);
     } finally {
       setLoading(false);
     }
@@ -36,31 +35,28 @@ const About: React.FC = () => {
     );
   }
 
-  // This should rarely happen now since we fallback to defaults in loadSettings
-  if (!settings) {
+  // Show empty state when no settings are available
+  if (!settings || !settings.author.name) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center p-8">
+          <div className="text-6xl mb-4">📝</div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">No Content Available</h2>
+          <p className="text-gray-600">About page content has not been configured yet.</p>
+        </div>
       </div>
     );
   }
 
   const { author } = settings;
 
-  // Get skills from settings or use default
-  const skills = settings.author?.skills || [
-    'JavaScript', 'TypeScript', 'React', 'Node.js', 'Next.js', 'Vue.js',
-    'Python', 'PostgreSQL', 'MongoDB', 'AWS', 'Docker', 'GraphQL'
-  ];
+  // Get skills from settings
+  const skills = settings.author?.skills || [];
 
-  const stats = [
-    { icon: Code2, label: 'Years of Experience', value: '5+' },
-    { icon: Award, label: 'Projects Completed', value: '50+' },
-    { icon: Users, label: 'Clients Worked With', value: '25+' },
-    { icon: Coffee, label: 'Cups of Coffee', value: '∞' }
-  ];
+  // Stats should come from settings or be empty
+  const stats = settings.author?.stats || [];
 
-  // Get career highlights from settings (includes default sample data from service)
+  // Get career highlights from settings
   const highlights = settings.author?.careerHighlights || [];
 
   // Icon mapping for dynamic icons
@@ -78,7 +74,7 @@ const About: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-20">
+      <section className="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-center gap-12">
             <div className="flex-1">
@@ -122,72 +118,78 @@ const About: React.FC = () => {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-16 -mt-10 relative z-10">
+      {/* Stats Section - Always show same UI structure */}
+      <section className="pt-16 pb-12 -mt-12 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {stats.map((stat, index) => (
-              <Card key={index} className="text-center p-6">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <stat.icon className="w-6 h-6 text-blue-600" />
-                </div>
-                <div className="text-3xl font-bold text-gray-900 mb-2">{stat.value}</div>
-                <div className="text-gray-600">{stat.label}</div>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* About Details */}
-      <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Story */}
-            <Card className="p-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">My Story</h3>
-              <div className="space-y-4 text-gray-700">
-                <p>
-                  I started my journey in web development over 5 years ago, driven by a passion for creating
-                  digital experiences that make a difference. What began as curiosity about how websites work
-                  has evolved into a career dedicated to building scalable, user-centric applications.
-                </p>
-                <p>
-                  Throughout my career, I've had the privilege of working with startups and established companies,
-                  helping them transform ideas into robust digital solutions. I specialize in modern JavaScript
-                  frameworks and have a deep appreciation for clean, maintainable code.
-                </p>
-                <p>
-                  When I'm not coding, you can find me contributing to open source projects, writing technical
-                  articles, or exploring the latest web technologies. I believe in continuous learning and
-                  sharing knowledge with the developer community.
-                </p>
-              </div>
-            </Card>
-
-            {/* Skills */}
-            <Card className="p-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">Skills & Technologies</h3>
-              <div className="grid grid-cols-2 gap-3">
-                {skills.map((skill) => (
-                  <div
-                    key={skill}
-                    className="bg-blue-50 text-blue-800 px-4 py-2 rounded-lg text-center font-medium"
-                  >
-                    {skill}
+            {stats.length > 0 ? (
+              stats.map((stat, index) => (
+                <Card key={index} className="text-center p-6">
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <stat.icon className="w-6 h-6 text-blue-600" />
                   </div>
-                ))}
-              </div>
-            </Card>
+                  <div className="text-3xl font-bold text-gray-900 mb-2">{stat.value}</div>
+                  <div className="text-gray-600">{stat.label}</div>
+                </Card>
+              ))
+            ) : (
+              // Show 4 empty stat cards when no data
+              Array.from({ length: 4 }).map((_, index) => (
+                <Card key={index} className="text-center p-6">
+                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Award className="w-6 h-6 text-gray-400" />
+                  </div>
+                  <div className="text-3xl font-bold text-gray-400 mb-2">--</div>
+                  <div className="text-gray-400">No data</div>
+                </Card>
+              ))
+            )}
           </div>
         </div>
       </section>
 
-      {/* Career Highlights */}
-<section className="py-20 bg-gray-50 relative">
+      {/* About Details - Only show if bio or skills exist */}
+      {(settings.author.bio || skills.length > 0) && (
+        <section className="py-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              {/* Story - Only show if bio exists */}
+              {settings.author.bio && (
+                <Card className="p-8">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6">My Story</h3>
+                  <div className="space-y-4 text-gray-700">
+                    <p>{settings.author.bio}</p>
+                  </div>
+                </Card>
+              )}
+
+              {/* Skills - Only show if skills exist */}
+              {skills.length > 0 && (
+                <Card className="p-8">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6">Skills & Technologies</h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    {skills.map((skill) => (
+                      <div
+                        key={skill}
+                        className="bg-blue-50 text-blue-800 px-4 py-2 rounded-lg text-center font-medium"
+                      >
+                        {skill}
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Career Highlights - Only show if highlights exist */}
+      {highlights.length > 0 && (
+<section className="py-24 bg-white relative">
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-    <div className="text-center mb-16">
-      <h3 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+    <div className="text-center mb-20">
+      <h3 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
         Career <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Highlights</span>
       </h3>
       <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
@@ -291,7 +293,7 @@ const About: React.FC = () => {
     </div>
 
     {/* Bottom CTA */}
-    <div className="text-center mt-16">
+    <div className="text-center mt-20">
       <div className="inline-flex items-center gap-4 bg-white/90 backdrop-blur-sm border border-gray-200/50 px-10 py-5 rounded-2xl text-gray-700 font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer group">
         <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center group-hover:rotate-3 transition-transform duration-300">
           <Trophy className="w-5 h-5 text-white" />
@@ -302,16 +304,17 @@ const About: React.FC = () => {
     </div>
   </div>
 </section>
+      )}
 
       {/* Contact Section */}
-      <section className="py-16 bg-blue-600 text-white">
+      <section className="py-20 bg-blue-600 text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h3 className="text-3xl font-bold mb-6">Let's Connect</h3>
-          <p className="text-xl text-blue-100 mb-8">
+          <p className="text-xl text-blue-100 mb-10">
             I'm always interested in new opportunities and interesting projects.
           </p>
 
-          <div className="flex justify-center gap-6 mb-8">
+          <div className="flex justify-center gap-6 mb-10">
             <a
               href={author.github}
               target="_blank"
