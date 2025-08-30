@@ -49,4 +49,14 @@ export interface SiteSettings {
   hashnodeApiKey: string;
   hashnodePublicationId: string;
   devToApiKey: string;
+  // Optional future-ready fields
+  theme?: {
+    primaryColor: string;
+    darkMode: boolean;
+  };
+  seo?: {
+    metaTitle: string;
+    metaDescription: string;
+    keywords: string[];
+  };
 }

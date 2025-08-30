@@ -65,64 +65,19 @@ export interface Database {
       site_settings: {
         Row: {
           id: string;
-          site_name: string;
-          site_description: string;
-          site_url: string;
-          author_name: string;
-          author_bio: string;
-          author_avatar: string;
-          author_title: string;
-          author_location: string;
-          author_email: string;
-          author_github: string;
-          author_twitter: string;
-          author_linkedin: string;
-          author_website: string;
-          hashnode_api_key: string | null;
-          hashnode_publication_id: string | null;
-          dev_to_api_key: string | null;
+          settings_data: any; // JSONB column containing all flexible settings
           created_at: string;
           updated_at: string;
         };
         Insert: {
           id?: string;
-          site_name: string;
-          site_description: string;
-          site_url: string;
-          author_name: string;
-          author_bio: string;
-          author_avatar: string;
-          author_title: string;
-          author_location: string;
-          author_email: string;
-          author_github: string;
-          author_twitter: string;
-          author_linkedin: string;
-          author_website: string;
-          hashnode_api_key?: string | null;
-          hashnode_publication_id?: string | null;
-          dev_to_api_key?: string | null;
+          settings_data: any;
           created_at?: string;
           updated_at?: string;
         };
         Update: {
           id?: string;
-          site_name?: string;
-          site_description?: string;
-          site_url?: string;
-          author_name?: string;
-          author_bio?: string;
-          author_avatar?: string;
-          author_title?: string;
-          author_location?: string;
-          author_email?: string;
-          author_github?: string;
-          author_twitter?: string;
-          author_linkedin?: string;
-          author_website?: string;
-          hashnode_api_key?: string | null;
-          hashnode_publication_id?: string | null;
-          dev_to_api_key?: string | null;
+          settings_data?: any;
           updated_at?: string;
         };
       };
