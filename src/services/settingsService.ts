@@ -62,6 +62,7 @@ export const settingsService = {
         website: '',
         skills: [],
         careerHighlights: [],
+        stats: [],
       },
       hashnodeApiKey: '',
       hashnodePublicationId: '',

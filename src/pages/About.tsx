@@ -123,15 +123,18 @@ const About: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {stats.length > 0 ? (
-              stats.map((stat, index) => (
-                <Card key={index} className="text-center p-6">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <stat.icon className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <div className="text-3xl font-bold text-gray-900 mb-2">{stat.value}</div>
-                  <div className="text-gray-600">{stat.label}</div>
-                </Card>
-              ))
+              stats.map((stat, index) => {
+                const IconComponent = iconMap[stat.icon] || Award;
+                return (
+                  <Card key={index} className="text-center p-6">
+                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <IconComponent className="w-6 h-6 text-blue-600" />
+                    </div>
+                    <div className="text-3xl font-bold text-gray-900 mb-2">{stat.value}</div>
+                    <div className="text-gray-600">{stat.label}</div>
+                  </Card>
+                );
+              })
             ) : (
               // Show 4 empty stat cards when no data
               Array.from({ length: 4 }).map((_, index) => (

@@ -34,6 +34,7 @@ const AdminDashboard: React.FC = () => {
     twitter: '',
     skills: '',
     careerHighlights: [] as any[],
+    stats: [] as any[],
   });
 
   // Career Highlights Modal State
@@ -51,6 +52,15 @@ const AdminDashboard: React.FC = () => {
     period: '',
     icon: 'Code2',
     order: 1
+  });
+
+  // Stats Modal State
+  const [showStatsModal, setShowStatsModal] = useState(false);
+  const [editingStats, setEditingStats] = useState<any>(null);
+  const [statsForm, setStatsForm] = useState({
+    label: '',
+    value: '',
+    icon: 'Code2'
   });
 
   useEffect(() => {
@@ -79,18 +89,19 @@ const AdminDashboard: React.FC = () => {
         hashnodeApiKey: data.hashnodeApiKey || '',
         hashnodePublicationId: data.hashnodePublicationId || '',
         devToApiKey: data.devToApiKey || '',
-        // About Content with sample data
-        siteName: data.siteName || 'Kumbham Ajay Goud',
-        siteDescription: data.siteDescription || 'Passionate Full-Stack Developer specializing in React, TypeScript, and modern web technologies. I create scalable applications and contribute to open-source projects while mentoring the next generation of developers.',
-        siteUrl: data.siteUrl || 'https://ajaykumbham-portfolio.vercel.app',
-        title: data.author?.title || 'Senior Full-Stack Developer',
-        location: data.author?.location || 'Hyderabad, India',
-        email: data.author?.email || 'ajaygoud.kumbham@gmail.com',
-        github: data.author?.github || 'https://github.com/AjayKumbham',
-        linkedin: data.author?.linkedin || 'https://linkedin.com/in/ajaykumbham',
-        twitter: data.author?.twitter || 'https://twitter.com/ajaykumbham',
-        skills: data.author?.skills?.join(', ') || 'JavaScript, TypeScript, React, Next.js, Node.js, Express.js, MongoDB, PostgreSQL, AWS, Docker, Git, GraphQL, REST APIs, Tailwind CSS, Material-UI, Redux, Zustand',
+        // About Content
+        siteName: data.siteName || '',
+        siteDescription: data.siteDescription || '',
+        siteUrl: data.siteUrl || '',
+        title: data.author?.title || '',
+        location: data.author?.location || '',
+        email: data.author?.email || '',
+        github: data.author?.github || '',
+        linkedin: data.author?.linkedin || '',
+        twitter: data.author?.twitter || '',
+        skills: data.author?.skills?.join(', ') || '',
         careerHighlights: data.author?.careerHighlights || [],
+        stats: data.author?.stats || [],
       });
     } catch (error) {
       console.error('Error loading settings:', error);
@@ -163,6 +174,7 @@ const AdminDashboard: React.FC = () => {
           website: settings.siteUrl,
           skills: settings.skills ? settings.skills.split(',').map(s => s.trim()).filter(s => s) : [],
           careerHighlights: settings.careerHighlights || [],
+          stats: settings.stats || [],
         }
       };
       
@@ -271,6 +283,69 @@ const AdminDashboard: React.FC = () => {
         return { ...prev, [field]: value };
       }
     });
+  };
+
+  // Stats CRUD Operations
+  const openStatsModal = (stat?: any) => {
+    if (stat) {
+      setEditingStats(stat);
+      setStatsForm({
+        label: stat.label || '',
+        value: stat.value || '',
+        icon: stat.icon || 'Code2'
+      });
+    } else {
+      setEditingStats(null);
+      setStatsForm({
+        label: '',
+        value: '',
+        icon: 'Code2'
+      });
+    }
+    setShowStatsModal(true);
+  };
+
+  const closeStatsModal = () => {
+    setShowStatsModal(false);
+    setEditingStats(null);
+  };
+
+  const saveStat = () => {
+    const newStat = {
+      id: editingStats?.id || Date.now().toString(),
+      ...statsForm
+    };
+
+    let updatedStats;
+    if (editingStats) {
+      updatedStats = settings.stats.map(s => 
+        s.id === editingStats.id ? newStat : s
+      );
+    } else {
+      updatedStats = [...settings.stats, newStat];
+    }
+
+    setSettings(prev => ({
+      ...prev,
+      stats: updatedStats
+    }));
+
+    closeStatsModal();
+    showSuccess(
+      editingStats ? 'Stat updated' : 'Stat added',
+      `Stat has been ${editingStats ? 'updated' : 'added'} successfully.`
+    );
+  };
+
+  const deleteStat = (id: string) => {
+    if (window.confirm('Are you sure you want to delete this stat?')) {
+      const updatedStats = settings.stats.filter(s => s.id !== id);
+      setSettings(prev => ({
+        ...prev,
+        stats: updatedStats
+      }));
+      showSuccess('Stat deleted', 'Stat has been deleted successfully.');
+    }
   };
 
   const stats = [
@@ -627,6 +702,71 @@ const AdminDashboard: React.FC = () => {
                 </div>
               </Card>
 
+              {/* Stats */}
+              <Card className="p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900">Statistics</h3>
+                  <Button 
+                    onClick={() => openStatsModal()} 
+                    icon={PlusCircle}
+                    disabled={settings.stats.length >= 4}
+                  >
+                    Add New Stat
+                  </Button>
+                </div>
+                <p className="text-sm text-gray-600 mb-4">
+                  Manage your key statistics that will be displayed in the stats section of your About page. You can have up to 4 stats.
+                </p>
+                <div className="space-y-4">
+                  {settings.stats.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {settings.stats.map((stat: any, index: number) => (
+                        <div key={stat.id || index} className="bg-gray-50 p-4 rounded-lg">
+                          <div className="flex justify-between items-start mb-3">
+                            <div>
+                              <h4 className="font-medium text-gray-900">{stat.label}</h4>
+                              <p className="text-2xl font-bold text-blue-600">{stat.value}</p>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => openStatsModal(stat)}
+                                icon={Edit}
+                              >
+                                Edit
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                className="text-red-600 hover:text-red-700"
+                                onClick={() => deleteStat(stat.id)}
+                                icon={Trash2}
+                              >
+                                Delete
+                              </Button>
+                            </div>
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            Icon: {stat.icon}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      <p className="mb-4">No statistics added yet.</p>
+                      <p className="text-sm">Add your first stat to showcase your achievements!</p>
+                    </div>
+                  )}
+                  {settings.stats.length >= 4 && (
+                    <p className="text-sm text-amber-600 bg-amber-50 p-3 rounded-lg">
+                      Maximum of 4 statistics reached. Delete a stat to add a new one.
+                    </p>
+                  )}
+                </div>
+              </Card>
+
               {/* Career Highlights */}
               <Card className="p-6">
                 <div className="flex justify-between items-center mb-4">
@@ -920,6 +1060,87 @@ const AdminDashboard: React.FC = () => {
                 </Button>
                 <Button onClick={saveHighlight}>
                   {editingHighlight ? 'Update Highlight' : 'Add Highlight'}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Stats Modal */}
+      {showStatsModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  {editingStats ? 'Edit Statistic' : 'Add New Statistic'}
+                </h3>
+                <button
+                  onClick={closeStatsModal}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Label *
+                  </label>
+                  <input
+                    type="text"
+                    value={statsForm.label}
+                    onChange={(e) => setStatsForm(prev => ({ ...prev, label: e.target.value }))}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="e.g., Years of Experience"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Value *
+                  </label>
+                  <input
+                    type="text"
+                    value={statsForm.value}
+                    onChange={(e) => setStatsForm(prev => ({ ...prev, value: e.target.value }))}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="e.g., 5+"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Icon
+                  </label>
+                  <select
+                    value={statsForm.icon}
+                    onChange={(e) => setStatsForm(prev => ({ ...prev, icon: e.target.value }))}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="Code2">Code2</option>
+                    <option value="Award">Award</option>
+                    <option value="Users">Users</option>
+                    <option value="Trophy">Trophy</option>
+                    <option value="Target">Target</option>
+                    <option value="Briefcase">Briefcase</option>
+                    <option value="Zap">Zap</option>
+                    <option value="Rocket">Rocket</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 mt-6 pt-4 border-t">
+                <Button variant="outline" onClick={closeStatsModal}>
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={saveStat}
+                  disabled={!statsForm.label.trim() || !statsForm.value.trim() || (!editingStats && settings.stats.length >= 4)}
+                >
+                  {editingStats ? 'Update Stat' : 'Add Stat'}
                 </Button>
               </div>
             </div>
