@@ -73,7 +73,7 @@ const AdminDashboard: React.FC = () => {
         linkedin: data.author?.linkedin || 'https://linkedin.com/in/ajaykumbham',
         twitter: data.author?.twitter || 'https://twitter.com/ajaykumbham',
         skills: data.author?.skills?.join(', ') || 'JavaScript, TypeScript, React, Next.js, Node.js, Express.js, MongoDB, PostgreSQL, AWS, Docker, Git, GraphQL, REST APIs, Tailwind CSS, Material-UI, Redux, Zustand',
-        careerHighlights: data.author?.careerHighlights || sampleCareerHighlights,
+        careerHighlights: data.author?.careerHighlights || [],
       });
     } catch (error) {
       console.error('Error loading settings:', error);
