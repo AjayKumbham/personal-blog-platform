@@ -26,6 +26,7 @@ export const settingsService = {
         twitter: data.author_twitter,
         linkedin: data.author_linkedin,
         website: data.author_website,
+        skills: data.author_skills ? data.author_skills.split(',').map((s: string) => s.trim()) : [],
       },
       hashnodeApiKey: data.hashnode_api_key || '',
       hashnodePublicationId: data.hashnode_publication_id || '',
@@ -55,6 +56,7 @@ export const settingsService = {
       if (settings.author.twitter !== undefined) updateData.author_twitter = settings.author.twitter;
       if (settings.author.linkedin !== undefined) updateData.author_linkedin = settings.author.linkedin;
       if (settings.author.website !== undefined) updateData.author_website = settings.author.website;
+      if (settings.author.skills !== undefined) updateData.author_skills = settings.author.skills.join(', ');
     }
 
     const { data, error } = await supabase

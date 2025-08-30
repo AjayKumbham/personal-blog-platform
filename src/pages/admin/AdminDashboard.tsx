@@ -121,7 +121,30 @@ const AdminDashboard: React.FC = () => {
   const handleSaveSettings = async () => {
     setSavingSettings(true);
     try {
-      await settingsService.updateSiteSettings(settings);
+      // Prepare the settings object with proper structure
+      const settingsToSave = {
+        siteName: settings.siteName,
+        siteDescription: settings.siteDescription,
+        siteUrl: settings.siteUrl,
+        hashnodeApiKey: settings.hashnodeApiKey,
+        hashnodePublicationId: settings.hashnodePublicationId,
+        devToApiKey: settings.devToApiKey,
+        author: {
+          name: settings.siteName, // Use siteName as author name
+          bio: settings.siteDescription,
+          avatar: '/personal-logo.jpg', // Default avatar
+          title: settings.title,
+          location: settings.location,
+          email: settings.email,
+          github: settings.github,
+          twitter: settings.twitter,
+          linkedin: settings.linkedin,
+          website: settings.siteUrl,
+          skills: settings.skills ? settings.skills.split(',').map(s => s.trim()).filter(s => s) : [],
+        }
+      };
+      
+      await settingsService.updateSiteSettings(settingsToSave);
       showSuccess('Settings saved', 'Your settings have been successfully updated.');
     } catch (error) {
       console.error('Error saving settings:', error);

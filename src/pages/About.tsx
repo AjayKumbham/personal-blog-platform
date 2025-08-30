@@ -46,7 +46,8 @@ const About: React.FC = () => {
 
   const { author } = settings;
 
-  const skills = [
+  // Get skills from settings or use default
+  const skills = settings.author?.skills || [
     'JavaScript', 'TypeScript', 'React', 'Node.js', 'Next.js', 'Vue.js',
     'Python', 'PostgreSQL', 'MongoDB', 'AWS', 'Docker', 'GraphQL'
   ];
