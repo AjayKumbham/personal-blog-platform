@@ -3,31 +3,25 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Code2, Lightbulb, Zap } from 'lucide-react';
 import { blogService } from '../services/blogService';
-import { settingsService } from '../services/settingsService';
-import { BlogPost, SiteSettings } from '../types';
+import { BlogPost } from '../types';
 import BlogCard from '../components/blog/BlogCard';
 import Button from '../components/ui/Button';
 import AnimatedBackground from '../components/ui/AnimatedBackground';
 
 const Home: React.FC = () => {
   const [recentPosts, setRecentPosts] = useState<BlogPost[]>([]);
-  const [settings, setSettings] = useState<SiteSettings | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadData();
+    loadPosts();
   }, []);
 
-  const loadData = async () => {
+  const loadPosts = async () => {
     try {
-      const [posts, siteSettings] = await Promise.all([
-        blogService.getPublishedPosts(),
-        settingsService.getSiteSettings(),
-      ]);
+      const posts = await blogService.getPublishedPosts();
       setRecentPosts(posts.slice(0, 6));
-      setSettings(siteSettings);
     } catch (error) {
-      console.error('Error loading data:', error);
+      console.error('Error loading posts:', error);
     } finally {
       setLoading(false);
     }
@@ -48,7 +42,7 @@ const Home: React.FC = () => {
         <AnimatedBackground />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="relative z-10 text-center max-w-4xl mx-auto">
-             <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
               Learn<span className="text-[0.6em]">.</span>{' '}
               Build<span className="text-[0.6em]">.</span>{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
@@ -56,7 +50,7 @@ const Home: React.FC = () => {
               </span>
             </h1>
             <p className="text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed backdrop-blur-sm bg-white/5 rounded-lg p-4 border border-white/10">
-              {settings?.siteDescription || 'A comprehensive space to explore software development, emerging technologies, programming techniques, and industry trends—empowering developers to learn, build, and evolve.'}
+              A comprehensive space to explore software development, emerging technologies, programming techniques, and industry trends.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center relative z-20">
               <Button size="lg" className="text-lg px-8 py-4 bg-blue-600 hover:bg-blue-700 transform hover:scale-105 transition-all duration-300 shadow-2xl hover:shadow-blue-500/25">
@@ -71,7 +65,7 @@ const Home: React.FC = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Floating elements */}
         <div className="absolute top-20 left-10 w-20 h-20 border border-blue-400/30 rounded-full animate-bounce" style={{ animationDelay: '0s', animationDuration: '3s' }}></div>
         <div className="absolute top-40 right-20 w-16 h-16 border border-purple-400/30 rounded-lg rotate-45 animate-bounce" style={{ animationDelay: '1s', animationDuration: '4s' }}></div>
@@ -90,7 +84,7 @@ const Home: React.FC = () => {
               Deep dives into modern web development, practical tutorials, and insights from real-world projects.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center p-6">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 transform hover:scale-110 transition-transform duration-300">
@@ -101,7 +95,7 @@ const Home: React.FC = () => {
                 Comprehensive tutorials and guides on React, TypeScript, and modern web technologies.
               </p>
             </div>
-            
+
             <div className="text-center p-6">
               <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 transform hover:scale-110 transition-transform duration-300">
                 <Lightbulb className="w-8 h-8 text-purple-600" />
@@ -111,7 +105,7 @@ const Home: React.FC = () => {
                 Learn industry best practices, coding patterns, and architectural decisions that scale.
               </p>
             </div>
-            
+
             <div className="text-center p-6">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 transform hover:scale-110 transition-transform duration-300">
                 <Zap className="w-8 h-8 text-green-600" />
@@ -138,7 +132,7 @@ const Home: React.FC = () => {
               <ArrowRight className="ml-1 w-4 h-4" />
             </Link>
           </div>
-          
+
           {/* Horizontal Scrolling Posts */}
           <div className="relative overflow-hidden">
             <div className="flex animate-scroll space-x-6" style={{ width: 'max-content' }}>
