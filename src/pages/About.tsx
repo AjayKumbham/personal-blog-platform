@@ -122,8 +122,11 @@ const About: React.FC = () => {
       <section className="pt-16 pb-12 -mt-12 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {stats.length > 0 ? (
-              stats.map((stat, index) => {
+            {Array.from({ length: 4 }).map((_, index) => {
+              const stat = stats[index];
+              
+              if (stat) {
+                // Show actual stat data
                 const IconComponent = iconMap[stat.icon] || Award;
                 return (
                   <Card key={index} className="text-center p-6">
@@ -134,19 +137,19 @@ const About: React.FC = () => {
                     <div className="text-gray-600">{stat.label}</div>
                   </Card>
                 );
-              })
-            ) : (
-              // Show 4 empty stat cards when no data
-              Array.from({ length: 4 }).map((_, index) => (
-                <Card key={index} className="text-center p-6">
-                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Award className="w-6 h-6 text-gray-400" />
-                  </div>
-                  <div className="text-3xl font-bold text-gray-400 mb-2">--</div>
-                  <div className="text-gray-400">No data</div>
-                </Card>
-              ))
-            )}
+              } else {
+                // Show empty stat card
+                return (
+                  <Card key={index} className="text-center p-6">
+                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Award className="w-6 h-6 text-gray-400" />
+                    </div>
+                    <div className="text-3xl font-bold text-gray-400 mb-2">--</div>
+                    <div className="text-gray-400">No data</div>
+                  </Card>
+                );
+              }
+            })}
           </div>
         </div>
       </section>
