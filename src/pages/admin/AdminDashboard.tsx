@@ -18,12 +18,21 @@ const AdminDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [savingSettings, setSavingSettings] = useState(false);
   const [settings, setSettings] = useState({
-    siteName: '',
-    siteDescription: '',
-    siteUrl: '',
+    // API Keys
     hashnodeApiKey: '',
     hashnodePublicationId: '',
     devToApiKey: '',
+    // About Content
+    siteName: '',
+    siteDescription: '',
+    siteUrl: '',
+    title: '',
+    location: '',
+    email: '',
+    github: '',
+    linkedin: '',
+    twitter: '',
+    skills: '',
   });
 
   useEffect(() => {
@@ -46,12 +55,21 @@ const AdminDashboard: React.FC = () => {
     try {
       const data = await settingsService.getSiteSettings();
       setSettings({
-        siteName: data.siteName || '',
-        siteDescription: data.siteDescription || '',
-        siteUrl: data.siteUrl || '',
+        // API Keys
         hashnodeApiKey: data.hashnodeApiKey || '',
         hashnodePublicationId: data.hashnodePublicationId || '',
         devToApiKey: data.devToApiKey || '',
+        // About Content
+        siteName: data.siteName || '',
+        siteDescription: data.siteDescription || '',
+        siteUrl: data.siteUrl || '',
+        title: data.author?.title || '',
+        location: data.author?.location || '',
+        email: data.author?.email || '',
+        github: data.author?.github || '',
+        linkedin: data.author?.linkedin || '',
+        twitter: data.author?.twitter || '',
+        skills: data.author?.skills?.join(', ') || '',
       });
     } catch (error) {
       console.error('Error loading settings:', error);
@@ -123,6 +141,7 @@ const AdminDashboard: React.FC = () => {
   const navigation = [
     { id: 'dashboard', name: 'Dashboard', icon: BarChart3 },
     { id: 'posts', name: 'Posts', icon: FileText },
+    { id: 'about', name: 'About Content', icon: Users },
     { id: 'settings', name: 'Settings', icon: Settings },
   ];
 
@@ -319,11 +338,209 @@ const AdminDashboard: React.FC = () => {
           </div>
         )}
 
+        {activeTab === 'about' && (
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-8">About Content Management</h1>
+            
+            <div className="space-y-8">
+              {/* Personal Information */}
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Personal Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.siteName}
+                      onChange={(e) => setSettings(prev => ({ ...prev, siteName: e.target.value }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Your full name"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Professional Title
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.title}
+                      onChange={(e) => setSettings(prev => ({ ...prev, title: e.target.value }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="e.g., Full Stack Developer"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Location
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.location}
+                      onChange={(e) => setSettings(prev => ({ ...prev, location: e.target.value }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="City, Country"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      value={settings.email}
+                      onChange={(e) => setSettings(prev => ({ ...prev, email: e.target.value }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="your@email.com"
+                    />
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Bio / About Description
+                  </label>
+                  <textarea
+                    rows={4}
+                    value={settings.siteDescription}
+                    onChange={(e) => setSettings(prev => ({ ...prev, siteDescription: e.target.value }))}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Write a brief description about yourself..."
+                  />
+                </div>
+              </Card>
+
+              {/* Social Links */}
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Social Links</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Website/Portfolio
+                    </label>
+                    <input
+                      type="url"
+                      value={settings.siteUrl}
+                      onChange={(e) => setSettings(prev => ({ ...prev, siteUrl: e.target.value }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="https://yourwebsite.com"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      GitHub
+                    </label>
+                    <input
+                      type="url"
+                      value={settings.github}
+                      onChange={(e) => setSettings(prev => ({ ...prev, github: e.target.value }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="https://github.com/username"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      LinkedIn
+                    </label>
+                    <input
+                      type="url"
+                      value={settings.linkedin}
+                      onChange={(e) => setSettings(prev => ({ ...prev, linkedin: e.target.value }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="https://linkedin.com/in/username"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Twitter
+                    </label>
+                    <input
+                      type="url"
+                      value={settings.twitter}
+                      onChange={(e) => setSettings(prev => ({ ...prev, twitter: e.target.value }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="https://twitter.com/username"
+                    />
+                  </div>
+                </div>
+              </Card>
+
+              {/* Skills */}
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Skills & Technologies</h3>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Skills (comma-separated)
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={settings.skills}
+                    onChange={(e) => setSettings(prev => ({ ...prev, skills: e.target.value }))}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="JavaScript, TypeScript, React, Node.js, Python, AWS, Docker..."
+                  />
+                  <p className="text-sm text-gray-500 mt-1">
+                    Enter skills separated by commas. They will be displayed as individual tags.
+                  </p>
+                </div>
+              </Card>
+
+              {/* Career Highlights */}
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Career Highlights</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Manage your professional achievements and career milestones. Each highlight will be displayed as a card on your About page.
+                </p>
+                <div className="space-y-4">
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="flex justify-between items-start mb-3">
+                      <h4 className="font-medium text-gray-900">Projects Delivered</h4>
+                      <Button size="sm" variant="outline">Edit</Button>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-2">Full-Stack Development</p>
+                    <div className="text-xs text-gray-500">
+                      • E-commerce platforms for startups<br/>
+                      • SaaS solutions for enterprises<br/>
+                      • Mobile-responsive web apps<br/>
+                      • API integrations & databases
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="flex justify-between items-start mb-3">
+                      <h4 className="font-medium text-gray-900">Open Source</h4>
+                      <Button size="sm" variant="outline">Edit</Button>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-2">Community Impact</p>
+                    <div className="text-xs text-gray-500">
+                      • React library contributions<br/>
+                      • GitHub community engagement<br/>
+                      • Technical blog writing<br/>
+                      • Developer mentoring
+                    </div>
+                  </div>
+                  
+                  <Button variant="outline" icon={PlusCircle}>
+                    Add New Highlight
+                  </Button>
+                </div>
+              </Card>
+
+              {/* Save Button */}
+              <div className="flex justify-end">
+                <Button onClick={handleSaveSettings} disabled={savingSettings} size="lg">
+                  {savingSettings ? 'Saving...' : 'Save About Content'}
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {activeTab === 'settings' && (
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-8">Settings</h1>
             
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="max-w-2xl">
               <Card className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">API Keys</h3>
                 <div className="space-y-4">
@@ -365,48 +582,6 @@ const AdminDashboard: React.FC = () => {
                   </div>
                   <Button onClick={handleSaveSettings} disabled={savingSettings}>
                     {savingSettings ? 'Saving...' : 'Save API Keys'}
-                  </Button>
-                </div>
-              </Card>
-
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Site Settings</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Site Name
-                    </label>
-                    <input
-                      type="text"
-                      value={settings.siteName}
-                      onChange={(e) => setSettings(prev => ({ ...prev, siteName: e.target.value }))}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Site Description
-                    </label>
-                    <textarea
-                      rows={3}
-                      value={settings.siteDescription}
-                      onChange={(e) => setSettings(prev => ({ ...prev, siteDescription: e.target.value }))}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Site URL
-                    </label>
-                    <input
-                      type="url"
-                      value={settings.siteUrl}
-                      onChange={(e) => setSettings(prev => ({ ...prev, siteUrl: e.target.value }))}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-                  <Button onClick={handleSaveSettings} disabled={savingSettings}>
-                    {savingSettings ? 'Saving...' : 'Save Settings'}
                   </Button>
                 </div>
               </Card>
