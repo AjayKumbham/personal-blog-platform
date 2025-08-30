@@ -20,6 +20,9 @@ const About: React.FC = () => {
       setSettings(data);
     } catch (error) {
       console.error('Error loading settings:', error);
+      // If settings fail to load, use default settings
+      const defaultSettings = settingsService.getDefaultSettings();
+      setSettings(defaultSettings);
     } finally {
       setLoading(false);
     }
@@ -33,13 +36,11 @@ const About: React.FC = () => {
     );
   }
 
+  // This should rarely happen now since we fallback to defaults in loadSettings
   if (!settings) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Settings not found</h1>
-          <p className="text-gray-600">Unable to load site settings.</p>
-        </div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
       </div>
     );
   }
