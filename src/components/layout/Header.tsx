@@ -1,26 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
-import { settingsService } from '../../services/settingsService';
-import { SiteSettings } from '../../types';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [settings, setSettings] = useState<SiteSettings | null>(null);
   const location = useLocation();
-
-  useEffect(() => {
-    loadSettings();
-  }, []);
-
-  const loadSettings = async () => {
-    try {
-      const data = await settingsService.getSiteSettings();
-      setSettings(data);
-    } catch (error) {
-      console.error('Error loading settings:', error);
-    }
-  };
 
   const navigation = [
     { name: 'Home', href: '/' },
@@ -30,8 +14,8 @@ const Header: React.FC = () => {
 
   const isActive = (href: string) => location.pathname === href;
 
-  // Fallback values if settings haven't loaded yet
-  const authorName = settings?.author?.name || 'Loading...';
+  // Static author information
+  const authorName = 'Kumbham Ajay Goud';
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">

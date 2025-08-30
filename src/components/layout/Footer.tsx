@@ -1,31 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Github, Mail, Globe } from 'lucide-react';
-import { settingsService } from '../../services/settingsService';
-import { SiteSettings } from '../../types';
 
 const Footer: React.FC = () => {
-  const [settings, setSettings] = useState<SiteSettings | null>(null);
-
-  useEffect(() => {
-    loadSettings();
-  }, []);
-
-  const loadSettings = async () => {
-    try {
-      const data = await settingsService.getSiteSettings();
-      setSettings(data);
-    } catch (error) {
-      console.error('Error loading settings:', error);
-    }
-  };
-
-  // Fallback values if settings haven't loaded yet
-  const author = settings?.author || {
-    name: 'Loading...',
-    bio: 'Loading...',
-    github: '#',
-    website: '#',
-    email: 'loading@example.com'
+  // Static author information
+  const author = {
+    name: 'Kumbham Ajay Goud',
+    bio: 'Passionate Full-Stack Developer specializing in React, TypeScript, and modern web technologies. I create scalable applications and contribute to open-source projects while mentoring the next generation of developers.',
+    github: 'https://github.com/AjayKumbham',
+    website: 'https://ajaykumbham-portfolio.vercel.app',
+    email: 'ajaygoud.kumbham@gmail.com'
   };
 
   return (
