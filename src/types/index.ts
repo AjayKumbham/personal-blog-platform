@@ -12,6 +12,20 @@ export interface BlogPost {
   coverImage?: string;
 }
 
+export interface CareerHighlight {
+  id: string;
+  title: string;
+  subtitle: string;
+  points: string[];
+  metrics: Array<{
+    label: string;
+    value: string;
+  }>;
+  period: string;
+  icon: string; // Icon name as string
+  order: number;
+}
+
 export interface Author {
   name: string;
   bio: string;
@@ -24,6 +38,7 @@ export interface Author {
   linkedin: string;
   website: string;
   skills?: string[];
+  careerHighlights?: CareerHighlight[];
 }
 
 export interface SiteSettings {

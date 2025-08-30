@@ -33,6 +33,7 @@ const AdminDashboard: React.FC = () => {
     linkedin: '',
     twitter: '',
     skills: '',
+    careerHighlights: [] as any[],
   });
 
   useEffect(() => {
@@ -54,22 +55,25 @@ const AdminDashboard: React.FC = () => {
   const loadSettings = async () => {
     try {
       const data = await settingsService.getSiteSettings();
+
+
       setSettings({
         // API Keys
         hashnodeApiKey: data.hashnodeApiKey || '',
         hashnodePublicationId: data.hashnodePublicationId || '',
         devToApiKey: data.devToApiKey || '',
-        // About Content
-        siteName: data.siteName || '',
-        siteDescription: data.siteDescription || '',
-        siteUrl: data.siteUrl || '',
-        title: data.author?.title || '',
-        location: data.author?.location || '',
-        email: data.author?.email || '',
-        github: data.author?.github || '',
-        linkedin: data.author?.linkedin || '',
-        twitter: data.author?.twitter || '',
-        skills: data.author?.skills?.join(', ') || '',
+        // About Content with sample data
+        siteName: data.siteName || 'Kumbham Ajay Goud',
+        siteDescription: data.siteDescription || 'Passionate Full-Stack Developer specializing in React, TypeScript, and modern web technologies. I create scalable applications and contribute to open-source projects while mentoring the next generation of developers.',
+        siteUrl: data.siteUrl || 'https://ajaykumbham-portfolio.vercel.app',
+        title: data.author?.title || 'Senior Full-Stack Developer',
+        location: data.author?.location || 'Hyderabad, India',
+        email: data.author?.email || 'ajaygoud.kumbham@gmail.com',
+        github: data.author?.github || 'https://github.com/AjayKumbham',
+        linkedin: data.author?.linkedin || 'https://linkedin.com/in/ajaykumbham',
+        twitter: data.author?.twitter || 'https://twitter.com/ajaykumbham',
+        skills: data.author?.skills?.join(', ') || 'JavaScript, TypeScript, React, Next.js, Node.js, Express.js, MongoDB, PostgreSQL, AWS, Docker, Git, GraphQL, REST APIs, Tailwind CSS, Material-UI, Redux, Zustand',
+        careerHighlights: data.author?.careerHighlights || sampleCareerHighlights,
       });
     } catch (error) {
       console.error('Error loading settings:', error);
@@ -141,6 +145,7 @@ const AdminDashboard: React.FC = () => {
           linkedin: settings.linkedin,
           website: settings.siteUrl,
           skills: settings.skills ? settings.skills.split(',').map(s => s.trim()).filter(s => s) : [],
+          careerHighlights: settings.careerHighlights || [],
         }
       };
       
@@ -515,33 +520,37 @@ const AdminDashboard: React.FC = () => {
                   Manage your professional achievements and career milestones. Each highlight will be displayed as a card on your About page.
                 </p>
                 <div className="space-y-4">
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="flex justify-between items-start mb-3">
-                      <h4 className="font-medium text-gray-900">Projects Delivered</h4>
-                      <Button size="sm" variant="outline">Edit</Button>
+                  {settings.careerHighlights.length > 0 ? (
+                    settings.careerHighlights.map((highlight: any, index: number) => (
+                      <div key={highlight.id || index} className="bg-gray-50 p-4 rounded-lg">
+                        <div className="flex justify-between items-start mb-3">
+                          <h4 className="font-medium text-gray-900">{highlight.title}</h4>
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline">Edit</Button>
+                            <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700">Delete</Button>
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-600 mb-2">{highlight.subtitle}</p>
+                        <div className="text-xs text-gray-500 mb-2">
+                          {highlight.points?.slice(0, 3).map((point: string, i: number) => (
+                            <div key={i}>• {point}</div>
+                          ))}
+                          {highlight.points?.length > 3 && (
+                            <div>• +{highlight.points.length - 3} more...</div>
+                          )}
+                        </div>
+                        <div className="flex justify-between items-center text-xs text-gray-500">
+                          <span>Icon: {highlight.icon}</span>
+                          <span>{highlight.period}</span>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      <p className="mb-4">No career highlights added yet.</p>
+                      <p className="text-sm">Add your first highlight to showcase your achievements!</p>
                     </div>
-                    <p className="text-sm text-gray-600 mb-2">Full-Stack Development</p>
-                    <div className="text-xs text-gray-500">
-                      • E-commerce platforms for startups<br/>
-                      • SaaS solutions for enterprises<br/>
-                      • Mobile-responsive web apps<br/>
-                      • API integrations & databases
-                    </div>
-                  </div>
-                  
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="flex justify-between items-start mb-3">
-                      <h4 className="font-medium text-gray-900">Open Source</h4>
-                      <Button size="sm" variant="outline">Edit</Button>
-                    </div>
-                    <p className="text-sm text-gray-600 mb-2">Community Impact</p>
-                    <div className="text-xs text-gray-500">
-                      • React library contributions<br/>
-                      • GitHub community engagement<br/>
-                      • Technical blog writing<br/>
-                      • Developer mentoring
-                    </div>
-                  </div>
+                  )}
                   
                   <Button variant="outline" icon={PlusCircle}>
                     Add New Highlight

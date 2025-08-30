@@ -59,146 +59,20 @@ const About: React.FC = () => {
     { icon: Coffee, label: 'Cups of Coffee', value: '∞' }
   ];
 
-  const highlights = [
-    {
-      id: 1,
-      icon: Rocket,
-      title: 'Projects Delivered',
-      subtitle: 'Full-Stack Development',
-      points: [
-        'E-commerce platforms for startups',
-        'SaaS solutions for enterprises',
-        'Mobile-responsive web apps',
-        'API integrations & databases'
-      ],
-      metrics: [
-        { label: 'Projects', value: '50+' },
-        { label: 'Success Rate', value: '98%' },
-        { label: 'On-Time', value: '95%' }
-      ],
-      period: '2020 - Present',
-      gradient: 'from-blue-500 to-blue-600',
-      textColors: {
-        light: 'text-blue-100',
-        lighter: 'text-blue-200'
-      }
-    },
-    {
-      id: 2,
-      icon: Trophy,
-      title: 'Open Source',
-      subtitle: 'Community Impact',
-      points: [
-        'React library contributions',
-        'GitHub community engagement',
-        'Technical blog writing',
-        'Developer mentoring'
-      ],
-      metrics: [
-        { label: 'Stars', value: '1K+' },
-        { label: 'Commits', value: '500+' },
-        { label: 'Repos', value: '25+' }
-      ],
-      period: '2022 - Present',
-      gradient: 'from-purple-500 to-purple-600',
-      textColors: {
-        light: 'text-purple-100',
-        lighter: 'text-purple-200'
-      }
-    },
-    {
-      id: 3,
-      icon: Target,
-      title: 'Performance',
-      subtitle: 'Technical Excellence',
-      points: [
-        'Code optimization techniques',
-        'Lazy loading implementation',
-        'Bundle size reduction',
-        'Modern build tools'
-      ],
-      metrics: [
-        { label: 'Speed', value: '+60%' },
-        { label: 'Load Time', value: '-40%' },
-        { label: 'Bundle', value: '-35%' }
-      ],
-      period: 'Ongoing',
-      gradient: 'from-green-500 to-green-600',
-      textColors: {
-        light: 'text-green-100',
-        lighter: 'text-green-200'
-      }
-    },
-    {
-      id: 4,
-      icon: Briefcase,
-      title: 'Leadership',
-      subtitle: 'Team Management',
-      points: [
-        'Cross-functional team lead',
-        'Agile methodology implementation',
-        'Junior developer mentoring',
-        'Project planning & execution'
-      ],
-      metrics: [
-        { label: 'Team Size', value: '5-8' },
-        { label: 'Projects', value: '15+' },
-        { label: 'Mentored', value: '20+' }
-      ],
-      period: '2023 - Present',
-      gradient: 'from-orange-500 to-red-500',
-      textColors: {
-        light: 'text-orange-100',
-        lighter: 'text-orange-200'
-      }
-    },
-    {
-      id: 5,
-      icon: Zap,
-      title: 'Innovation',
-      subtitle: 'Modern Solutions',
-      points: [
-        'Modern framework adoption',
-        'Development workflow optimization',
-        'Code quality improvements',
-        'Best practices implementation'
-      ],
-      metrics: [
-        { label: 'Time Saved', value: '40%' },
-        { label: 'Quality', value: '+85%' },
-        { label: 'Bugs', value: '-50%' }
-      ],
-      period: 'Continuous',
-      gradient: 'from-indigo-500 to-indigo-600',
-      textColors: {
-        light: 'text-indigo-100',
-        lighter: 'text-indigo-200'
-      }
-    },
-    {
-      id: 6,
-      icon: Users,
-      title: 'Client Relations',
-      subtitle: 'Satisfaction & Growth',
-      points: [
-        'High-quality solution delivery',
-        'On-time project completion',
-        'Budget-conscious development',
-        'Long-term partnerships'
-      ],
-      metrics: [
-        { label: 'Satisfaction', value: '98%' },
-        { label: 'Retention', value: '85%' },
-        { label: 'Referrals', value: '70%' }
-      ],
-      period: 'Proven Record',
-      gradient: 'from-pink-500 to-rose-500',
-      textColors: {
-        light: 'text-pink-100',
-        lighter: 'text-pink-200'
-      }
-    }
-  ];
+  // Get career highlights from settings (includes default sample data from service)
+  const highlights = settings.author?.careerHighlights || [];
+
+  // Icon mapping for dynamic icons
+  const iconMap: { [key: string]: any } = {
+    Rocket,
+    Trophy,
+    Target,
+    Briefcase,
+    Zap,
+    Users,
+    Code2,
+    Award
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -321,7 +195,7 @@ const About: React.FC = () => {
     </div>
 
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {highlights.map((highlight, index) => {
+      {highlights.sort((a, b) => a.order - b.order).map((highlight, index) => {
         // Define distinct gradient backgrounds for each card
         const gradients = [
           'from-blue-500 to-blue-600',
@@ -363,13 +237,12 @@ const About: React.FC = () => {
               {/* Header with logo and subtitle */}
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center space-x-4">
-                  {/* Personal Logo */}
+                  {/* Dynamic Icon */}
                   <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                    <img 
-                      src="/personal-logo.jpg" 
-                      alt="Personal Logo" 
-                      className="w-8 h-8 object-contain rounded-lg"
-                    />
+                    {(() => {
+                      const IconComponent = iconMap[highlight.icon] || Code2;
+                      return <IconComponent className="w-7 h-7 text-white drop-shadow-sm" />;
+                    })()}
                   </div>
                   <span className="text-sm font-semibold text-white/90 uppercase tracking-wide">
                     {highlight.subtitle}

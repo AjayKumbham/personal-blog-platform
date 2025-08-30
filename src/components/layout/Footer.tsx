@@ -1,7 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Github, Mail, Globe } from 'lucide-react';
+import { settingsService } from '../../services/settingsService';
+import { SiteSettings } from '../../types';
 
 const Footer: React.FC = () => {
+  const [settings, setSettings] = useState<SiteSettings | null>(null);
+
+  useEffect(() => {
+    loadSettings();
+  }, []);
+
+  const loadSettings = async () => {
+    try {
+      const data = await settingsService.getSiteSettings();
+      setSettings(data);
+    } catch (error) {
+      console.error('Error loading settings:', error);
+    }
+  };
+
+  // Fallback values if settings haven't loaded yet
+  const author = settings?.author || {
+    name: 'Loading...',
+    bio: 'Loading...',
+    github: '#',
+    website: '#',
+    email: 'loading@example.com'
+  };
+
   return (
     <footer className="bg-slate-800 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -10,28 +36,34 @@ const Footer: React.FC = () => {
             <div className="flex items-center space-x-3 mb-4">
               <img
                 src="/personal-logo.jpg"
-                alt="Kumbham Ajay Goud"
+                alt={author.name}
                 className="w-8 h-8 rounded-full object-cover border-2 border-blue-400 shadow-sm"
               />
               <div className="relative">
                 <span className="font-bold text-xl bg-gradient-to-r from-blue-400 via-purple-400 to-blue-600 bg-clip-text text-transparent">
-                  Kumbham Ajay Goud
+                  {author.name}
                 </span>
               </div>
             </div>
             <p className="text-gray-300 mb-4">
-              Sharing insights on software development, emerging technologies, programming techniques, and industry trends.
+              {author.bio}
             </p>
             <div className="flex space-x-4">
-              <a href="https://github.com/AjayKumbham" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-400 transition-colors">
-                <Github className="w-5 h-5" />
-              </a>
-              <a href="https://ajaykumbham-portfolio.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-400 transition-colors">
-                <Globe className="w-5 h-5" />
-              </a>
-              <a href="mailto:ajaygoud.kumbham@gmail.com" className="text-gray-400 hover:text-blue-400 transition-colors">
-                <Mail className="w-5 h-5" />
-              </a>
+              {author.github && (
+                <a href={author.github} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-400 transition-colors">
+                  <Github className="w-5 h-5" />
+                </a>
+              )}
+              {author.website && (
+                <a href={author.website} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-400 transition-colors">
+                  <Globe className="w-5 h-5" />
+                </a>
+              )}
+              {author.email && (
+                <a href={`mailto:${author.email}`} className="text-gray-400 hover:text-blue-400 transition-colors">
+                  <Mail className="w-5 h-5" />
+                </a>
+              )}
             </div>
           </div>
 
@@ -57,7 +89,7 @@ const Footer: React.FC = () => {
 
         <div className="border-t border-gray-700 mt-8 pt-8 text-center">
           <p className="text-gray-400">
-            © 2025 Kumbham Ajay Goud. Built with ❤️ and lots of ☕
+            © 2025 {author.name}. Built with ❤️ and lots of ☕
           </p>
         </div>
       </div>
