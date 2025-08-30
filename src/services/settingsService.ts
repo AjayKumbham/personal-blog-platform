@@ -1,33 +1,67 @@
 import { supabase } from '../lib/supabase';
-import { SiteSettings } from '../types';
+import { SiteSettings, CareerHighlight } from '../types';
 
 export const settingsService = {
-  // Get site settings (public data only for non-authenticated users)
-  async getSiteSettings() {
+  // Get site settings using the new JSON schema only
+  async getSiteSettings(): Promise<SiteSettings> {
     const { data, error } = await supabase
       .from('site_settings')
-      .select('*')
+      .select('settings_data')
       .single();
 
-    if (error) throw error;
+    if (error) {
+      // If no settings exist, return default values
+      if (error.code === 'PGRST116') {
+        return this.getDefaultSettings();
+      }
+      throw error;
+    }
+
+    // Merge with defaults to ensure all required fields exist
+    const defaultSettings = this.getDefaultSettings();
+    const savedSettings = data.settings_data || {};
     
     return {
-      siteName: data.site_name,
-      siteDescription: data.site_description,
-      siteUrl: data.site_url,
+      ...defaultSettings,
+      ...savedSettings,
       author: {
-        name: data.author_name,
-        bio: data.author_bio,
-        avatar: data.author_avatar,
-        title: data.author_title,
-        location: data.author_location,
-        email: data.author_email,
-        github: data.author_github,
-        twitter: data.author_twitter,
-        linkedin: data.author_linkedin,
-        website: data.author_website,
-        skills: data.author_skills ? data.author_skills.split(',').map((s: string) => s.trim()) : [],
-        careerHighlights: data.author_career_highlights ? JSON.parse(data.author_career_highlights) : [
+        ...defaultSettings.author,
+        ...savedSettings.author,
+      },
+      theme: {
+        ...defaultSettings.theme,
+        ...savedSettings.theme,
+      },
+      seo: {
+        ...defaultSettings.seo,
+        ...savedSettings.seo,
+      },
+      // Backward compatibility for old API key fields
+      hashnodeApiKey: savedSettings.apiKeys?.hashnode?.apiKey || savedSettings.hashnodeApiKey || '',
+      hashnodePublicationId: savedSettings.apiKeys?.hashnode?.publicationId || savedSettings.hashnodePublicationId || '',
+      devToApiKey: savedSettings.apiKeys?.devTo?.apiKey || savedSettings.devToApiKey || '',
+    } as SiteSettings;
+  },
+
+  // Get default settings when no database record exists
+  getDefaultSettings(): SiteSettings {
+    return {
+      siteName: 'Kumbham Ajay Goud',
+      siteDescription: 'Passionate Full-Stack Developer specializing in React, TypeScript, and modern web technologies. I create scalable applications and contribute to open-source projects while mentoring the next generation of developers.',
+      siteUrl: 'https://ajaykumbham-portfolio.vercel.app',
+      author: {
+        name: 'Kumbham Ajay Goud',
+        bio: 'Passionate Full-Stack Developer specializing in React, TypeScript, and modern web technologies. I create scalable applications and contribute to open-source projects while mentoring the next generation of developers.',
+        avatar: '/personal-logo.jpg',
+        title: 'Senior Full-Stack Developer',
+        location: 'Hyderabad, India',
+        email: 'ajaygoud.kumbham@gmail.com',
+        github: 'https://github.com/AjayKumbham',
+        twitter: 'https://twitter.com/ajaykumbham',
+        linkedin: 'https://linkedin.com/in/ajaykumbham',
+        website: 'https://ajaykumbham-portfolio.vercel.app',
+        skills: ['JavaScript', 'TypeScript', 'React', 'Next.js', 'Node.js', 'Express.js', 'MongoDB', 'PostgreSQL', 'AWS', 'Docker', 'Git', 'GraphQL', 'REST APIs', 'Tailwind CSS', 'Material-UI', 'Redux', 'Zustand'],
+        careerHighlights: [
           {
             id: '1',
             title: 'Full-Stack Projects',
@@ -144,45 +178,131 @@ export const settingsService = {
           }
         ],
       },
-      hashnodeApiKey: data.hashnode_api_key || '',
-      hashnodePublicationId: data.hashnode_publication_id || '',
-      devToApiKey: data.dev_to_api_key || '',
-    } as SiteSettings;
+      hashnodeApiKey: '',
+      hashnodePublicationId: '',
+      devToApiKey: '',
+      theme: {
+        primaryColor: '#3B82F6',
+        darkMode: false,
+      },
+      seo: {
+        metaTitle: 'Kumbham Ajay Goud - Full-Stack Developer',
+        metaDescription: 'Passionate Full-Stack Developer specializing in React, TypeScript, and modern web technologies. I create scalable applications and contribute to open-source projects while mentoring the next generation of developers.',
+        keywords: ['Full-Stack Developer', 'React', 'TypeScript', 'JavaScript', 'Node.js'],
+      },
+    };
   },
 
-  // Admin: Update site settings
+  // Admin: Update site settings using flexible JSON storage
   async updateSiteSettings(settings: Partial<SiteSettings>) {
-    const updateData: any = {};
+    // Get current settings to merge with new ones
+    const currentSettings = await this.getSiteSettings();
     
-    if (settings.siteName !== undefined) updateData.site_name = settings.siteName;
-    if (settings.siteDescription !== undefined) updateData.site_description = settings.siteDescription;
-    if (settings.siteUrl !== undefined) updateData.site_url = settings.siteUrl;
-    if (settings.hashnodeApiKey !== undefined) updateData.hashnode_api_key = settings.hashnodeApiKey;
-    if (settings.hashnodePublicationId !== undefined) updateData.hashnode_publication_id = settings.hashnodePublicationId;
-    if (settings.devToApiKey !== undefined) updateData.dev_to_api_key = settings.devToApiKey;
-    
-    if (settings.author) {
-      if (settings.author.name !== undefined) updateData.author_name = settings.author.name;
-      if (settings.author.bio !== undefined) updateData.author_bio = settings.author.bio;
-      if (settings.author.avatar !== undefined) updateData.author_avatar = settings.author.avatar;
-      if (settings.author.title !== undefined) updateData.author_title = settings.author.title;
-      if (settings.author.location !== undefined) updateData.author_location = settings.author.location;
-      if (settings.author.email !== undefined) updateData.author_email = settings.author.email;
-      if (settings.author.github !== undefined) updateData.author_github = settings.author.github;
-      if (settings.author.twitter !== undefined) updateData.author_twitter = settings.author.twitter;
-      if (settings.author.linkedin !== undefined) updateData.author_linkedin = settings.author.linkedin;
-      if (settings.author.website !== undefined) updateData.author_website = settings.author.website;
-      if (settings.author.skills !== undefined) updateData.author_skills = settings.author.skills.join(', ');
-      if (settings.author.careerHighlights !== undefined) updateData.author_career_highlights = JSON.stringify(settings.author.careerHighlights);
-    }
+    // Merge the new settings with existing ones
+    const updatedSettings = {
+      ...currentSettings,
+      ...settings,
+      author: {
+        ...currentSettings.author,
+        ...settings.author,
+      },
+      // Store API keys in structured format for future flexibility
+      apiKeys: {
+        hashnode: {
+          apiKey: settings.hashnodeApiKey || currentSettings.hashnodeApiKey,
+          publicationId: settings.hashnodePublicationId || currentSettings.hashnodePublicationId,
+        },
+        devTo: {
+          apiKey: settings.devToApiKey || currentSettings.devToApiKey,
+        },
+      },
+      // Add extensible sections for future features
+      theme: {
+        primaryColor: '#3B82F6',
+        darkMode: false,
+        ...currentSettings.theme,
+      },
+      seo: {
+        metaTitle: settings.siteName || currentSettings.siteName,
+        metaDescription: settings.siteDescription || currentSettings.siteDescription,
+        keywords: ['Full-Stack Developer', 'React', 'TypeScript', 'JavaScript', 'Node.js'],
+        ...currentSettings.seo,
+      },
+    };
 
-    const { data, error } = await supabase
+    // Remove the old API key fields from the main object to avoid duplication
+    const { hashnodeApiKey, hashnodePublicationId, devToApiKey, ...settingsToStore } = updatedSettings;
+
+    // First, try to get existing record
+    const { data: existingData } = await supabase
       .from('site_settings')
-      .update(updateData)
-      .select()
+      .select('id')
       .single();
 
-    if (error) throw error;
-    return data;
+    let result;
+    if (existingData) {
+      // Update existing record
+      result = await supabase
+        .from('site_settings')
+        .update({
+          settings_data: settingsToStore,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', existingData.id)
+        .select()
+        .single();
+    } else {
+      // Insert new record
+      result = await supabase
+        .from('site_settings')
+        .insert({
+          settings_data: settingsToStore,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .select()
+        .single();
+    }
+
+    if (result.error) throw result.error;
+    return result.data;
+  },
+
+  // Future: Add specific methods for different setting categories
+  async updateThemeSettings(theme: { primaryColor?: string; darkMode?: boolean }) {
+    const currentSettings = await this.getSiteSettings();
+    const updatedTheme = { ...currentSettings.theme, ...theme };
+    return this.updateSiteSettings({
+      theme: {
+        primaryColor: updatedTheme.primaryColor || '#3B82F6',
+        darkMode: updatedTheme.darkMode || false,
+      }
+    });
+  },
+
+  async updateSeoSettings(seo: { metaTitle?: string; metaDescription?: string; keywords?: string[] }) {
+    const currentSettings = await this.getSiteSettings();
+    const updatedSeo = { ...currentSettings.seo, ...seo };
+    return this.updateSiteSettings({
+      seo: {
+        metaTitle: updatedSeo.metaTitle || currentSettings.siteName,
+        metaDescription: updatedSeo.metaDescription || currentSettings.siteDescription,
+        keywords: updatedSeo.keywords || ['Full-Stack Developer', 'React', 'TypeScript'],
+      }
+    });
+  },
+
+  async updateCareerHighlights(careerHighlights: CareerHighlight[]) {
+    const currentSettings = await this.getSiteSettings();
+    return this.updateSiteSettings({
+      author: { ...currentSettings.author, careerHighlights }
+    });
+  },
+
+  async updateSkills(skills: string[]) {
+    const currentSettings = await this.getSiteSettings();
+    return this.updateSiteSettings({
+      author: { ...currentSettings.author, skills }
+    });
   },
 };
