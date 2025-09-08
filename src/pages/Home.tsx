@@ -144,7 +144,7 @@ const Home: React.FC = () => {
           <div className="relative overflow-hidden">
             <div className="flex animate-scroll space-x-6" style={{ width: 'max-content' }}>
               {recentPosts.length > 0 && [...recentPosts, ...recentPosts].map((post, index) => (
-                <div key={`${post.id}-${index}`} className="flex-shrink-0 w-80 h-[28rem]">
+                <div key={`${post.id}-${index}`} className="flex-shrink-0 w-72 sm:w-80 h-auto min-h-[26rem] sm:min-h-[28rem] md:h-[28rem]">
                   <BlogCard post={post} />
                 </div>
               ))}

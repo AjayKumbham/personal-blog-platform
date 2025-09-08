@@ -6,6 +6,7 @@ import { SiteSettings } from '../types';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 
+
 const About: React.FC = () => {
   const [settings, setSettings] = useState<SiteSettings | null>(null);
   const [loading, setLoading] = useState(true);
@@ -89,31 +90,34 @@ const About: React.FC = () => {
               <p className="text-xl text-gray-300 mb-8 leading-relaxed">
                 {author.bio}
               </p>
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-col sm:flex-row flex-wrap gap-4">
                 {author.website ? (
-                  <Button size="lg">
-                    <a href={author.website} target="_blank" rel="noopener noreferrer" className="flex items-center">
+                  <Button size="lg" className="w-full sm:w-auto">
+                    <a href={author.website} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center">
                       <Globe className="w-5 h-5 mr-2" />
                       View Portfolio
                     </a>
                   </Button>
                 ) : (
-                  <Button size="lg" className="opacity-50 cursor-not-allowed">
-                    <span className="flex items-center">
+                  <Button size="lg" className="w-full sm:w-auto opacity-50 cursor-not-allowed">
+                    <span className="flex items-center justify-center">
                       <Globe className="w-5 h-5 mr-2" />
                       Portfolio Not Available
                     </span>
                   </Button>
                 )}
                 {author.resume ? (
-                  <Button variant="outline" size="lg" className="border-white text-white hover:!bg-white hover:!text-slate-900">
-                    <a href={author.resume} target="_blank" rel="noopener noreferrer" className="flex items-center">
-                      Download Resume
-                    </a>
+                  <Button 
+                    variant="outline" 
+                    size="lg" 
+                    className="w-full sm:w-auto border-white text-white hover:!bg-white hover:!text-slate-900"
+                    onClick={() => window.open(author.resume, '_blank', 'noopener,noreferrer')}
+                  >
+                    Download Resume
                   </Button>
                 ) : (
-                  <Button variant="outline" size="lg" className="border-white text-white opacity-50 cursor-not-allowed">
-                    <span className="flex items-center">
+                  <Button variant="outline" size="lg" className="w-full sm:w-auto border-white text-white opacity-50 cursor-not-allowed">
+                    <span className="flex items-center justify-center">
                       Resume Not Available
                     </span>
                   </Button>

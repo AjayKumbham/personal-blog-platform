@@ -11,7 +11,7 @@ interface BlogCardProps {
 }
 
 const BlogCard: React.FC<BlogCardProps> = ({ post, featured = false }) => {
-  const imageHeightClass = featured ? 'h-64 md:h-72' : 'h-56 md:h-60';
+  const imageHeightClass = featured ? 'h-48 sm:h-64 md:h-72' : 'h-40 sm:h-56 md:h-60';
   return (
     <Card className={`h-full flex flex-col ${featured ? 'col-span-full md:col-span-2' : ''}`}>
       <Link to={`/blog/${post.slug}`} className="block">
@@ -34,7 +34,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ post, featured = false }) => {
           )}
         </div>
         
-        <div className="p-6 flex-1 flex flex-col">
+        <div className="p-4 sm:p-6 flex-1 flex flex-col">
           <div className="flex flex-wrap gap-2 mb-3">
             {post.tags.slice(0, 3).map((tag) => (
               <span
@@ -47,11 +47,11 @@ const BlogCard: React.FC<BlogCardProps> = ({ post, featured = false }) => {
             ))}
           </div>
           
-          <h3 className={`font-bold text-gray-900 mb-2 line-clamp-2 ${featured ? 'text-2xl' : 'text-xl'}`}>
+          <h3 className={`font-bold text-gray-900 mb-2 line-clamp-2 ${featured ? 'text-xl sm:text-2xl' : 'text-lg sm:text-xl'}`}>
             {post.title}
           </h3>
           
-          <p className="text-gray-600 mb-4 line-clamp-3 flex-1">
+          <p className="text-gray-600 mb-3 sm:mb-4 line-clamp-3 flex-1 text-sm sm:text-base">
             {post.excerpt}
           </p>
           
