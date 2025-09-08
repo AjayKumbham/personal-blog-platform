@@ -342,30 +342,55 @@ const About: React.FC = () => {
           </p>
 
           <div className="flex justify-center gap-6 mb-10">
-            <a
-              href={author.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
-            >
-              <Github className="w-6 h-6" />
-            </a>
-            <a
-              href={author.twitter}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
-            >
-              <Twitter className="w-6 h-6" />
-            </a>
-            <a
-              href={author.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
-            >
-              <Linkedin className="w-6 h-6" />
-            </a>
+            {/* GitHub */}
+            {author.github ? (
+              <a
+                href={author.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
+              >
+                <Github className="w-6 h-6" />
+              </a>
+            ) : (
+              <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center opacity-30 cursor-not-allowed">
+                <Github className="w-6 h-6" />
+              </div>
+            )}
+
+            {/* Twitter */}
+            {author.twitter ? (
+              <a
+                href={author.twitter}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
+              >
+                <Twitter className="w-6 h-6" />
+              </a>
+            ) : (
+              <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center opacity-30 cursor-not-allowed">
+                <Twitter className="w-6 h-6" />
+              </div>
+            )}
+
+            {/* LinkedIn */}
+            {author.linkedin ? (
+              <a
+                href={author.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
+              >
+                <Linkedin className="w-6 h-6" />
+              </a>
+            ) : (
+              <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center opacity-30 cursor-not-allowed">
+                <Linkedin className="w-6 h-6" />
+              </div>
+            )}
+
+            {/* Email - Always show since it's required */}
             <a
               href={`mailto:${author.email}`}
               className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
