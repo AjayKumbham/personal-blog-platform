@@ -353,8 +353,8 @@ const About: React.FC = () => {
             </a>
           </div>
 
-          <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-blue-600">
-            <a href={`mailto:${author.email}`}>
+          <Button variant="outline" size="lg" className="border-white text-white hover:!bg-white hover:!text-blue-600 transition-all duration-300">
+            <a href={`mailto:${author.email}`} className="block w-full h-full">
               Send me an email
             </a>
           </Button>
