@@ -3,25 +3,32 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Code2, Lightbulb, Zap } from 'lucide-react';
 import { blogService } from '../services/blogService';
-import { BlogPost } from '../types';
+import { settingsService } from '../services/settingsService';
+import { BlogPost, SiteSettings } from '../types';
 import BlogCard from '../components/blog/BlogCard';
 import Button from '../components/ui/Button';
 import AnimatedBackground from '../components/ui/AnimatedBackground';
+import NewsletterSignup from '../components/newsletter/NewsletterSignup';
 
 const Home: React.FC = () => {
   const [recentPosts, setRecentPosts] = useState<BlogPost[]>([]);
+  const [settings, setSettings] = useState<SiteSettings | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadPosts();
+    loadData();
   }, []);
 
-  const loadPosts = async () => {
+  const loadData = async () => {
     try {
-      const posts = await blogService.getPublishedPosts();
+      const [posts, siteSettings] = await Promise.all([
+        blogService.getPublishedPosts(),
+        settingsService.getSiteSettings()
+      ]);
       setRecentPosts(posts.slice(0, 6));
+      setSettings(siteSettings);
     } catch (error) {
-      console.error('Error loading posts:', error);
+      console.error('Error loading data:', error);
     } finally {
       setLoading(false);
     }
@@ -153,7 +160,7 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Newsletter Section */}
       <section className="py-20 bg-blue-600">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
@@ -162,9 +169,19 @@ const Home: React.FC = () => {
           <p className="text-xl text-blue-100 mb-8">
             Get notified when I publish new articles about web development and programming.
           </p>
-          <Button variant="outline" size="lg" className="border-white text-white hover:!bg-white hover:!text-blue-600 hover:!border-white">
-            <Link to="/about">Get In Touch</Link>
-          </Button>
+          
+          {settings?.newsletter?.enabled && settings?.newsletter?.substackUrl ? (
+            <NewsletterSignup
+              substackUrl={settings.newsletter.substackUrl}
+            />
+          ) : (
+            <div className="text-center">
+              <p className="text-blue-100 text-lg mb-4">Newsletter signup coming soon!</p>
+              <Button variant="outline" size="lg" className="border-white text-white hover:!bg-white hover:!text-blue-600 hover:!border-white">
+                <Link to="/about#contact">Get In Touch</Link>
+              </Button>
+            </div>
+          )}
         </div>
       </section>
     </div>
