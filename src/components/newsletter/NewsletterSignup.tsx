@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, CheckCircle, AlertCircle, ExternalLink } from 'lucide-react';
+import { Mail, CheckCircle, AlertCircle } from 'lucide-react';
 import Button from '../ui/Button';
 
 interface NewsletterSignupProps {
@@ -82,10 +82,9 @@ const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
             <Button
               type="submit"
               disabled={!email}
-              className="w-full bg-blue-600 text-white hover:bg-blue-700 font-semibold py-3 border-0 flex items-center justify-center"
+              className="w-full !bg-gradient-to-r !from-purple-500 !to-blue-500 !text-white hover:!from-purple-600 hover:!to-blue-600 font-semibold py-3 border-0 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
             >
               Subscribe
-              <ExternalLink className="w-4 h-4 ml-2" />
             </Button>
           </form>
         </div>
