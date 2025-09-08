@@ -200,13 +200,17 @@ const About: React.FC = () => {
 
       {/* Career Highlights - Only show if highlights exist */}
       {highlights.length > 0 && (
-<section className="py-24 bg-white relative">
+<section className="py-24 bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/20 relative overflow-hidden">
+  {/* Background decoration */}
+  <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-purple-600/5"></div>
+  <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl"></div>
+  <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl"></div>
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
     <div className="text-center mb-20">
       <h3 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
         Career <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Highlights</span>
       </h3>
-      <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+      <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
         Key achievements and milestones that define my professional journey and showcase the impact I've made
       </p>
     </div>
