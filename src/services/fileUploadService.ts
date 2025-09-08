@@ -7,7 +7,7 @@ export const fileUploadService = {
     const fileName = `resume-${Date.now()}.${fileExt}`;
     const filePath = `resumes/${fileName}`;
 
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from('uploads')
       .upload(filePath, file, {
         cacheControl: '3600',
@@ -22,7 +22,6 @@ export const fileUploadService = {
     const { data: { publicUrl } } = supabase.storage
       .from('uploads')
       .getPublicUrl(filePath);
-
     return publicUrl;
   },
 
