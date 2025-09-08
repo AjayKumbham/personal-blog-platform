@@ -334,7 +334,7 @@ const About: React.FC = () => {
       )}
 
       {/* Contact Section */}
-      <section className="py-20 bg-blue-600 text-white">
+      <section id="contact" className="py-20 bg-blue-600 text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h3 className="text-3xl font-bold mb-6">Let's Connect</h3>
           <p className="text-xl text-blue-100 mb-10">
