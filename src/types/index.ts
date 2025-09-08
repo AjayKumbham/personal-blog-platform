@@ -37,6 +37,7 @@ export interface Author {
   twitter: string;
   linkedin: string;
   website: string;
+  resume?: string; // URL to resume file
   skills?: string[];
   careerHighlights?: CareerHighlight[];
   stats?: Array<{

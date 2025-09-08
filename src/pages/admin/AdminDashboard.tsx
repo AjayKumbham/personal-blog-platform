@@ -6,6 +6,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../hooks/useToast';
 import { blogService } from '../../services/blogService';
 import { settingsService } from '../../services/settingsService';
+import { fileUploadService } from '../../services/fileUploadService';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 
@@ -32,10 +33,64 @@ const AdminDashboard: React.FC = () => {
     github: '',
     linkedin: '',
     twitter: '',
+    resume: '',
     skills: '',
     careerHighlights: [] as any[],
     stats: [] as any[],
   });
+
+  // Resume upload state
+  const [uploadingResume, setUploadingResume] = useState(false);
+
+  // Handle resume upload
+  const handleResumeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file
+    const validation = fileUploadService.validateResumeFile(file);
+    if (!validation.isValid) {
+      showError('Invalid file', validation.error || 'Please select a valid resume file');
+      return;
+    }
+
+    setUploadingResume(true);
+    try {
+      // Delete old resume if exists
+      if (settings.resume) {
+        await fileUploadService.deleteResume(settings.resume);
+      }
+
+      // Upload new resume
+      const resumeUrl = await fileUploadService.uploadResume(file);
+      
+      // Update settings
+      setSettings(prev => ({ ...prev, resume: resumeUrl }));
+      
+      showSuccess('Resume uploaded', 'Your resume has been successfully uploaded');
+    } catch (error) {
+      console.error('Error uploading resume:', error);
+      showError('Upload failed', 'Failed to upload resume. Please try again.');
+    } finally {
+      setUploadingResume(false);
+      // Reset file input
+      event.target.value = '';
+    }
+  };
+
+  // Handle resume removal
+  const handleRemoveResume = async () => {
+    if (!settings.resume) return;
+
+    try {
+      await fileUploadService.deleteResume(settings.resume);
+      setSettings(prev => ({ ...prev, resume: '' }));
+      showSuccess('Resume removed', 'Your resume has been removed');
+    } catch (error) {
+      console.error('Error removing resume:', error);
+      showError('Remove failed', 'Failed to remove resume. Please try again.');
+    }
+  };
 
   // Career Highlights Modal State
   const [showHighlightModal, setShowHighlightModal] = useState(false);
@@ -99,6 +154,7 @@ const AdminDashboard: React.FC = () => {
         github: data.author?.github || '',
         linkedin: data.author?.linkedin || '',
         twitter: data.author?.twitter || '',
+        resume: data.author?.resume || '',
         skills: data.author?.skills?.join(', ') || '',
         careerHighlights: data.author?.careerHighlights || [],
         stats: data.author?.stats || [],
@@ -172,6 +228,7 @@ const AdminDashboard: React.FC = () => {
           twitter: settings.twitter,
           linkedin: settings.linkedin,
           website: settings.siteUrl,
+          resume: settings.resume,
           skills: settings.skills ? settings.skills.split(',').map(s => s.trim()).filter(s => s) : [],
           careerHighlights: settings.careerHighlights || [],
           stats: settings.stats || [],
@@ -678,6 +735,62 @@ const AdminDashboard: React.FC = () => {
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="https://twitter.com/username"
                     />
+                  </div>
+                </div>
+              </Card>
+
+              {/* Resume Upload */}
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Resume</h3>
+                <div className="space-y-4">
+                  {settings.resume ? (
+                    <div className="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-lg">
+                      <div className="flex items-center">
+                        <FileText className="w-5 h-5 text-green-600 mr-3" />
+                        <div>
+                          <p className="text-sm font-medium text-green-800">Resume uploaded</p>
+                          <p className="text-xs text-green-600">Click to view current resume</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => window.open(settings.resume, '_blank')}
+                        >
+                          View
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleRemoveResume}
+                          className="text-red-600 border-red-300 hover:bg-red-50"
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center p-6 border-2 border-dashed border-gray-300 rounded-lg">
+                      <FileText className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                      <p className="text-sm text-gray-600 mb-4">No resume uploaded</p>
+                    </div>
+                  )}
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Upload Resume (PDF, DOC, DOCX - Max 5MB)
+                    </label>
+                    <input
+                      type="file"
+                      accept=".pdf,.doc,.docx"
+                      onChange={handleResumeUpload}
+                      disabled={uploadingResume}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
+                    />
+                    {uploadingResume && (
+                      <p className="text-sm text-blue-600 mt-2">Uploading resume...</p>
+                    )}
                   </div>
                 </div>
               </Card>

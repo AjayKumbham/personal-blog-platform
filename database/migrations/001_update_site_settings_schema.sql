@@ -38,6 +38,7 @@ SELECT
       "twitter": "https://twitter.com/ajaykumbham",
       "linkedin": "https://linkedin.com/in/ajaykumbham",
       "website": "https://ajaykumbham-portfolio.vercel.app",
+      "resume": null,
       "skills": ["JavaScript", "TypeScript", "React", "Next.js", "Node.js", "Express.js", "MongoDB", "PostgreSQL", "AWS", "Docker", "Git", "GraphQL", "REST APIs", "Tailwind CSS", "Material-UI", "Redux", "Zustand"],
       "careerHighlights": [
         {

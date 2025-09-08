@@ -60,6 +60,7 @@ export const settingsService = {
         twitter: '',
         linkedin: '',
         website: '',
+        resume: '',
         skills: [],
         careerHighlights: [],
         stats: [],

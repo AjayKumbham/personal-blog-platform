@@ -96,11 +96,19 @@ const About: React.FC = () => {
                     View Portfolio
                   </a>
                 </Button>
-                <Button variant="outline" size="lg" className="border-white text-white hover:!bg-white hover:!text-slate-900">
-                  <a href="#" className="flex items-center">
-                    Download Resume
-                  </a>
-                </Button>
+                {author.resume ? (
+                  <Button variant="outline" size="lg" className="border-white text-white hover:!bg-white hover:!text-slate-900">
+                    <a href={author.resume} target="_blank" rel="noopener noreferrer" className="flex items-center">
+                      Download Resume
+                    </a>
+                  </Button>
+                ) : (
+                  <Button variant="outline" size="lg" className="border-white text-white opacity-50 cursor-not-allowed">
+                    <span className="flex items-center">
+                      Resume Not Available
+                    </span>
+                  </Button>
+                )}
               </div>
             </div>
 
