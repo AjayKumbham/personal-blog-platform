@@ -37,6 +37,9 @@ const AdminDashboard: React.FC = () => {
     skills: '',
     careerHighlights: [] as any[],
     stats: [] as any[],
+    // Newsletter
+    newsletterEnabled: true,
+    substackUrl: 'https://kumbhamajaygoud.substack.com',
   });
 
   // Resume upload state
@@ -158,6 +161,9 @@ const AdminDashboard: React.FC = () => {
         skills: data.author?.skills?.join(', ') || '',
         careerHighlights: data.author?.careerHighlights || [],
         stats: data.author?.stats || [],
+        // Newsletter
+        newsletterEnabled: data.newsletter?.enabled ?? true,
+        substackUrl: data.newsletter?.substackUrl || 'https://kumbhamajaygoud.substack.com',
       });
     } catch (error) {
       console.error('Error loading settings:', error);
@@ -217,6 +223,10 @@ const AdminDashboard: React.FC = () => {
         hashnodeApiKey: settings.hashnodeApiKey,
         hashnodePublicationId: settings.hashnodePublicationId,
         devToApiKey: settings.devToApiKey,
+        newsletter: {
+          enabled: settings.newsletterEnabled,
+          substackUrl: settings.substackUrl,
+        },
         author: {
           name: settings.siteName, // Use siteName as author name
           bio: settings.siteDescription,
@@ -1060,6 +1070,51 @@ const AdminDashboard: React.FC = () => {
                   </div>
                   <Button onClick={handleSaveSettings} disabled={savingSettings}>
                     {savingSettings ? 'Saving...' : 'Save API Keys'}
+                  </Button>
+                </div>
+              </Card>
+
+              <Card className="p-6 mt-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Newsletter Settings</h3>
+                <div className="space-y-4">
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="newsletterEnabled"
+                      checked={settings.newsletterEnabled}
+                      onChange={(e) => setSettings(prev => ({ ...prev, newsletterEnabled: e.target.checked }))}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <label htmlFor="newsletterEnabled" className="ml-2 block text-sm text-gray-900">
+                      Enable Newsletter Signup
+                    </label>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Newsletter Service URL
+                    </label>
+                    <input
+                      type="url"
+                      value={settings.substackUrl}
+                      onChange={(e) => setSettings(prev => ({ ...prev, substackUrl: e.target.value }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="https://yourname.substack.com"
+                    />
+                  </div>
+                  
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <h4 className="text-sm font-medium text-blue-900 mb-2">How it works:</h4>
+                    <ul className="text-xs text-blue-700 space-y-1">
+                      <li>• Users enter their email in a clean form on your site</li>
+                      <li>• They get automatically subscribed to your newsletter</li>
+                      <li>• No redirects or external branding</li>
+                      <li>• Professional, seamless experience</li>
+                    </ul>
+                  </div>
+                  
+                  <Button onClick={handleSaveSettings} disabled={savingSettings}>
+                    {savingSettings ? 'Saving...' : 'Save Newsletter Settings'}
                   </Button>
                 </div>
               </Card>
