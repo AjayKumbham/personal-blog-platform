@@ -4,7 +4,8 @@ export const fileUploadService = {
   // Upload resume file to Supabase storage
   async uploadResume(file: File): Promise<string> {
     const fileExt = file.name.split('.').pop();
-    const fileName = `resume-${Date.now()}.${fileExt}`;
+    // Use crypto.randomUUID() for better security instead of timestamp
+    const fileName = `resume-${crypto.randomUUID()}.${fileExt}`;
     const filePath = `resumes/${fileName}`;
 
     const { error } = await supabase.storage
