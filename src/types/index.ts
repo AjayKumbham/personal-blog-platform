@@ -55,6 +55,10 @@ export interface SiteSettings {
   hashnodeApiKey: string;
   hashnodePublicationId: string;
   devToApiKey: string;
+  newsletter?: {
+    substackUrl?: string;
+    enabled?: boolean;
+  };
   // Optional future-ready fields
   theme?: {
     primaryColor: string;
