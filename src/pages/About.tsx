@@ -90,12 +90,21 @@ const About: React.FC = () => {
                 {author.bio}
               </p>
               <div className="flex flex-wrap gap-4">
-                <Button size="lg">
-                  <a href={author.website} target="_blank" rel="noopener noreferrer" className="flex items-center">
-                    <Globe className="w-5 h-5 mr-2" />
-                    View Portfolio
-                  </a>
-                </Button>
+                {author.website ? (
+                  <Button size="lg">
+                    <a href={author.website} target="_blank" rel="noopener noreferrer" className="flex items-center">
+                      <Globe className="w-5 h-5 mr-2" />
+                      View Portfolio
+                    </a>
+                  </Button>
+                ) : (
+                  <Button size="lg" className="opacity-50 cursor-not-allowed">
+                    <span className="flex items-center">
+                      <Globe className="w-5 h-5 mr-2" />
+                      Portfolio Not Available
+                    </span>
+                  </Button>
+                )}
                 {author.resume ? (
                   <Button variant="outline" size="lg" className="border-white text-white hover:!bg-white hover:!text-slate-900">
                     <a href={author.resume} target="_blank" rel="noopener noreferrer" className="flex items-center">
