@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { BarChart3, FileText, Settings, Users, PlusCircle, LogOut, Eye, Edit, Trash2 } from 'lucide-react';
+import { BarChart3, FileText, Settings, Users, PlusCircle, LogOut, Eye, Edit, Trash2, Home, Globe } from 'lucide-react';
 import { BlogPost } from '../../types';
 import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../hooks/useToast';
@@ -429,23 +429,70 @@ const AdminDashboard: React.FC = () => {
           </div>
           
           <nav className="flex-1 p-4">
-            <ul className="space-y-2">
-              {navigation.map((item) => (
-                <li key={item.id}>
-                  <button
-                    onClick={() => setActiveTab(item.id)}
-                    className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
-                      activeTab === item.id
-                        ? 'bg-blue-100 text-blue-700'
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}
+            {/* Admin Panel Navigation */}
+            <div className="mb-6">
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Admin Panel</h3>
+              <ul className="space-y-2">
+                {navigation.map((item) => (
+                  <li key={item.id}>
+                    <button
+                      onClick={() => setActiveTab(item.id)}
+                      className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+                        activeTab === item.id
+                          ? 'bg-blue-100 text-blue-700'
+                          : 'text-gray-700 hover:bg-gray-100'
+                      }`}
+                    >
+                      <item.icon className="w-5 h-5 mr-3" />
+                      {item.name}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Quick Navigation to Site Pages */}
+            <div>
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Quick Navigation</h3>
+              <ul className="space-y-1">
+                <li>
+                  <Link
+                    to="/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-md transition-colors"
                   >
-                    <item.icon className="w-5 h-5 mr-3" />
-                    {item.name}
-                  </button>
+                    <Home className="w-4 h-4 mr-3" />
+                    View Home Page
+                    <Globe className="w-3 h-3 ml-auto opacity-50" />
+                  </Link>
                 </li>
-              ))}
-            </ul>
+                <li>
+                  <Link
+                    to="/posts"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-md transition-colors"
+                  >
+                    <FileText className="w-4 h-4 mr-3" />
+                    View Posts Page
+                    <Globe className="w-3 h-3 ml-auto opacity-50" />
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/about"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-md transition-colors"
+                  >
+                    <Users className="w-4 h-4 mr-3" />
+                    View About Page
+                    <Globe className="w-3 h-3 ml-auto opacity-50" />
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </nav>
           
           <div className="p-4 border-t">
