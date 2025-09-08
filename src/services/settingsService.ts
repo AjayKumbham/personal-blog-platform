@@ -28,6 +28,10 @@ export const settingsService = {
         ...defaultSettings.author,
         ...savedSettings.author,
       },
+      newsletter: {
+        ...defaultSettings.newsletter,
+        ...savedSettings.newsletter,
+      },
       theme: {
         ...defaultSettings.theme,
         ...savedSettings.theme,
@@ -68,6 +72,10 @@ export const settingsService = {
       hashnodeApiKey: '',
       hashnodePublicationId: '',
       devToApiKey: '',
+      newsletter: {
+        enabled: true,
+        substackUrl: '',
+      },
       theme: {
         primaryColor: '#3B82F6',
         darkMode: false,
