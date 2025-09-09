@@ -24,12 +24,50 @@ const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
       return;
     }
 
-    // Show success message and open Substack
-    setStatus('success');
-    setEmail('');
-    
-    // Open Substack subscription page
-    window.open(`${substackUrl}/subscribe`, '_blank');
+    try {
+      const baseUrl = substackUrl || 'https://kumbhamajaygoud.substack.com';
+      
+      // Create a hidden form and submit it to Substack (this bypasses CORS)
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = `${baseUrl}/api/v1/free`;
+      form.target = '_blank';
+      form.style.display = 'none';
+
+      // Add email field
+      const emailField = document.createElement('input');
+      emailField.type = 'email';
+      emailField.name = 'email';
+      emailField.value = email;
+      form.appendChild(emailField);
+
+      // Add referrer fields
+      const firstUrlField = document.createElement('input');
+      firstUrlField.type = 'hidden';
+      firstUrlField.name = 'first_url';
+      firstUrlField.value = window.location.href;
+      form.appendChild(firstUrlField);
+
+      const currentUrlField = document.createElement('input');
+      currentUrlField.type = 'hidden';
+      currentUrlField.name = 'current_url';
+      currentUrlField.value = window.location.href;
+      form.appendChild(currentUrlField);
+
+      // Submit the form
+      document.body.appendChild(form);
+      form.submit();
+      document.body.removeChild(form);
+
+      // Show success message
+      setStatus('success');
+      setMessage('Subscription form submitted! Please check the new tab and your email.');
+      setEmail('');
+      
+    } catch (error) {
+      setStatus('error');
+      setMessage('Subscription failed. Please try again.');
+    }
   };
 
   if (status === 'success') {
@@ -38,7 +76,7 @@ const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
         <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 max-w-md mx-auto">
           <CheckCircle className="w-12 h-12 text-green-400 mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-white mb-2">Thank you!</h3>
-          <p className="text-blue-100 mb-4">Your subscription has been processed.</p>
+          <p className="text-blue-100 mb-4">{message || 'Please complete your subscription on Substack.'}</p>
           <Button
             onClick={() => setStatus('idle')}
             variant="outline"
