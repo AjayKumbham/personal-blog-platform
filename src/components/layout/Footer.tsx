@@ -60,12 +60,12 @@ const Footer: React.FC = () => {
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-4">Categories</h3>
+            <h3 className="text-lg font-semibold mb-4">Blog Topics</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">React</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">TypeScript</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Web Development</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">JavaScript</a></li>
+              <li><span className="text-gray-300">Tutorials & Guides</span></li>
+              <li><span className="text-gray-300">Programming Techniques</span></li>
+              <li><span className="text-gray-300">Emerging Technologies</span></li>
+              <li><span className="text-gray-300">Industry Trends & Opinions</span></li>
             </ul>
           </div>
         </div>

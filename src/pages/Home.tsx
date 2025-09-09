@@ -67,7 +67,7 @@ const Home: React.FC = () => {
                 </Link>
               </Button>
               <Button variant="outline" size="lg" className="text-lg px-8 py-4 border-white/30 text-white hover:bg-white/10 hover:border-white/50 backdrop-blur-sm transform hover:scale-105 transition-all duration-300">
-                <Link to="/about">Learn About Me</Link>
+                <Link to="/about">Know About Me</Link>
               </Button>
             </div>
           </div>
