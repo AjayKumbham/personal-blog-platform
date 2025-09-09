@@ -169,18 +169,15 @@ const Home: React.FC = () => {
           <p className="text-xl text-blue-100 mb-8">
             Get notified when I publish new articles about web development and programming.
           </p>
-          
-          {settings?.newsletter?.enabled && settings?.newsletter?.substackUrl ? (
+
+          {settings?.newsletter?.enabled ? (
             <NewsletterSignup
               substackUrl={settings.newsletter.substackUrl}
             />
           ) : (
-            <div className="text-center">
-              <p className="text-blue-100 text-lg mb-4">Newsletter signup coming soon!</p>
-              <Button variant="outline" size="lg" className="border-white text-white hover:!bg-white hover:!text-blue-600 hover:!border-white">
-                <Link to="/about#contact">Get In Touch</Link>
-              </Button>
-            </div>
+            <NewsletterSignup
+              substackUrl="https://kumbhamajaygoud.substack.com"
+            />
           )}
         </div>
       </section>
