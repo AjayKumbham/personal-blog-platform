@@ -4,61 +4,65 @@ import { useAuth } from '../../hooks/useAuth';
 import { Lock, Eye, EyeOff, Shield, AlertTriangle } from 'lucide-react';
 
 const AdminLogin: React.FC = () => {
-  const [accessKey, setAccessKey] = useState('');
-  const [email, setEmail] = useState('admin@devblog.com');
-  const [password, setPassword] = useState('admin123456');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isAuthorized, setIsAuthorized] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [attempts, setAttempts] = useState(0);
   const [isBlocked, setIsBlocked] = useState(false);
   
-  const { signIn } = useAuth();
+  const { signIn, user } = useAuth();
   const navigate = useNavigate();
 
-  const ADMIN_ACCESS_KEY = 'DEVBLOG_ADMIN_2024';
-  const MAX_ATTEMPTS = 3;
+  const MAX_ATTEMPTS = 5;
 
-  const handleAccessKeySubmit = (e: React.FormEvent) => {
+  // Rate limiting for failed login attempts
+  const handleRateLimit = () => {
+    const newAttempts = attempts + 1;
+    setAttempts(newAttempts);
+    
+    if (newAttempts >= MAX_ATTEMPTS) {
+      setIsBlocked(true);
+      setError(`Too many failed attempts. Access blocked for 15 minutes.`);
+      
+      // Store block time in localStorage with expiry
+      const blockUntil = Date.now() + (15 * 60 * 1000); // 15 minutes
+      localStorage.setItem('admin_blocked_until', blockUntil.toString());
+      
+      setTimeout(() => {
+        setIsBlocked(false);
+        setAttempts(0);
+        localStorage.removeItem('admin_blocked_until');
+      }, 15 * 60 * 1000); // 15 minutes
+    }
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (isBlocked) {
       setError('Access blocked. Please try again later.');
       return;
     }
-
-    if (accessKey === ADMIN_ACCESS_KEY) {
-      setIsAuthorized(true);
-      setError('');
-      sessionStorage.setItem('admin_authorized', 'true');
-    } else {
-      const newAttempts = attempts + 1;
-      setAttempts(newAttempts);
-      
-      if (newAttempts >= MAX_ATTEMPTS) {
-        setIsBlocked(true);
-        setError(`Too many failed attempts. Access blocked for 1 hour.`);
-        setTimeout(() => {
-          setIsBlocked(false);
-          setAttempts(0);
-        }, 3600000); // 1 hour
-      } else {
-        setError(`Invalid access key. ${MAX_ATTEMPTS - newAttempts} attempts remaining.`);
-      }
-      setAccessKey('');
-    }
-  };
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+    
     setLoading(true);
     setError('');
 
     try {
-      await signIn(email, password);
-      navigate('/admin');
+      const { error } = await signIn(email, password);
+      
+      if (error) {
+        handleRateLimit();
+        setError(error.message || 'Login failed. Please check your credentials.');
+      } else {
+        // Clear any previous blocks on successful login
+        localStorage.removeItem('admin_blocked_until');
+        setAttempts(0);
+        navigate('/admin');
+      }
     } catch (err: any) {
+      handleRateLimit();
       setError(err.message || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
@@ -66,71 +70,20 @@ const AdminLogin: React.FC = () => {
   };
 
   React.useEffect(() => {
-    const authorized = sessionStorage.getItem('admin_authorized');
-    if (authorized === 'true') {
-      setIsAuthorized(true);
+    // Check if user is already authenticated
+    if (user) {
+      navigate('/admin');
+      return;
     }
-  }, []);
-
-  if (!isAuthorized) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-6">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8">
-          {/* Clean Access Interface */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-6">
-              <Lock className="w-7 h-7 text-gray-600" />
-            </div>
-            <h1 className="text-2xl font-semibold text-gray-900 mb-2">Access Required</h1>
-            <p className="text-gray-600 text-sm">Please enter your access key to continue</p>
-          </div>
-
-          <form onSubmit={handleAccessKeySubmit} className="space-y-6">
-            <div>
-              <label htmlFor="accessKey" className="block text-sm font-medium text-gray-700 mb-2">
-                Access Key
-              </label>
-              <input
-                type="password"
-                id="accessKey"
-                value={accessKey}
-                onChange={(e) => setAccessKey(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-mono tracking-wider"
-                placeholder="Enter access key"
-                required
-                disabled={isBlocked}
-              />
-            </div>
-
-            {error && (
-              <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0" />
-                  <p className="text-red-700 text-sm font-medium">{error}</p>
-                </div>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={isBlocked}
-              className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400"
-            >
-              {isBlocked ? 'Access Blocked' : 'Verify Access'}
-            </button>
-          </form>
-
-          {/* Security Notice */}
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <div className="flex items-center justify-center gap-2 text-gray-500 text-xs">
-              <Shield className="w-3 h-3" />
-              <span>Secure • Monitored • Protected</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+    
+    // Check if currently blocked
+    const blockedUntil = localStorage.getItem('admin_blocked_until');
+    if (blockedUntil && Date.now() < parseInt(blockedUntil)) {
+      setIsBlocked(true);
+      const remainingTime = Math.ceil((parseInt(blockedUntil) - Date.now()) / 60000);
+      setError(`Access blocked. Try again in ${remainingTime} minutes.`);
+    }
+  }, [user, navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
@@ -196,12 +149,20 @@ const AdminLogin: React.FC = () => {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || isBlocked}
             className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400"
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? 'Signing in...' : isBlocked ? 'Access Blocked' : 'Sign In'}
           </button>
         </form>
+
+        {/* Security Notice */}
+        <div className="mt-8 pt-6 border-t border-gray-200">
+          <div className="flex items-center justify-center gap-2 text-gray-500 text-xs">
+            <Shield className="w-3 h-3" />
+            <span>Secure • Encrypted • Protected</span>
+          </div>
+        </div>
       </div>
     </div>
   );
