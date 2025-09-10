@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Code2, Lock } from 'lucide-react';
+import { Lock } from 'lucide-react';
 import Card from '../ui/Card';
 import Button from '../ui/Button';
 

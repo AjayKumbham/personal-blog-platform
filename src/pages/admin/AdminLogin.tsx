@@ -61,9 +61,9 @@ const AdminLogin: React.FC = () => {
         setAttempts(0);
         navigate('/admin');
       }
-    } catch (err: any) {
+    } catch (err) {
       handleRateLimit();
-      setError(err.message || 'Login failed. Please check your credentials.');
+      setError((err as Error).message || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
