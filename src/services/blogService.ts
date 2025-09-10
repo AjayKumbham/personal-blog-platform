@@ -101,7 +101,7 @@ export const blogService = {
 
   // Admin: Update post
   async updatePost(id: string, updates: Partial<BlogPost>) {
-    const updateData: any = {};
+    const updateData: Record<string, unknown> = {};
     
     if (updates.title) updateData.title = updates.title;
     if (updates.slug) updateData.slug = updates.slug;
@@ -140,7 +140,7 @@ export const blogService = {
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
     const filePath = `covers/${fileName}`;
 
-    const { data: uploadData, error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from('blog-covers')
       .upload(filePath, file);
 

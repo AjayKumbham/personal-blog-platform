@@ -126,6 +126,7 @@ export const settingsService = {
     };
 
     // Remove the old API key fields from the main object to avoid duplication
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { hashnodeApiKey, hashnodePublicationId, devToApiKey, ...settingsToStore } = updatedSettings;
 
     // First, try to get existing record
