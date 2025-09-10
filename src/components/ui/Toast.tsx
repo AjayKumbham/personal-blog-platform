@@ -13,6 +13,11 @@ export interface ToastProps {
 const Toast: React.FC<ToastProps> = ({ id, type, title, message, duration = 5000, onClose }) => {
   const [isVisible, setIsVisible] = useState(false);
 
+  const handleClose = React.useCallback(() => {
+    setIsVisible(false);
+    setTimeout(() => onClose(id), 300);
+  }, [id, onClose]);
+
   useEffect(() => {
     setIsVisible(true);
     const timer = setTimeout(() => {
@@ -20,12 +25,9 @@ const Toast: React.FC<ToastProps> = ({ id, type, title, message, duration = 5000
     }, duration);
 
     return () => clearTimeout(timer);
-  }, [duration]);
+  }, [duration, handleClose]);
 
-  const handleClose = () => {
-    setIsVisible(false);
-    setTimeout(() => onClose(id), 300);
-  };
+
 
   const icons = {
     success: CheckCircle,

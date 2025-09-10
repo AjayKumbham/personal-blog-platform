@@ -68,6 +68,7 @@ const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
       setEmail('');
 
     } catch (error) {
+      console.error('Newsletter subscription error:', error);
       setStatus('error');
       setMessage('Subscription failed. Please try again.');
     }
