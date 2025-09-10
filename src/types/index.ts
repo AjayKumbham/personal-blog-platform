@@ -58,6 +58,8 @@ export interface SiteSettings {
   newsletter?: {
     substackUrl?: string;
     enabled?: boolean;
+    title?: string;
+    description?: string;
   };
   // Optional future-ready fields
   theme?: {
