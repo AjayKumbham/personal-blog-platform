@@ -65,19 +65,19 @@ export interface Database {
       site_settings: {
         Row: {
           id: string;
-          settings_data: any; // JSONB column containing all flexible settings
+          settings_data: Record<string, unknown>; // JSONB column containing all flexible settings
           created_at: string;
           updated_at: string;
         };
         Insert: {
           id?: string;
-          settings_data: any;
+          settings_data: Record<string, unknown>;
           created_at?: string;
           updated_at?: string;
         };
         Update: {
           id?: string;
-          settings_data?: any;
+          settings_data?: Record<string, unknown>;
           updated_at?: string;
         };
       };

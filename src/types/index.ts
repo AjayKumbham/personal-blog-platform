@@ -41,7 +41,8 @@ export interface Author {
   skills?: string[];
   careerHighlights?: CareerHighlight[];
   stats?: Array<{
-    icon: any; // React component
+    id?: string;
+    icon: React.ComponentType<{ className?: string }>; // React component
     label: string;
     value: string;
   }>;
