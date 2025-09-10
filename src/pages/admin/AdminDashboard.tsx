@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { BarChart3, FileText, Settings, Users, PlusCircle, LogOut, Eye, Edit, Trash2, Home, Globe } from 'lucide-react';
-import { BlogPost } from '../../types';
+import { BarChart3, FileText, Settings, Users, PlusCircle, LogOut, Eye, Edit, Trash2, Home, Globe, Code2, Trophy, Target, Briefcase, Zap, Calendar, Clock, Star, Award, TrendingUp } from 'lucide-react';
+import { BlogPost, CareerHighlight } from '../../types';
 import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../hooks/useToast';
 import { blogService } from '../../services/blogService';
@@ -10,13 +10,34 @@ import { fileUploadService } from '../../services/fileUploadService';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 
+// Icon mapping for dynamic icons
+const iconMap: { [key: string]: React.ComponentType<{ className?: string }> } = {
+  BarChart3,
+  FileText,
+  Settings,
+  Users,
+  Code2,
+  Trophy,
+  Target,
+  Briefcase,
+  Zap,
+  Calendar,
+  Clock,
+  Star,
+  Award,
+  TrendingUp,
+  Globe,
+  Home
+};
+
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const { signOut } = useAuth();
   const { showSuccess, showError } = useToast();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [loading, setLoading] = useState(true);
+  const [loadingPosts, setLoadingPosts] = useState(true);
+  const [loadingSettings, setLoadingSettings] = useState(true);
   const [savingSettings, setSavingSettings] = useState(false);
   const [settings, setSettings] = useState({
     // API Keys
@@ -27,16 +48,19 @@ const AdminDashboard: React.FC = () => {
     siteName: '',
     siteDescription: '',
     siteUrl: '',
-    title: '',
-    location: '',
-    email: '',
+    authorName: '',
+    authorBio: '',
+    authorTitle: '',
+    authorLocation: '',
+    authorEmail: '',
     github: '',
     linkedin: '',
     twitter: '',
+    website: '',
     resume: '',
     skills: '',
-    careerHighlights: [] as any[],
-    stats: [] as any[],
+    careerHighlights: [] as CareerHighlight[],
+    stats: [] as Array<{ id?: string; icon: string; label: string; value: string }>,
     // Newsletter
     newsletterEnabled: true,
     substackUrl: 'https://kumbhamajaygoud.substack.com',
@@ -66,10 +90,10 @@ const AdminDashboard: React.FC = () => {
 
       // Upload new resume
       const resumeUrl = await fileUploadService.uploadResume(file);
-      
+
       // Update settings
       setSettings(prev => ({ ...prev, resume: resumeUrl }));
-      
+
       showSuccess('Resume uploaded', 'Your resume has been successfully uploaded');
     } catch (error) {
       console.error('Error uploading resume:', error);
@@ -97,7 +121,7 @@ const AdminDashboard: React.FC = () => {
 
   // Career Highlights Modal State
   const [showHighlightModal, setShowHighlightModal] = useState(false);
-  const [editingHighlight, setEditingHighlight] = useState<any>(null);
+  const [editingHighlight, setEditingHighlight] = useState<CareerHighlight | null>(null);
   const [highlightForm, setHighlightForm] = useState({
     title: '',
     subtitle: '',
@@ -114,62 +138,71 @@ const AdminDashboard: React.FC = () => {
 
   // Stats Modal State
   const [showStatsModal, setShowStatsModal] = useState(false);
-  const [editingStats, setEditingStats] = useState<any>(null);
+  const [editingStats, setEditingStats] = useState<{ id?: string; icon: string; label: string; value: string } | null>(null);
   const [statsForm, setStatsForm] = useState({
     label: '',
     value: '',
     icon: 'Code2'
   });
 
-  useEffect(() => {
-    loadPosts();
-    loadSettings();
-  }, []);
-
-  const loadPosts = async () => {
+  const loadPosts = React.useCallback(async () => {
     try {
       const data = await blogService.getAllPosts();
       setPosts(data);
     } catch (error) {
       console.error('Error loading posts:', error);
     } finally {
-      setLoading(false);
+      setLoadingPosts(false);
     }
-  };
+  }, []);
 
-  const loadSettings = async () => {
+  const loadSettings = React.useCallback(async () => {
     try {
       const data = await settingsService.getSiteSettings();
 
-
+      // Transform the data to match our form structure
       setSettings({
-        // API Keys
-        hashnodeApiKey: data.hashnodeApiKey || '',
-        hashnodePublicationId: data.hashnodePublicationId || '',
-        devToApiKey: data.devToApiKey || '',
-        // About Content
         siteName: data.siteName || '',
         siteDescription: data.siteDescription || '',
         siteUrl: data.siteUrl || '',
-        title: data.author?.title || '',
-        location: data.author?.location || '',
-        email: data.author?.email || '',
+        hashnodeApiKey: data.hashnodeApiKey || '',
+        hashnodePublicationId: data.hashnodePublicationId || '',
+        devToApiKey: data.devToApiKey || '',
+        authorName: data.author?.name || '',
+        authorBio: data.author?.bio || '',
+        authorTitle: data.author?.title || '',
+        authorLocation: data.author?.location || '',
+        authorEmail: data.author?.email || '',
         github: data.author?.github || '',
         linkedin: data.author?.linkedin || '',
         twitter: data.author?.twitter || '',
+        website: data.author?.website || '',
         resume: data.author?.resume || '',
         skills: data.author?.skills?.join(', ') || '',
         careerHighlights: data.author?.careerHighlights || [],
-        stats: data.author?.stats || [],
+        stats: (data.author?.stats || []).map(stat => ({
+          id: stat.id || Date.now().toString(),
+          icon: typeof stat.icon === 'string' ? stat.icon : 'Code2',
+          label: stat.label,
+          value: stat.value
+        })),
         // Newsletter
         newsletterEnabled: data.newsletter?.enabled ?? true,
         substackUrl: data.newsletter?.substackUrl || 'https://kumbhamajaygoud.substack.com',
       });
     } catch (error) {
       console.error('Error loading settings:', error);
-      showError('Failed to load settings', 'Please refresh the page and try again.');
+    } finally {
+      setLoadingSettings(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadPosts();
+    loadSettings();
+  }, [loadPosts, loadSettings]);
+
+
 
   const handleLogout = async () => {
     try {
@@ -198,7 +231,7 @@ const AdminDashboard: React.FC = () => {
       const post = posts.find(p => p.id === id);
       if (post) {
         await blogService.updatePost(id, { published: !post.published });
-        setPosts(posts.map(p => 
+        setPosts(posts.map(p =>
           p.id === id ? { ...p, published: !p.published } : p
         ));
         showSuccess(
@@ -231,9 +264,9 @@ const AdminDashboard: React.FC = () => {
           name: settings.siteName, // Use siteName as author name
           bio: settings.siteDescription,
           avatar: '/personal-logo.jpg', // Default avatar
-          title: settings.title,
-          location: settings.location,
-          email: settings.email,
+          title: settings.authorTitle,
+          location: settings.authorLocation,
+          email: settings.authorEmail,
           github: settings.github,
           twitter: settings.twitter,
           linkedin: settings.linkedin,
@@ -241,10 +274,14 @@ const AdminDashboard: React.FC = () => {
           resume: settings.resume,
           skills: settings.skills ? settings.skills.split(',').map(s => s.trim()).filter(s => s) : [],
           careerHighlights: settings.careerHighlights || [],
-          stats: settings.stats || [],
+          stats: (settings.stats || []).map(stat => ({
+            icon: iconMap[stat.icon] || Code2,
+            label: stat.label,
+            value: stat.value
+          })),
         }
       };
-      
+
       await settingsService.updateSiteSettings(settingsToSave);
       showSuccess('Settings saved', 'Your settings have been successfully updated.');
     } catch (error) {
@@ -256,7 +293,7 @@ const AdminDashboard: React.FC = () => {
   };
 
   // Career Highlights CRUD Operations
-  const openHighlightModal = (highlight?: any) => {
+  const openHighlightModal = (highlight?: CareerHighlight) => {
     if (highlight) {
       setEditingHighlight(highlight);
       setHighlightForm({
@@ -306,7 +343,7 @@ const AdminDashboard: React.FC = () => {
 
     let updatedHighlights;
     if (editingHighlight) {
-      updatedHighlights = settings.careerHighlights.map(h => 
+      updatedHighlights = settings.careerHighlights.map(h =>
         h.id === editingHighlight.id ? newHighlight : h
       );
     } else {
@@ -336,16 +373,24 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  const updateHighlightForm = (field: string, value: any, index?: number) => {
+  const updateHighlightForm = (
+    field: string,
+    value: string | number | string[] | { label: string; value: string }[] | { label: string; value: string },
+    index?: number
+  ) => {
     setHighlightForm(prev => {
       if (field === 'points' && index !== undefined) {
         const newPoints = [...prev.points];
-        newPoints[index] = value;
+        newPoints[index] = value as string;
         return { ...prev, points: newPoints };
       } else if (field === 'metrics' && index !== undefined) {
         const newMetrics = [...prev.metrics];
-        newMetrics[index] = value;
+        newMetrics[index] = value as { label: string; value: string };
         return { ...prev, metrics: newMetrics };
+      } else if (field === 'points' && Array.isArray(value)) {
+        return { ...prev, points: value as string[] };
+      } else if (field === 'metrics' && Array.isArray(value)) {
+        return { ...prev, metrics: value as { label: string; value: string }[] };
       } else {
         return { ...prev, [field]: value };
       }
@@ -353,7 +398,7 @@ const AdminDashboard: React.FC = () => {
   };
 
   // Stats CRUD Operations
-  const openStatsModal = (stat?: any) => {
+  const openStatsModal = (stat?: { id?: string; icon: string; label: string; value: string }) => {
     if (stat) {
       setEditingStats(stat);
       setStatsForm({
@@ -385,7 +430,7 @@ const AdminDashboard: React.FC = () => {
 
     let updatedStats;
     if (editingStats) {
-      updatedStats = settings.stats.map(s => 
+      updatedStats = settings.stats.map(s =>
         s.id === editingStats.id ? newStat : s
       );
     } else {
@@ -437,7 +482,7 @@ const AdminDashboard: React.FC = () => {
           <div className="p-6 border-b">
             <h2 className="text-xl font-bold text-gray-900">Admin Panel</h2>
           </div>
-          
+
           <nav className="flex-1 p-4">
             {/* Admin Panel Navigation */}
             <div className="mb-6">
@@ -447,11 +492,10 @@ const AdminDashboard: React.FC = () => {
                   <li key={item.id}>
                     <button
                       onClick={() => setActiveTab(item.id)}
-                      className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
-                        activeTab === item.id
+                      className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${activeTab === item.id
                           ? 'bg-blue-100 text-blue-700'
                           : 'text-gray-700 hover:bg-gray-100'
-                      }`}
+                        }`}
                     >
                       <item.icon className="w-5 h-5 mr-3" />
                       {item.name}
@@ -504,7 +548,7 @@ const AdminDashboard: React.FC = () => {
               </ul>
             </div>
           </nav>
-          
+
           <div className="p-4 border-t">
             <Button variant="ghost" onClick={handleLogout} icon={LogOut} className="w-full justify-start">
               Logout
@@ -526,7 +570,7 @@ const AdminDashboard: React.FC = () => {
               </Link>
             </div>
 
-            {loading ? (
+            {loadingPosts ? (
               <div className="flex justify-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
               </div>
@@ -538,7 +582,7 @@ const AdminDashboard: React.FC = () => {
                     <Card key={index} className="p-6">
                       <div className="flex items-center">
                         <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                          <stat.icon className="w-6 h-6 text-blue-600" />
+                          {React.createElement(typeof stat.icon === 'string' ? iconMap[stat.icon] || Code2 : stat.icon, { className: "w-6 h-6 text-blue-600" })}
                         </div>
                         <div className="ml-4">
                           <p className="text-sm font-medium text-gray-600">{stat.label}</p>
@@ -562,9 +606,8 @@ const AdminDashboard: React.FC = () => {
                           </p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                            post.published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                          }`}>
+                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${post.published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                            }`}>
                             {post.published ? 'Published' : 'Draft'}
                           </span>
                         </div>
@@ -583,87 +626,86 @@ const AdminDashboard: React.FC = () => {
               <h1 className="text-3xl font-bold text-gray-900">Posts</h1>
               <Link to="/admin/posts/new">
                 <Button icon={PlusCircle}>
-                New Post
+                  New Post
                 </Button>
               </Link>
             </div>
 
-            {loading ? (
+            {loadingPosts ? (
               <div className="flex justify-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
               </div>
             ) : (
               <Card className="overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Title
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Published
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {posts.map((post) => (
-                      <tr key={post.id}>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div>
-                            <div className="text-sm font-medium text-gray-900">{post.title}</div>
-                            <div className="text-sm text-gray-500">{post.readTime} min read</div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            post.published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                          }`}>
-                            {post.published ? 'Published' : 'Draft'}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {post.publishedAt.toLocaleDateString()}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <div className="flex items-center gap-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => togglePublished(post.id)}
-                            >
-                              {post.published ? 'Unpublish' : 'Publish'}
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => navigate(`/admin/posts/edit/${post.id}`)}
-                              icon={Edit}
-                            >
-                              Edit
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              icon={Trash2}
-                              onClick={() => handleDeletePost(post.id)}
-                              className="text-red-600 hover:text-red-700"
-                            >
-                              Delete
-                            </Button>
-                          </div>
-                        </td>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Title
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Status
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Published
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Actions
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {posts.map((post) => (
+                        <tr key={post.id}>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div>
+                              <div className="text-sm font-medium text-gray-900">{post.title}</div>
+                              <div className="text-sm text-gray-500">{post.readTime} min read</div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${post.published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                              }`}>
+                              {post.published ? 'Published' : 'Draft'}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {post.publishedAt.toLocaleDateString()}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div className="flex items-center gap-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => togglePublished(post.id)}
+                              >
+                                {post.published ? 'Unpublish' : 'Publish'}
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => navigate(`/admin/posts/edit/${post.id}`)}
+                                icon={Edit}
+                              >
+                                Edit
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                icon={Trash2}
+                                onClick={() => handleDeletePost(post.id)}
+                                className="text-red-600 hover:text-red-700"
+                              >
+                                Delete
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </Card>
             )}
           </div>
@@ -672,7 +714,7 @@ const AdminDashboard: React.FC = () => {
         {activeTab === 'about' && (
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-8">About Content Management</h1>
-            
+
             <div className="space-y-8">
               {/* Personal Information */}
               <Card className="p-6">
@@ -696,8 +738,8 @@ const AdminDashboard: React.FC = () => {
                     </label>
                     <input
                       type="text"
-                      value={settings.title}
-                      onChange={(e) => setSettings(prev => ({ ...prev, title: e.target.value }))}
+                      value={settings.authorTitle}
+                      onChange={(e) => setSettings(prev => ({ ...prev, authorTitle: e.target.value }))}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="e.g., Full Stack Developer"
                     />
@@ -708,8 +750,8 @@ const AdminDashboard: React.FC = () => {
                     </label>
                     <input
                       type="text"
-                      value={settings.location}
-                      onChange={(e) => setSettings(prev => ({ ...prev, location: e.target.value }))}
+                      value={settings.authorLocation}
+                      onChange={(e) => setSettings(prev => ({ ...prev, authorLocation: e.target.value }))}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="City, Country"
                     />
@@ -720,8 +762,8 @@ const AdminDashboard: React.FC = () => {
                     </label>
                     <input
                       type="email"
-                      value={settings.email}
-                      onChange={(e) => setSettings(prev => ({ ...prev, email: e.target.value }))}
+                      value={settings.authorEmail}
+                      onChange={(e) => setSettings(prev => ({ ...prev, authorEmail: e.target.value }))}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="your@email.com"
                     />
@@ -833,7 +875,7 @@ const AdminDashboard: React.FC = () => {
                       <p className="text-sm text-gray-600 mb-4">No resume uploaded</p>
                     </div>
                   )}
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Upload Resume (PDF, DOC, DOCX - Max 5MB)
@@ -876,8 +918,8 @@ const AdminDashboard: React.FC = () => {
               <Card className="p-6">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-lg font-semibold text-gray-900">Statistics</h3>
-                  <Button 
-                    onClick={() => openStatsModal()} 
+                  <Button
+                    onClick={() => openStatsModal()}
                     icon={PlusCircle}
                     disabled={settings.stats.length >= 4}
                   >
@@ -890,7 +932,7 @@ const AdminDashboard: React.FC = () => {
                 <div className="space-y-4">
                   {settings.stats.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {settings.stats.map((stat: any, index: number) => (
+                      {settings.stats.map((stat, index: number) => (
                         <div key={stat.id || index} className="bg-gray-50 p-4 rounded-lg">
                           <div className="flex justify-between items-start mb-3">
                             <div>
@@ -898,19 +940,19 @@ const AdminDashboard: React.FC = () => {
                               <p className="text-2xl font-bold text-blue-600">{stat.value}</p>
                             </div>
                             <div className="flex gap-2">
-                              <Button 
-                                size="sm" 
+                              <Button
+                                size="sm"
                                 variant="outline"
                                 onClick={() => openStatsModal(stat)}
                                 icon={Edit}
                               >
                                 Edit
                               </Button>
-                              <Button 
-                                size="sm" 
-                                variant="outline" 
+                              <Button
+                                size="sm"
+                                variant="outline"
                                 className="text-red-600 hover:text-red-700"
-                                onClick={() => deleteStat(stat.id)}
+                                onClick={() => deleteStat(stat.id || '')}
                                 icon={Trash2}
                               >
                                 Delete
@@ -951,60 +993,60 @@ const AdminDashboard: React.FC = () => {
                 <div className="space-y-4">
                   {settings.careerHighlights.length > 0 ? (
                     settings.careerHighlights
-                      .sort((a: any, b: any) => a.order - b.order)
-                      .map((highlight: any, index: number) => (
-                      <div key={highlight.id || index} className="bg-gray-50 p-4 rounded-lg">
-                        <div className="flex justify-between items-start mb-3">
-                          <div>
-                            <h4 className="font-medium text-gray-900">{highlight.title}</h4>
-                            <p className="text-sm text-gray-600">{highlight.subtitle}</p>
+                      .sort((a, b) => a.order - b.order)
+                      .map((highlight, index: number) => (
+                        <div key={highlight.id || index} className="bg-gray-50 p-4 rounded-lg">
+                          <div className="flex justify-between items-start mb-3">
+                            <div>
+                              <h4 className="font-medium text-gray-900">{highlight.title}</h4>
+                              <p className="text-sm text-gray-600">{highlight.subtitle}</p>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => openHighlightModal(highlight)}
+                                icon={Edit}
+                              >
+                                Edit
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="text-red-600 hover:text-red-700"
+                                onClick={() => deleteHighlight(highlight.id)}
+                                icon={Trash2}
+                              >
+                                Delete
+                              </Button>
+                            </div>
                           </div>
-                          <div className="flex gap-2">
-                            <Button 
-                              size="sm" 
-                              variant="outline"
-                              onClick={() => openHighlightModal(highlight)}
-                              icon={Edit}
-                            >
-                              Edit
-                            </Button>
-                            <Button 
-                              size="sm" 
-                              variant="outline" 
-                              className="text-red-600 hover:text-red-700"
-                              onClick={() => deleteHighlight(highlight.id)}
-                              icon={Trash2}
-                            >
-                              Delete
-                            </Button>
+                          <div className="text-xs text-gray-500 mb-3">
+                            {highlight.points?.slice(0, 3).map((point: string, i: number) => (
+                              <div key={i} className="mb-1">• {point}</div>
+                            ))}
+                            {highlight.points?.length > 3 && (
+                              <div className="text-gray-400">• +{highlight.points.length - 3} more points...</div>
+                            )}
                           </div>
-                        </div>
-                        <div className="text-xs text-gray-500 mb-3">
-                          {highlight.points?.slice(0, 3).map((point: string, i: number) => (
-                            <div key={i} className="mb-1">• {point}</div>
-                          ))}
-                          {highlight.points?.length > 3 && (
-                            <div className="text-gray-400">• +{highlight.points.length - 3} more points...</div>
+                          <div className="flex justify-between items-center text-xs text-gray-500">
+                            <div className="flex gap-4">
+                              <span>Icon: {highlight.icon}</span>
+                              <span>Order: {highlight.order}</span>
+                            </div>
+                            <span>{highlight.period}</span>
+                          </div>
+                          {highlight.metrics?.length > 0 && (
+                            <div className="mt-2 flex gap-2">
+                              {highlight.metrics.slice(0, 3).map((metric, i: number) => (
+                                <span key={i} className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                                  {metric.label}: {metric.value}
+                                </span>
+                              ))}
+                            </div>
                           )}
                         </div>
-                        <div className="flex justify-between items-center text-xs text-gray-500">
-                          <div className="flex gap-4">
-                            <span>Icon: {highlight.icon}</span>
-                            <span>Order: {highlight.order}</span>
-                          </div>
-                          <span>{highlight.period}</span>
-                        </div>
-                        {highlight.metrics?.length > 0 && (
-                          <div className="mt-2 flex gap-2">
-                            {highlight.metrics.slice(0, 3).map((metric: any, i: number) => (
-                              <span key={i} className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                                {metric.label}: {metric.value}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))
+                      ))
                   ) : (
                     <div className="text-center py-8 text-gray-500">
                       <p className="mb-4">No career highlights added yet.</p>
@@ -1027,98 +1069,104 @@ const AdminDashboard: React.FC = () => {
         {activeTab === 'settings' && (
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-8">Settings</h1>
-            
-            <div className="max-w-2xl">
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">API Keys</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Hashnode API Key
-                    </label>
-                    <input
-                      type="password"
-                      value={settings.hashnodeApiKey}
-                      onChange={(e) => setSettings(prev => ({ ...prev, hashnodeApiKey: e.target.value }))}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Enter Hashnode API key"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Hashnode Publication ID
-                    </label>
-                    <input
-                      type="text"
-                      value={settings.hashnodePublicationId}
-                      onChange={(e) => setSettings(prev => ({ ...prev, hashnodePublicationId: e.target.value }))}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Enter publication ID"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Dev.to API Key
-                    </label>
-                    <input
-                      type="password"
-                      value={settings.devToApiKey}
-                      onChange={(e) => setSettings(prev => ({ ...prev, devToApiKey: e.target.value }))}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Enter Dev.to API key"
-                    />
-                  </div>
-                  <Button onClick={handleSaveSettings} disabled={savingSettings}>
-                    {savingSettings ? 'Saving...' : 'Save API Keys'}
-                  </Button>
-                </div>
-              </Card>
 
-              <Card className="p-6 mt-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Newsletter Settings</h3>
-                <div className="space-y-4">
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="newsletterEnabled"
-                      checked={settings.newsletterEnabled}
-                      onChange={(e) => setSettings(prev => ({ ...prev, newsletterEnabled: e.target.checked }))}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                    <label htmlFor="newsletterEnabled" className="ml-2 block text-sm text-gray-900">
-                      Enable Newsletter Signup
-                    </label>
+            {loadingSettings ? (
+              <div className="flex justify-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              </div>
+            ) : (
+              <div className="max-w-2xl">
+                <Card className="p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">API Keys</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Hashnode API Key
+                      </label>
+                      <input
+                        type="password"
+                        value={settings.hashnodeApiKey}
+                        onChange={(e) => setSettings(prev => ({ ...prev, hashnodeApiKey: e.target.value }))}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Enter Hashnode API key"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Hashnode Publication ID
+                      </label>
+                      <input
+                        type="text"
+                        value={settings.hashnodePublicationId}
+                        onChange={(e) => setSettings(prev => ({ ...prev, hashnodePublicationId: e.target.value }))}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Enter publication ID"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Dev.to API Key
+                      </label>
+                      <input
+                        type="password"
+                        value={settings.devToApiKey}
+                        onChange={(e) => setSettings(prev => ({ ...prev, devToApiKey: e.target.value }))}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Enter Dev.to API key"
+                      />
+                    </div>
+                    <Button onClick={handleSaveSettings} disabled={savingSettings}>
+                      {savingSettings ? 'Saving...' : 'Save API Keys'}
+                    </Button>
                   </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Newsletter Service URL
-                    </label>
-                    <input
-                      type="url"
-                      value={settings.substackUrl}
-                      onChange={(e) => setSettings(prev => ({ ...prev, substackUrl: e.target.value }))}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="https://yourname.substack.com"
-                    />
+                </Card>
+
+                <Card className="p-6 mt-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Newsletter Settings</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="newsletterEnabled"
+                        checked={settings.newsletterEnabled}
+                        onChange={(e) => setSettings(prev => ({ ...prev, newsletterEnabled: e.target.checked }))}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                      <label htmlFor="newsletterEnabled" className="ml-2 block text-sm text-gray-900">
+                        Enable Newsletter Signup
+                      </label>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Newsletter Service URL
+                      </label>
+                      <input
+                        type="url"
+                        value={settings.substackUrl}
+                        onChange={(e) => setSettings(prev => ({ ...prev, substackUrl: e.target.value }))}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="https://yourname.substack.com"
+                      />
+                    </div>
+
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                      <h4 className="text-sm font-medium text-blue-900 mb-2">How it works:</h4>
+                      <ul className="text-xs text-blue-700 space-y-1">
+                        <li>• Users enter their email in a clean form on your site</li>
+                        <li>• They get automatically subscribed to your newsletter</li>
+                        <li>• No redirects or external branding</li>
+                        <li>• Professional, seamless experience</li>
+                      </ul>
+                    </div>
+
+                    <Button onClick={handleSaveSettings} disabled={savingSettings}>
+                      {savingSettings ? 'Saving...' : 'Save Newsletter Settings'}
+                    </Button>
                   </div>
-                  
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <h4 className="text-sm font-medium text-blue-900 mb-2">How it works:</h4>
-                    <ul className="text-xs text-blue-700 space-y-1">
-                      <li>• Users enter their email in a clean form on your site</li>
-                      <li>• They get automatically subscribed to your newsletter</li>
-                      <li>• No redirects or external branding</li>
-                      <li>• Professional, seamless experience</li>
-                    </ul>
-                  </div>
-                  
-                  <Button onClick={handleSaveSettings} disabled={savingSettings}>
-                    {savingSettings ? 'Saving...' : 'Save Newsletter Settings'}
-                  </Button>
-                </div>
-              </Card>
-            </div>
+                </Card>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -1351,7 +1399,7 @@ const AdminDashboard: React.FC = () => {
                 <Button variant="outline" onClick={closeStatsModal}>
                   Cancel
                 </Button>
-                <Button 
+                <Button
                   onClick={saveStat}
                   disabled={!statsForm.label.trim() || !statsForm.value.trim() || (!editingStats && settings.stats.length >= 4)}
                 >
