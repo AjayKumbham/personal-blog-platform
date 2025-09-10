@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { ArrowLeft, Upload, Eye, Save, Send } from 'lucide-react';
+import { ArrowLeft, Upload, Save } from 'lucide-react';
 import { blogService } from '../../services/blogService';
 import { settingsService } from '../../services/settingsService';
 import { publishToHashnode, publishToDevTo } from '../../services/api';

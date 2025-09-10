@@ -49,13 +49,7 @@ const EditPost: React.FC = () => {
   const watchedData = watch();
   const { title, content } = watchedData;
 
-  useEffect(() => {
-    if (id) {
-      loadPost();
-    }
-  }, [id]);
-
-  const loadPost = async () => {
+  const loadPost = React.useCallback(async () => {
     try {
       const posts = await blogService.getAllPosts();
       const post = posts.find(p => p.id === id);
@@ -79,7 +73,13 @@ const EditPost: React.FC = () => {
     } finally {
       setInitialLoading(false);
     }
-  };
+  }, [id, setValue]);
+
+  useEffect(() => {
+    if (id) {
+      loadPost();
+    }
+  }, [id, loadPost]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
