@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import { useEffect } from 'react';
-import { Search, Filter, Calendar, Clock, User, SortAsc } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Filter, Clock, User, SortAsc } from 'lucide-react';
 import { blogService } from '../services/blogService';
 import { BlogPost } from '../types';
 import BlogCard from '../components/blog/BlogCard';

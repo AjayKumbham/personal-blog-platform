@@ -61,7 +61,7 @@ const About: React.FC = () => {
   const highlights = settings.author?.careerHighlights || [];
 
   // Icon mapping for dynamic icons
-  const iconMap: { [key: string]: any } = {
+  const iconMap: { [key: string]: React.ComponentType<{ className?: string }> } = {
     Rocket,
     Trophy,
     Target,

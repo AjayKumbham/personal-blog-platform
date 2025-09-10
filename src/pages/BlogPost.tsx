@@ -15,28 +15,36 @@ const BlogPost: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (slug) {
-      loadPost();
-    }
-  }, [slug]);
-
-  const loadPost = async () => {
+  const loadPost = React.useCallback(async () => {
     try {
       const [postData, allPosts] = await Promise.all([
         blogService.getPostBySlug(slug!),
         blogService.getPublishedPosts(),
       ]);
       
-      setPost(postData);
-      setRelatedPosts(allPosts.filter(p => p.id !== postData.id).slice(0, 2));
+      if (postData) {
+        setPost(postData);
+        // Get related posts (same tags, excluding current post)
+        const related = allPosts
+          .filter(p => p.id !== postData.id && p.tags.some(tag => postData.tags.includes(tag)))
+          .slice(0, 3);
+        setRelatedPosts(related);
+      } else {
+        setError('Post not found');
+      }
     } catch (error) {
       console.error('Error loading post:', error);
       setError('Post not found');
     } finally {
       setLoading(false);
     }
-  };
+  }, [slug]);
+
+  useEffect(() => {
+    if (slug) {
+      loadPost();
+    }
+  }, [slug, loadPost]);
 
   if (loading) {
     return (
