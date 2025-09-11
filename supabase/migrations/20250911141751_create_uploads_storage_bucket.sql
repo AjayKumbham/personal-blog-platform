@@ -1,3 +1,10 @@
+/*
+  # Create uploads storage bucket for file uploads
+  
+  This migration creates the uploads bucket for general file uploads
+  including resumes, documents, and other assets.
+*/
+
 -- Create storage bucket for file uploads
 INSERT INTO storage.buckets (id, name, public)
 VALUES ('uploads', 'uploads', true)
