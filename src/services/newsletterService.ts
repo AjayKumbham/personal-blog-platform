@@ -2,7 +2,7 @@ interface NewsletterSubscription {
   email: string;
   firstName?: string;
   lastName?: string;
-  attributes?: Record<string, any>;
+  attributes?: Record<string, unknown>;
 }
 
 interface NewsletterResponse {
