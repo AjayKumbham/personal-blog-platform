@@ -38,7 +38,7 @@ export class EmailService {
       errors.push({ field: 'name', message: 'Name must be at least 2 characters long' });
     } else if (data.name.trim().length > 100) {
       errors.push({ field: 'name', message: 'Name must be less than 100 characters' });
-    } else if (!/^[a-zA-Z\s\-'\.]+$/.test(data.name.trim())) {
+    } else if (!/^[a-zA-Z\s\-'.]+$/.test(data.name.trim())) {
       errors.push({ field: 'name', message: 'Name contains invalid characters' });
     }
 
