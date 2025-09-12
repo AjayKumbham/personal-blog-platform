@@ -70,12 +70,12 @@ const BrevoForm: React.FC<BrevoFormProps> = ({ className = '' }) => {
       document.body.appendChild(script);
 
       // Set global variables for Brevo
-      (window as any).REQUIRED_CODE_ERROR_MESSAGE = 'Please choose a country code';
-      (window as any).LOCALE = 'en';
-      (window as any).EMAIL_INVALID_MESSAGE = 'The information provided is invalid. Please review the field format and try again.';
-      (window as any).REQUIRED_ERROR_MESSAGE = 'This field cannot be left blank.';
-      (window as any).GENERIC_INVALID_MESSAGE = 'The information provided is invalid. Please review the field format and try again.';
-      (window as any).AUTOHIDE = false;
+      (window as unknown as Record<string, unknown>).REQUIRED_CODE_ERROR_MESSAGE = 'Please choose a country code';
+      (window as unknown as Record<string, unknown>).LOCALE = 'en';
+      (window as unknown as Record<string, unknown>).EMAIL_INVALID_MESSAGE = 'The information provided is invalid. Please review the field format and try again.';
+      (window as unknown as Record<string, unknown>).REQUIRED_ERROR_MESSAGE = 'This field cannot be left blank.';
+      (window as unknown as Record<string, unknown>).GENERIC_INVALID_MESSAGE = 'The information provided is invalid. Please review the field format and try again.';
+      (window as unknown as Record<string, unknown>).AUTOHIDE = false;
     }
   }, []);
 
