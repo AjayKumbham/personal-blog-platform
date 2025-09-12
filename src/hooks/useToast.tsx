@@ -11,7 +11,7 @@ interface ToastContextType {
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
-// Export hook as default to satisfy react-refresh/only-export-components
+// Hook function
 const useToast = () => {
   const context = useContext(ToastContext);
   if (!context) {
@@ -20,11 +20,12 @@ const useToast = () => {
   return context;
 };
 
-export { useToast };
-
 interface ToastProviderProps {
   children: ReactNode;
 }
+
+// Export the hook
+export { useToast };
 
 export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
   const [toasts, setToasts] = useState<ToastProps[]>([]);
