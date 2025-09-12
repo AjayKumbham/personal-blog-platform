@@ -33,7 +33,7 @@ const Contact: React.FC = () => {
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }
-  }, []);
+  }, [showSuccess]);
 
   const loadSettings = async () => {
     try {
