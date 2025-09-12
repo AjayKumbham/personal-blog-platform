@@ -57,10 +57,14 @@ export interface SiteSettings {
   hashnodePublicationId: string;
   devToApiKey: string;
   newsletter?: {
-    substackUrl?: string;
     enabled?: boolean;
+    provider?: 'brevo' | 'substack';
     title?: string;
     description?: string;
+    brevoApiKey?: string;
+    brevoListId?: number;
+    // Legacy support
+    substackUrl?: string;
   };
   // Optional future-ready fields
   theme?: {
