@@ -74,6 +74,12 @@ export const settingsService = {
       devToApiKey: '',
       newsletter: {
         enabled: true,
+        provider: 'brevo',
+        title: 'Stay Updated',
+        description: 'Get notified when I publish new articles about web development and programming.',
+        brevoApiKey: '',
+        brevoListId: 1,
+        // Legacy support
         substackUrl: '',
       },
       theme: {
