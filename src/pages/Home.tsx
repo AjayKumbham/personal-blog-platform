@@ -3,8 +3,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Code2, Lightbulb, Zap } from 'lucide-react';
 import { blogService } from '../services/blogService';
-import { settingsService } from '../services/settingsService';
-import { BlogPost, SiteSettings } from '../types';
+import { BlogPost } from '../types';
 import BlogCard from '../components/blog/BlogCard';
 import Button from '../components/ui/Button';
 import AnimatedBackground from '../components/ui/AnimatedBackground';
@@ -12,7 +11,6 @@ import NewsletterSignup from '../components/newsletter/NewsletterSignup';
 
 const Home: React.FC = () => {
   const [recentPosts, setRecentPosts] = useState<BlogPost[]>([]);
-  const [settings, setSettings] = useState<SiteSettings | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,12 +19,8 @@ const Home: React.FC = () => {
 
   const loadData = async () => {
     try {
-      const [posts, siteSettings] = await Promise.all([
-        blogService.getPublishedPosts(),
-        settingsService.getSiteSettings()
-      ]);
+      const posts = await blogService.getPublishedPosts();
       setRecentPosts(posts.slice(0, 6));
-      setSettings(siteSettings);
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
@@ -170,15 +164,7 @@ const Home: React.FC = () => {
             Get notified when I publish new articles about web development and programming.
           </p>
 
-          {settings?.newsletter?.enabled ? (
-            <NewsletterSignup
-              substackUrl={settings.newsletter.substackUrl}
-            />
-          ) : (
-            <NewsletterSignup
-              substackUrl="https://kumbhamajaygoud.substack.com"
-            />
-          )}
+          <NewsletterSignup />
         </div>
       </section>
     </div>
