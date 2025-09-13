@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { BarChart3, FileText, Settings, Users, PlusCircle, LogOut, Eye, Edit, Trash2, Home, Globe, Code2, Trophy, Target, Briefcase, Zap, Calendar, Clock, Star, Award, TrendingUp } from 'lucide-react';
+import { BarChart3, FileText, Settings, Users, PlusCircle, LogOut, Eye, Edit, Trash2, Home, Globe, Code2, Trophy, Target, Briefcase, Zap, Calendar, Clock, Star, Award, TrendingUp, Mail, CheckCircle2, AlertCircle } from 'lucide-react';
 import { BlogPost, CareerHighlight } from '../../types';
 import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../hooks/useToast';
 import { blogService } from '../../services/blogService';
 import { settingsService } from '../../services/settingsService';
 import { fileUploadService } from '../../services/fileUploadService';
+import { blogNotificationService } from '../../services/blogNotificationService';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 
@@ -68,6 +69,21 @@ const AdminDashboard: React.FC = () => {
 
   // Resume upload state
   const [uploadingResume, setUploadingResume] = useState(false);
+
+  // Notification system state
+  const [notificationStatus, setNotificationStatus] = useState<{
+    configured: boolean;
+    subscriberCount: number;
+    senderVerified?: boolean;
+    lastError?: string;
+  }>({
+    configured: false,
+    subscriberCount: 0,
+    senderVerified: false,
+    lastError: undefined
+  });
+  const [sendingTestNotification, setSendingTestNotification] = useState(false);
+  const [loadingNotificationStatus, setLoadingNotificationStatus] = useState(true);
 
   // Handle resume upload
   const handleResumeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -197,10 +213,27 @@ const AdminDashboard: React.FC = () => {
     }
   }, []);
 
+  const loadNotificationStatus = React.useCallback(async () => {
+    try {
+      const status = await blogNotificationService.getSystemStatus();
+      setNotificationStatus(status);
+    } catch (error) {
+      console.error('Error loading notification status:', error);
+      setNotificationStatus({
+        configured: false,
+        subscriberCount: 0,
+        lastError: error instanceof Error ? error.message : 'Unknown error'
+      });
+    } finally {
+      setLoadingNotificationStatus(false);
+    }
+  }, []);
+
   useEffect(() => {
     loadPosts();
     loadSettings();
-  }, [loadPosts, loadSettings]);
+    loadNotificationStatus();
+  }, [loadPosts, loadSettings, loadNotificationStatus]);
 
 
 
@@ -460,6 +493,39 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  // Notification management functions
+  const handleSendTestNotification = async () => {
+    setSendingTestNotification(true);
+    try {
+      const result = await blogNotificationService.sendTestNotification();
+
+      if (result.success) {
+        showSuccess(
+          'Test notification sent!',
+          result.message
+        );
+      } else {
+        showError(
+          'Failed to send test notification',
+          result.message
+        );
+      }
+    } catch (error) {
+      console.error('Error sending test notification:', error);
+      showError(
+        'Test notification failed',
+        'An unexpected error occurred while sending the test notification.'
+      );
+    } finally {
+      setSendingTestNotification(false);
+    }
+  };
+
+  const refreshNotificationStatus = async () => {
+    setLoadingNotificationStatus(true);
+    await loadNotificationStatus();
+  };
+
   const stats = [
     { icon: FileText, label: 'Total Posts', value: posts.length, color: 'blue' },
     { icon: Eye, label: 'Published', value: posts.filter(p => p.published).length, color: 'green' },
@@ -470,6 +536,7 @@ const AdminDashboard: React.FC = () => {
   const navigation = [
     { id: 'dashboard', name: 'Dashboard', icon: BarChart3 },
     { id: 'posts', name: 'Posts', icon: FileText },
+    { id: 'notifications', name: 'Email Notifications', icon: Users },
     { id: 'about', name: 'About Content', icon: Users },
     { id: 'settings', name: 'Settings', icon: Settings },
   ];
@@ -493,8 +560,8 @@ const AdminDashboard: React.FC = () => {
                     <button
                       onClick={() => setActiveTab(item.id)}
                       className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${activeTab === item.id
-                          ? 'bg-blue-100 text-blue-700'
-                          : 'text-gray-700 hover:bg-gray-100'
+                        ? 'bg-blue-100 text-blue-700'
+                        : 'text-gray-700 hover:bg-gray-100'
                         }`}
                     >
                       <item.icon className="w-5 h-5 mr-3" />
@@ -617,6 +684,243 @@ const AdminDashboard: React.FC = () => {
                 </Card>
               </>
             )}
+          </div>
+        )}
+
+        {activeTab === 'notifications' && (
+          <div>
+            <div className="flex justify-between items-center mb-8">
+              <h1 className="text-3xl font-bold text-gray-900">Email Notifications</h1>
+              <Button
+                onClick={refreshNotificationStatus}
+                disabled={loadingNotificationStatus}
+                variant="outline"
+              >
+                {loadingNotificationStatus ? 'Refreshing...' : 'Refresh Status'}
+              </Button>
+            </div>
+
+            <div className="space-y-6">
+              {/* System Status */}
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">System Status</h3>
+
+                {loadingNotificationStatus ? (
+                  <div className="flex justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="text-center">
+                      <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-3 ${notificationStatus.configured ? 'bg-green-100' : 'bg-red-100'
+                        }`}>
+                        {notificationStatus.configured ? (
+                          <CheckCircle2 className="w-8 h-8 text-green-600" />
+                        ) : (
+                          <AlertCircle className="w-8 h-8 text-red-600" />
+                        )}
+                      </div>
+                      <h4 className="font-semibold text-gray-900">Configuration</h4>
+                      <p className={`text-sm ${notificationStatus.configured ? 'text-green-600' : 'text-red-600'
+                        }`}>
+                        {notificationStatus.configured ? 'Configured' : 'Not Configured'}
+                      </p>
+                    </div>
+
+                    <div className="text-center">
+                      <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-3">
+                        <Users className="w-8 h-8 text-blue-600" />
+                      </div>
+                      <h4 className="font-semibold text-gray-900">Subscribers</h4>
+                      <p className="text-2xl font-bold text-blue-600">{notificationStatus.subscriberCount}</p>
+                    </div>
+
+                    <div className="text-center">
+                      <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-3 ${notificationStatus.senderVerified ? 'bg-green-100' : 'bg-yellow-100'
+                        }`}>
+                        <Mail className={`w-8 h-8 ${notificationStatus.senderVerified ? 'text-green-600' : 'text-yellow-600'
+                          }`} />
+                      </div>
+                      <h4 className="font-semibold text-gray-900">Sender Status</h4>
+                      <p className={`text-sm ${notificationStatus.senderVerified ? 'text-green-600' : 'text-yellow-600'
+                        }`}>
+                        {notificationStatus.senderVerified ? 'Verified' : 'Needs Verification'}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {notificationStatus.lastError && (
+                  <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <div className="flex items-center">
+                      <AlertCircle className="w-5 h-5 text-red-600 mr-2" />
+                      <span className="text-sm text-red-800">Error: {notificationStatus.lastError}</span>
+                    </div>
+                  </div>
+                )}
+              </Card>
+
+              {/* How It Works */}
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">How Email Notifications Work</h3>
+                <div className="space-y-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-xs font-semibold text-blue-600">1</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900">Automatic Notifications</h4>
+                      <p className="text-sm text-gray-600">When you publish a new blog post, an email notification is automatically sent to all newsletter subscribers.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-xs font-semibold text-blue-600">2</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900">Rich Email Content</h4>
+                      <p className="text-sm text-gray-600">Emails include the post title, excerpt, tags, reading time, and a direct link to read the full article.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-xs font-semibold text-blue-600">3</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900">Professional Design</h4>
+                      <p className="text-sm text-gray-600">Emails are beautifully designed with your branding and include unsubscribe links for compliance.</p>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Email Configuration */}
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Email Configuration</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Current Sender Email
+                    </label>
+                    <div className="flex items-center space-x-3">
+                      <code className="bg-gray-100 px-3 py-2 rounded text-sm font-mono">
+                        {import.meta.env.VITE_SENDER_EMAIL || 'ajaygoud.kumbham@gmail.com'}
+                      </code>
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                        notificationStatus.senderVerified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                      }`}>
+                        {notificationStatus.senderVerified ? 'Verified' : 'Needs Verification'}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <h4 className="text-sm font-medium text-blue-900 mb-2">To change sender email:</h4>
+                    <ol className="text-xs text-blue-700 space-y-1">
+                      <li>1. Update <code>VITE_SENDER_EMAIL</code> in your .env file</li>
+                      <li>2. Verify the new email in <a href="https://app.brevo.com/senders" target="_blank" rel="noopener noreferrer" className="underline">Brevo Senders</a></li>
+                      <li>3. Restart your development server</li>
+                      <li>4. Refresh this page to see the changes</li>
+                    </ol>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Test Notification */}
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Test Notification System</h3>
+                <p className="text-gray-600 mb-4">
+                  Send a test email notification to all subscribers to verify the system is working correctly.
+                </p>
+
+                <div className="flex items-center space-x-4">
+                  <Button
+                    onClick={handleSendTestNotification}
+                    disabled={sendingTestNotification || !notificationStatus.configured}
+                    className="flex items-center space-x-2"
+                  >
+                    {sendingTestNotification ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        <span>Sending Test...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Mail className="w-4 h-4" />
+                        <span>Send Test Notification</span>
+                      </>
+                    )}
+                  </Button>
+
+                  {!notificationStatus.configured && (
+                    <p className="text-sm text-gray-500">
+                      Configure Brevo API settings first
+                    </p>
+                  )}
+                </div>
+              </Card>
+
+              {/* Configuration Help */}
+              {!notificationStatus.configured && (
+                <Card className="p-6 bg-yellow-50 border-yellow-200">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Setup Required</h3>
+                  <p className="text-gray-700 mb-4">
+                    To enable automatic email notifications, you need to configure your Brevo API settings:
+                  </p>
+                  <ol className="list-decimal list-inside space-y-2 text-sm text-gray-600 mb-4">
+                    <li>Sign up for a free Brevo account at <a href="https://brevo.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">brevo.com</a></li>
+                    <li>Get your API key from Brevo dashboard</li>
+                    <li>Create a contact list and note the List ID</li>
+                    <li>Add your API key and List ID to the .env file:
+                      <div className="mt-2 p-3 bg-gray-100 rounded font-mono text-xs">
+                        VITE_BREVO_API_KEY=your_api_key_here<br />
+                        VITE_BREVO_LIST_ID=your_list_id_here
+                      </div>
+                    </li>
+                    <li>Restart your development server</li>
+                  </ol>
+                  <Button
+                    onClick={refreshNotificationStatus}
+                    variant="outline"
+                    size="sm"
+                  >
+                    Check Configuration
+                  </Button>
+                </Card>
+              )}
+
+              {/* Sender Verification Help */}
+              {notificationStatus.configured && !notificationStatus.senderVerified && (
+                <Card className="p-6 bg-orange-50 border-orange-200">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Sender Email Verification Required</h3>
+                  <p className="text-gray-700 mb-4">
+                    Your emails are being sent to Brevo but not delivered because your sender email needs verification:
+                  </p>
+                  <ol className="list-decimal list-inside space-y-2 text-sm text-gray-600 mb-4">
+                    <li>Go to your <a href="https://app.brevo.com/senders" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Brevo Senders page</a></li>
+                    <li>Add and verify your email: <code className="bg-gray-100 px-2 py-1 rounded">{import.meta.env.VITE_SENDER_EMAIL || 'ajaygoud.kumbham@gmail.com'}</code></li>
+                    <li>Check your Gmail for the verification email from Brevo</li>
+                    <li>Click the verification link in that email</li>
+                    <li>Wait a few minutes for verification to complete</li>
+                  </ol>
+                  <div className="flex gap-3">
+                    <Button
+                      onClick={refreshNotificationStatus}
+                      variant="outline"
+                      size="sm"
+                    >
+                      Check Verification Status
+                    </Button>
+                    <Button
+                      onClick={() => window.open('https://app.brevo.com/senders', '_blank')}
+                      size="sm"
+                    >
+                      Open Brevo Senders
+                    </Button>
+                  </div>
+                </Card>
+              )}
+            </div>
           </div>
         )}
 
