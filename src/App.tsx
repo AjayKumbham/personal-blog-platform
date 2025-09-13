@@ -14,6 +14,7 @@ import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import NewPost from './pages/admin/NewPost';
 import EditPost from './pages/admin/EditPost';
+import Unsubscribe from './pages/Unsubscribe';
 
 function App() {
   return (
@@ -51,6 +52,7 @@ function App() {
                   <Route path="/blog/:slug" element={<BlogPost />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/contact" element={<Contact />} />
+                  <Route path="/unsubscribe" element={<Unsubscribe />} />
                 </Routes>
               </main>
               <Footer />
