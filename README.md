@@ -11,7 +11,7 @@
 
 ## 🌐 Live Demo
 
-**[View Live Site](https://your-blog-platform.vercel.app)** *(Replace with your actual deployment URL)*
+**[View Live Site](#)** 
 
 ## ✨ Features
 
