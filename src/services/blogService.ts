@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabase';
 import { BlogPost } from '../types';
+import { blogNotificationService } from './blogNotificationService';
 
 export const blogService = {
   // Get all published posts for public viewing
@@ -79,28 +80,76 @@ export const blogService = {
 
   // Admin: Create new post
   async createPost(post: Omit<BlogPost, 'id' | 'publishedAt'>) {
+    const insertData: Record<string, unknown> = {
+      title: post.title,
+      slug: post.slug,
+      excerpt: post.excerpt,
+      content: post.content,
+      tags: post.tags,
+      read_time: post.readTime,
+      featured: post.featured,
+      published: post.published,
+      cover_image: post.coverImage,
+    };
+
+    // Set published_at timestamp if creating as published
+    if (post.published) {
+      insertData.published_at = new Date().toISOString();
+    }
+
     const { data, error } = await supabase
       .from('posts')
-      .insert({
-        title: post.title,
-        slug: post.slug,
-        excerpt: post.excerpt,
-        content: post.content,
-        tags: post.tags,
-        read_time: post.readTime,
-        featured: post.featured,
-        published: post.published,
-        cover_image: post.coverImage,
-      })
+      .insert(insertData)
       .select()
       .single();
 
     if (error) throw error;
+
+    // Send notification email if post is created as published
+    if (post.published) {
+      const publishedPost: BlogPost = {
+        id: data.id,
+        title: data.title,
+        slug: data.slug,
+        excerpt: data.excerpt,
+        content: data.content,
+        tags: data.tags,
+        publishedAt: new Date(data.published_at),
+        readTime: data.read_time,
+        featured: data.featured,
+        published: data.published,
+        coverImage: data.cover_image,
+      };
+
+      // Send notification asynchronously (don't wait for it to complete)
+      blogNotificationService.notifySubscribersOfNewPost(publishedPost)
+        .then(result => {
+          if (result.success) {
+            console.log(`✅ Blog notification sent: ${result.message}`);
+          } else {
+            console.error(`❌ Blog notification failed: ${result.message}`);
+          }
+        })
+        .catch(error => {
+          console.error('❌ Blog notification error:', error);
+        });
+    }
+
     return data;
   },
 
   // Admin: Update post
   async updatePost(id: string, updates: Partial<BlogPost>) {
+    // Get the current post to check if it's being published for the first time
+    const { data: currentPost } = await supabase
+      .from('posts')
+      .select('published')
+      .eq('id', id)
+      .single();
+
+    const wasUnpublished = currentPost && !currentPost.published;
+    const isBeingPublished = updates.published === true;
+
     const updateData: Record<string, unknown> = {};
     
     if (updates.title) updateData.title = updates.title;
@@ -110,7 +159,13 @@ export const blogService = {
     if (updates.tags) updateData.tags = updates.tags;
     if (updates.readTime) updateData.read_time = updates.readTime;
     if (updates.featured !== undefined) updateData.featured = updates.featured;
-    if (updates.published !== undefined) updateData.published = updates.published;
+    if (updates.published !== undefined) {
+      updateData.published = updates.published;
+      // Set published_at timestamp when publishing for the first time
+      if (updates.published && wasUnpublished) {
+        updateData.published_at = new Date().toISOString();
+      }
+    }
     if (updates.coverImage !== undefined) updateData.cover_image = updates.coverImage;
 
     const { data, error } = await supabase
@@ -121,6 +176,37 @@ export const blogService = {
       .single();
 
     if (error) throw error;
+
+    // Send notification email if post is being published for the first time
+    if (wasUnpublished && isBeingPublished) {
+      const publishedPost: BlogPost = {
+        id: data.id,
+        title: data.title,
+        slug: data.slug,
+        excerpt: data.excerpt,
+        content: data.content,
+        tags: data.tags,
+        publishedAt: new Date(data.published_at),
+        readTime: data.read_time,
+        featured: data.featured,
+        published: data.published,
+        coverImage: data.cover_image,
+      };
+
+      // Send notification asynchronously (don't wait for it to complete)
+      blogNotificationService.notifySubscribersOfNewPost(publishedPost)
+        .then(result => {
+          if (result.success) {
+            console.log(`✅ Blog notification sent: ${result.message}`);
+          } else {
+            console.error(`❌ Blog notification failed: ${result.message}`);
+          }
+        })
+        .catch(error => {
+          console.error('❌ Blog notification error:', error);
+        });
+    }
+
     return data;
   },
 
