@@ -58,13 +58,11 @@ export interface SiteSettings {
   devToApiKey: string;
   newsletter?: {
     enabled?: boolean;
-    provider?: 'brevo' | 'substack';
+    provider?: 'brevo';
     title?: string;
     description?: string;
     brevoApiKey?: string;
     brevoListId?: number;
-    // Legacy support
-    substackUrl?: string;
   };
   // Optional future-ready fields
   theme?: {

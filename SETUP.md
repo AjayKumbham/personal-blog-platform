@@ -143,7 +143,7 @@ INSERT INTO site_settings (settings_data) VALUES (
     },
     "newsletter": {
       "enabled": true,
-      "substackUrl": "https://yourname.substack.com",
+      "provider": "brevo",
       "title": "Stay Updated",
       "description": "Get notified when I publish new articles about web development and programming."
     },

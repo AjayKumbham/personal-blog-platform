@@ -79,8 +79,6 @@ export const settingsService = {
         description: 'Get notified when I publish new articles about web development and programming.',
         brevoApiKey: '',
         brevoListId: 1,
-        // Legacy support
-        substackUrl: '',
       },
       theme: {
         primaryColor: '#3B82F6',

@@ -10,7 +10,7 @@ UPDATE site_settings
 SET settings_data = settings_data || '{
   "newsletter": {
     "enabled": true,
-    "substackUrl": "https://kumbhamajaygoud.substack.com",
+    "provider": "brevo",
     "title": "Stay Updated",
     "description": "Get notified when I publish new articles about web development and programming."
   }
