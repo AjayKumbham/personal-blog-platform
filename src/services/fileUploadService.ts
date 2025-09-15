@@ -34,17 +34,35 @@ export const fileUploadService = {
       // Extract file path from URL
       const url = new URL(resumeUrl);
       const pathParts = url.pathname.split('/');
-      const filePath = pathParts.slice(-2).join('/'); // Get 'resumes/filename.pdf'
+      
+      // Find the index of 'uploads' in the path to get the correct file path
+      const uploadsIndex = pathParts.findIndex(part => part === 'uploads');
+      if (uploadsIndex === -1) {
+        throw new Error('Invalid resume URL format');
+      }
+      
+      // Get everything after 'uploads' bucket name
+      const filePath = pathParts.slice(uploadsIndex + 1).join('/');
+      
+      if (!filePath) {
+        throw new Error('Could not extract file path from URL');
+      }
+
+      console.log('Attempting to delete resume file:', filePath);
 
       const { error } = await supabase.storage
         .from('uploads')
         .remove([filePath]);
 
       if (error) {
-        console.warn('Failed to delete old resume:', error.message);
+        console.error('Failed to delete old resume:', error.message);
+        throw new Error(`Failed to delete resume: ${error.message}`);
       }
+      
+      console.log('Successfully deleted resume file:', filePath);
     } catch (error) {
-      console.warn('Failed to parse resume URL for deletion:', error);
+      console.error('Failed to delete resume:', error);
+      throw error;
     }
   },
 
