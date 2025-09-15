@@ -64,26 +64,39 @@ const AdminDashboard: React.FC = () => {
     stats: [] as Array<{ id?: string; icon: string; label: string; value: string }>,
     // Newsletter
     newsletterEnabled: true,
-    substackUrl: 'https://kumbhamajaygoud.substack.com',
   });
 
   // Resume upload state
   const [uploadingResume, setUploadingResume] = useState(false);
 
-  // Notification system state
+  // Notification system state with localStorage persistence
   const [notificationStatus, setNotificationStatus] = useState<{
     configured: boolean;
     subscriberCount: number;
     senderVerified?: boolean;
     lastError?: string;
-  }>({
-    configured: false,
-    subscriberCount: 0,
-    senderVerified: false,
-    lastError: undefined
+    lastChecked?: string;
+  }>(() => {
+    // Load from localStorage on initialization
+    try {
+      const saved = localStorage.getItem('brevo-notification-status');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (error) {
+      console.warn('Failed to load notification status from localStorage:', error);
+    }
+    // Default state if nothing in localStorage
+    return {
+      configured: false,
+      subscriberCount: 0,
+      senderVerified: false,
+      lastError: undefined,
+      lastChecked: undefined
+    };
   });
   const [sendingTestNotification, setSendingTestNotification] = useState(false);
-  const [loadingNotificationStatus, setLoadingNotificationStatus] = useState(true);
+  const [loadingNotificationStatus, setLoadingNotificationStatus] = useState(false);
 
   // Handle resume upload
   const handleResumeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,13 +138,17 @@ const AdminDashboard: React.FC = () => {
   const handleRemoveResume = async () => {
     if (!settings.resume) return;
 
+    if (!window.confirm('Are you sure you want to remove your resume? This action cannot be undone.')) {
+      return;
+    }
+
     try {
       await fileUploadService.deleteResume(settings.resume);
       setSettings(prev => ({ ...prev, resume: '' }));
-      showSuccess('Resume removed', 'Your resume has been removed');
+      showSuccess('Resume removed', 'Your resume has been successfully removed');
     } catch (error) {
       console.error('Error removing resume:', error);
-      showError('Remove failed', 'Failed to remove resume. Please try again.');
+      showError('Remove failed', error instanceof Error ? error.message : 'Failed to remove resume. Please try again.');
     }
   };
 
@@ -204,7 +221,6 @@ const AdminDashboard: React.FC = () => {
         })),
         // Newsletter
         newsletterEnabled: data.newsletter?.enabled ?? true,
-        substackUrl: data.newsletter?.substackUrl || 'https://kumbhamajaygoud.substack.com',
       });
     } catch (error) {
       console.error('Error loading settings:', error);
@@ -213,27 +229,12 @@ const AdminDashboard: React.FC = () => {
     }
   }, []);
 
-  const loadNotificationStatus = React.useCallback(async () => {
-    try {
-      const status = await blogNotificationService.getSystemStatus();
-      setNotificationStatus(status);
-    } catch (error) {
-      console.error('Error loading notification status:', error);
-      setNotificationStatus({
-        configured: false,
-        subscriberCount: 0,
-        lastError: error instanceof Error ? error.message : 'Unknown error'
-      });
-    } finally {
-      setLoadingNotificationStatus(false);
-    }
-  }, []);
 
   useEffect(() => {
     loadPosts();
     loadSettings();
-    loadNotificationStatus();
-  }, [loadPosts, loadSettings, loadNotificationStatus]);
+    // Don't automatically load notification status - only when user clicks refresh
+  }, [loadPosts, loadSettings]);
 
 
 
@@ -291,7 +292,6 @@ const AdminDashboard: React.FC = () => {
         devToApiKey: settings.devToApiKey,
         newsletter: {
           enabled: settings.newsletterEnabled,
-          substackUrl: settings.substackUrl,
         },
         author: {
           name: settings.siteName, // Use siteName as author name
@@ -523,7 +523,31 @@ const AdminDashboard: React.FC = () => {
 
   const refreshNotificationStatus = async () => {
     setLoadingNotificationStatus(true);
-    await loadNotificationStatus();
+    try {
+      const status = await blogNotificationService.getSystemStatus();
+      const statusWithTimestamp = {
+        ...status,
+        lastChecked: new Date().toISOString()
+      };
+
+      // Save to localStorage
+      localStorage.setItem('brevo-notification-status', JSON.stringify(statusWithTimestamp));
+      setNotificationStatus(statusWithTimestamp);
+    } catch (error) {
+      console.error('Error loading notification status:', error);
+      const errorStatus = {
+        configured: false,
+        subscriberCount: 0,
+        lastError: error instanceof Error ? error.message : 'Unknown error',
+        lastChecked: new Date().toISOString()
+      };
+
+      // Save error state to localStorage too
+      localStorage.setItem('brevo-notification-status', JSON.stringify(errorStatus));
+      setNotificationStatus(errorStatus);
+    } finally {
+      setLoadingNotificationStatus(false);
+    }
   };
 
   const stats = [
@@ -710,44 +734,72 @@ const AdminDashboard: React.FC = () => {
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="text-center">
-                      <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-3 ${notificationStatus.configured ? 'bg-green-100' : 'bg-red-100'
-                        }`}>
-                        {notificationStatus.configured ? (
-                          <CheckCircle2 className="w-8 h-8 text-green-600" />
-                        ) : (
-                          <AlertCircle className="w-8 h-8 text-red-600" />
-                        )}
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="text-center">
+                        <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-3 ${notificationStatus.configured ? 'bg-green-100' : 'bg-red-100'
+                          }`}>
+                          {notificationStatus.configured ? (
+                            <CheckCircle2 className="w-8 h-8 text-green-600" />
+                          ) : (
+                            <AlertCircle className="w-8 h-8 text-red-600" />
+                          )}
+                        </div>
+                        <h4 className="font-semibold text-gray-900">Configuration</h4>
+                        <p className={`text-sm ${notificationStatus.configured ? 'text-green-600' : 'text-red-600'
+                          }`}>
+                          {notificationStatus.configured ? 'Configured' : 'Not Configured'}
+                        </p>
                       </div>
-                      <h4 className="font-semibold text-gray-900">Configuration</h4>
-                      <p className={`text-sm ${notificationStatus.configured ? 'text-green-600' : 'text-red-600'
-                        }`}>
-                        {notificationStatus.configured ? 'Configured' : 'Not Configured'}
-                      </p>
+
+                      <div className="text-center">
+                        <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-3">
+                          <Users className="w-8 h-8 text-blue-600" />
+                        </div>
+                        <h4 className="font-semibold text-gray-900">Subscribers</h4>
+                        <p className="text-2xl font-bold text-blue-600">{notificationStatus.subscriberCount}</p>
+                      </div>
+
+                      <div className="text-center">
+                        <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-3 ${notificationStatus.senderVerified ? 'bg-green-100' : 'bg-yellow-100'
+                          }`}>
+                          <Mail className={`w-8 h-8 ${notificationStatus.senderVerified ? 'text-green-600' : 'text-yellow-600'
+                            }`} />
+                        </div>
+                        <h4 className="font-semibold text-gray-900">Sender Status</h4>
+                        <p className={`text-sm ${notificationStatus.senderVerified ? 'text-green-600' : 'text-yellow-600'
+                          }`}>
+                          {notificationStatus.senderVerified ? 'Verified' : 'Needs Verification'}
+                        </p>
+                      </div>
                     </div>
 
-                    <div className="text-center">
-                      <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-3">
-                        <Users className="w-8 h-8 text-blue-600" />
+                    {/* Last checked timestamp */}
+                    {notificationStatus.lastChecked && (
+                      <div className="mt-4 text-center">
+                        <p className="text-xs text-gray-500">
+                          Last checked: {new Date(notificationStatus.lastChecked).toLocaleString()}
+                          {(() => {
+                            const lastChecked = new Date(notificationStatus.lastChecked);
+                            const now = new Date();
+                            const hoursSinceCheck = (now.getTime() - lastChecked.getTime()) / (1000 * 60 * 60);
+                            if (hoursSinceCheck > 24) {
+                              return <span className="ml-2 text-yellow-600">(Status may be outdated)</span>;
+                            }
+                            return null;
+                          })()}
+                        </p>
                       </div>
-                      <h4 className="font-semibold text-gray-900">Subscribers</h4>
-                      <p className="text-2xl font-bold text-blue-600">{notificationStatus.subscriberCount}</p>
-                    </div>
+                    )}
 
-                    <div className="text-center">
-                      <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-3 ${notificationStatus.senderVerified ? 'bg-green-100' : 'bg-yellow-100'
-                        }`}>
-                        <Mail className={`w-8 h-8 ${notificationStatus.senderVerified ? 'text-green-600' : 'text-yellow-600'
-                          }`} />
+                    {!notificationStatus.lastChecked && (
+                      <div className="mt-4 text-center">
+                        <p className="text-xs text-gray-500">
+                          Click "Refresh Status" to check current Brevo configuration
+                        </p>
                       </div>
-                      <h4 className="font-semibold text-gray-900">Sender Status</h4>
-                      <p className={`text-sm ${notificationStatus.senderVerified ? 'text-green-600' : 'text-yellow-600'
-                        }`}>
-                        {notificationStatus.senderVerified ? 'Verified' : 'Needs Verification'}
-                      </p>
-                    </div>
-                  </div>
+                    )}
+                  </>
                 )}
 
                 {notificationStatus.lastError && (
@@ -806,14 +858,13 @@ const AdminDashboard: React.FC = () => {
                       <code className="bg-gray-100 px-3 py-2 rounded text-sm font-mono">
                         {import.meta.env.VITE_SENDER_EMAIL || 'ajaygoud.kumbham@gmail.com'}
                       </code>
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        notificationStatus.senderVerified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                      }`}>
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${notificationStatus.senderVerified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                        }`}>
                         {notificationStatus.senderVerified ? 'Verified' : 'Needs Verification'}
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <h4 className="text-sm font-medium text-blue-900 mb-2">To change sender email:</h4>
                     <ol className="text-xs text-blue-700 space-y-1">
@@ -1441,18 +1492,7 @@ const AdminDashboard: React.FC = () => {
                       </label>
                     </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Newsletter Service URL
-                      </label>
-                      <input
-                        type="url"
-                        value={settings.substackUrl}
-                        onChange={(e) => setSettings(prev => ({ ...prev, substackUrl: e.target.value }))}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="https://yourname.substack.com"
-                      />
-                    </div>
+
 
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                       <h4 className="text-sm font-medium text-blue-900 mb-2">How it works:</h4>
