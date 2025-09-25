@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastProvider } from './hooks/useToast';
 import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -11,7 +11,12 @@ import BlogPost from './pages/BlogPost';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import AdminLogin from './pages/admin/AdminLogin';
+import AdminLayout from './components/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminPosts from './pages/admin/AdminPosts';
+import AdminNotifications from './pages/admin/AdminNotifications';
+import AdminAbout from './pages/admin/AdminAbout';
+import AdminSettings from './pages/admin/AdminSettings';
 import NewPost from './pages/admin/NewPost';
 import EditPost from './pages/admin/EditPost';
 import Unsubscribe from './pages/Unsubscribe';
@@ -25,11 +30,48 @@ function App() {
           <Routes>
           {/* Admin routes without header/footer */}
           <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin" element={
+          
+          {/* Redirect /admin to /admin/dashboard */}
+          <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+          
+          {/* Admin dashboard routes with AdminLayout */}
+          <Route path="/admin/dashboard" element={
             <ProtectedRoute>
-              <AdminDashboard />
+              <AdminLayout>
+                <AdminDashboard />
+              </AdminLayout>
             </ProtectedRoute>
           } />
+          <Route path="/admin/posts" element={
+            <ProtectedRoute>
+              <AdminLayout>
+                <AdminPosts />
+              </AdminLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/notifications" element={
+            <ProtectedRoute>
+              <AdminLayout>
+                <AdminNotifications />
+              </AdminLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/about" element={
+            <ProtectedRoute>
+              <AdminLayout>
+                <AdminAbout />
+              </AdminLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/settings" element={
+            <ProtectedRoute>
+              <AdminLayout>
+                <AdminSettings />
+              </AdminLayout>
+            </ProtectedRoute>
+          } />
+          
+          {/* Admin post management routes */}
           <Route path="/admin/posts/new" element={
             <ProtectedRoute>
               <NewPost />

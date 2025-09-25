@@ -75,3 +75,61 @@ export interface SiteSettings {
     keywords: string[];
   };
 }
+
+// Admin-specific interfaces
+export interface NavigationItem {
+  id: string;
+  name: string;
+  icon: React.ComponentType<{ className?: string }>;
+  path: string;
+}
+
+export interface NotificationStatus {
+  configured: boolean;
+  subscriberCount: number;
+  senderVerified?: boolean;
+  lastError?: string;
+  lastChecked?: string;
+}
+
+export interface AdminSettingsState {
+  // API Keys
+  hashnodeApiKey: string;
+  hashnodePublicationId: string;
+  devToApiKey: string;
+  // About Content
+  siteName: string;
+  siteDescription: string;
+  siteUrl: string;
+  authorName: string;
+  authorBio: string;
+  authorTitle: string;
+  authorLocation: string;
+  authorEmail: string;
+  github: string;
+  linkedin: string;
+  twitter: string;
+  website: string;
+  resume: string;
+  skills: string;
+  careerHighlights: CareerHighlight[];
+  stats: Array<{ id?: string; icon: string; label: string; value: string }>;
+  // Newsletter
+  newsletterEnabled: boolean;
+}
+
+export interface StatsFormData {
+  label: string;
+  value: string;
+  icon: string;
+}
+
+export interface CareerHighlightFormData {
+  title: string;
+  subtitle: string;
+  points: string[];
+  metrics: Array<{ label: string; value: string }>;
+  period: string;
+  icon: string;
+  order: number;
+}
