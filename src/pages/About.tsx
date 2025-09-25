@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { Mail, Github, Twitter, Linkedin, MapPin, Code2, Award, Users, Globe, Briefcase, Trophy, Rocket, Target, Zap } from 'lucide-react';
+import { Mail, Github, X, Linkedin, MapPin, Code2, Award, Users, Globe, Briefcase, Trophy, Rocket, Target, Zap } from 'lucide-react';
 import { settingsService } from '../services/settingsService';
 import { SiteSettings } from '../types';
 import Card from '../components/ui/Card';
@@ -56,21 +56,37 @@ const About: React.FC = () => {
 
   // Stats should come from settings or be empty
   const stats = settings.author?.stats || [];
+  
+
 
   // Get career highlights from settings
   const highlights = settings.author?.careerHighlights || [];
 
-  // Icon mapping for dynamic icons
-  const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-    'Rocket': Rocket,
-    'Trophy': Trophy,
-    'Target': Target,
-    'Briefcase': Briefcase,
-    'Zap': Zap,
-    'Users': Users,
-    'Code2': Code2,
-    'Award': Award
+  // Icon component that properly handles lucide-react icons
+  const DynamicIcon: React.FC<{ iconName: string; className?: string }> = ({ iconName, className }) => {
+    switch (iconName) {
+      case 'Rocket':
+        return <Rocket className={className} />;
+      case 'Trophy':
+        return <Trophy className={className} />;
+      case 'Target':
+        return <Target className={className} />;
+      case 'Briefcase':
+        return <Briefcase className={className} />;
+      case 'Zap':
+        return <Zap className={className} />;
+      case 'Users':
+        return <Users className={className} />;
+      case 'Code2':
+        return <Code2 className={className} />;
+      case 'Award':
+        return <Award className={className} />;
+      default:
+        return <Award className={className} />;
+    }
   };
+
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -148,11 +164,12 @@ const About: React.FC = () => {
 
               if (stat) {
                 // Show actual stat data
-                const IconComponent = stat.icon || Award;
+                const iconName = typeof stat.icon === 'string' ? stat.icon : 'Award';
+                
                 return (
                   <Card key={index} className="text-center p-6">
                     <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <IconComponent className="w-6 h-6 text-blue-600" />
+                      <DynamicIcon iconName={iconName} className="w-6 h-6 text-blue-600" />
                     </div>
                     <div className="text-3xl font-bold text-gray-900 mb-2">{stat.value}</div>
                     <div className="text-gray-600">{stat.label}</div>
@@ -273,10 +290,7 @@ const About: React.FC = () => {
                         <div className="flex items-center space-x-4">
                           {/* Dynamic Icon */}
                           <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                            {(() => {
-                              const IconComponent = iconMap[highlight.icon] || Code2;
-                              return <IconComponent className="w-7 h-7 text-white drop-shadow-sm" />;
-                            })()}
+                            <DynamicIcon iconName={highlight.icon || 'Code2'} className="w-7 h-7 text-white drop-shadow-sm" />
                           </div>
                           <span className="text-sm font-semibold text-white/90 uppercase tracking-wide">
                             {highlight.subtitle}
@@ -362,7 +376,7 @@ const About: React.FC = () => {
               </div>
             )}
 
-            {/* Twitter */}
+            {/* X (formerly Twitter) */}
             {author.twitter ? (
               <a
                 href={author.twitter}
@@ -370,11 +384,11 @@ const About: React.FC = () => {
                 rel="noopener noreferrer"
                 className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
               >
-                <Twitter className="w-6 h-6" />
+                <X className="w-6 h-6" />
               </a>
             ) : (
               <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center opacity-30 cursor-not-allowed">
-                <Twitter className="w-6 h-6" />
+                <X className="w-6 h-6" />
               </div>
             )}
 
