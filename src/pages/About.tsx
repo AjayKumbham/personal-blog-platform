@@ -36,14 +36,15 @@ const About: React.FC = () => {
     );
   }
 
-  // Show empty state when no settings are available
-  if (!settings || !settings.author.name) {
+  // Show empty state when no settings are available or author name is missing
+  if (!settings || !settings.author?.name) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center p-8">
           <div className="text-6xl mb-4">📝</div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">No Content Available</h2>
-          <p className="text-gray-600">About page content has not been configured yet.</p>
+          <p className="text-gray-600 mb-4">About page content has not been configured yet.</p>
+          <p className="text-sm text-gray-500">Please configure your author information in the admin panel.</p>
         </div>
       </div>
     );
@@ -56,7 +57,7 @@ const About: React.FC = () => {
 
   // Stats should come from settings or be empty
   const stats = settings.author?.stats || [];
-  
+
 
 
   // Get career highlights from settings
@@ -107,37 +108,33 @@ const About: React.FC = () => {
                 {author.bio}
               </p>
               <div className="flex flex-col sm:flex-row flex-wrap gap-4">
-                {author.website ? (
-                  <Button size="lg" className="w-full sm:w-auto">
+                <Button
+                  size="lg"
+                  className="w-full sm:w-auto"
+                  disabled={!author.website || !author.website.trim()}
+                >
+                  {author.website && author.website.trim() ? (
                     <a href={author.website} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center">
                       <Globe className="w-5 h-5 mr-2" />
                       View Portfolio
                     </a>
-                  </Button>
-                ) : (
-                  <Button size="lg" className="w-full sm:w-auto opacity-50 cursor-not-allowed">
+                  ) : (
                     <span className="flex items-center justify-center">
                       <Globe className="w-5 h-5 mr-2" />
-                      Portfolio Not Available
+                      No Portfolio Available
                     </span>
-                  </Button>
-                )}
-                {author.resume ? (
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="w-full sm:w-auto border-white text-white hover:!bg-white hover:!text-slate-900"
-                    onClick={() => window.open(author.resume, '_blank', 'noopener,noreferrer')}
-                  >
-                    Download Resume
-                  </Button>
-                ) : (
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto border-white text-white opacity-50 cursor-not-allowed">
-                    <span className="flex items-center justify-center">
-                      Resume Not Available
-                    </span>
-                  </Button>
-                )}
+                  )}
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="w-full sm:w-auto border-white text-white hover:!bg-white hover:!text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={!author.resume || !author.resume.trim()}
+                  onClick={() => author.resume && author.resume.trim() && window.open(author.resume, '_blank', 'noopener,noreferrer')}
+                >
+                  {author.resume && author.resume.trim() ? 'Download Resume' : 'No Resume Available'}
+                </Button>
               </div>
             </div>
 
@@ -155,7 +152,7 @@ const About: React.FC = () => {
         </div>
       </section>
 
-      {/* Stats Section - Always show same UI structure */}
+      {/* Stats Section - Always show with 4 slots */}
       <section className="pt-16 pb-12 -mt-12 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -163,11 +160,10 @@ const About: React.FC = () => {
               const stat = stats[index];
 
               if (stat) {
-                // Show actual stat data
                 const iconName = typeof stat.icon === 'string' ? stat.icon : 'Award';
-                
+
                 return (
-                  <Card key={index} className="text-center p-6">
+                  <Card key={stat.id || index} className="text-center p-6 hover:shadow-lg transition-shadow duration-200">
                     <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                       <DynamicIcon iconName={iconName} className="w-6 h-6 text-blue-600" />
                     </div>
@@ -176,10 +172,10 @@ const About: React.FC = () => {
                   </Card>
                 );
               } else {
-                // Show empty stat card
+                // Show empty stat slot with "No data"
                 return (
-                  <Card key={index} className="text-center p-6">
-                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Card key={`empty-${index}`} className="text-center p-6 bg-gray-50 border-dashed border-2 border-gray-200">
+                    <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
                       <Award className="w-6 h-6 text-gray-400" />
                     </div>
                     <div className="text-3xl font-bold text-gray-400 mb-2">--</div>
@@ -361,7 +357,7 @@ const About: React.FC = () => {
 
           <div className="flex justify-center gap-6 mb-10">
             {/* GitHub */}
-            {author.github ? (
+            {author.github && author.github.trim() && (
               <a
                 href={author.github}
                 target="_blank"
@@ -370,14 +366,10 @@ const About: React.FC = () => {
               >
                 <Github className="w-6 h-6" />
               </a>
-            ) : (
-              <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center opacity-30 cursor-not-allowed">
-                <Github className="w-6 h-6" />
-              </div>
             )}
 
             {/* X (formerly Twitter) */}
-            {author.twitter ? (
+            {author.twitter && author.twitter.trim() && (
               <a
                 href={author.twitter}
                 target="_blank"
@@ -386,14 +378,10 @@ const About: React.FC = () => {
               >
                 <X className="w-6 h-6" />
               </a>
-            ) : (
-              <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center opacity-30 cursor-not-allowed">
-                <X className="w-6 h-6" />
-              </div>
             )}
 
             {/* LinkedIn */}
-            {author.linkedin ? (
+            {author.linkedin && author.linkedin.trim() && (
               <a
                 href={author.linkedin}
                 target="_blank"
@@ -402,25 +390,34 @@ const About: React.FC = () => {
               >
                 <Linkedin className="w-6 h-6" />
               </a>
-            ) : (
-              <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center opacity-30 cursor-not-allowed">
-                <Linkedin className="w-6 h-6" />
-              </div>
             )}
 
-            {/* Email - Always show since it's required */}
-            <a
-              href={`mailto:${author.email}`}
-              className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
-            >
-              <Mail className="w-6 h-6" />
-            </a>
+            {/* Email - Always show if available */}
+            {author.email && author.email.trim() && (
+              <a
+                href={`mailto:${author.email}`}
+                className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
+              >
+                <Mail className="w-6 h-6" />
+              </a>
+            )}
           </div>
 
-          <Button variant="outline" size="lg" className="border-white text-white hover:!bg-white hover:!text-blue-600 transition-all duration-300">
-            <a href={`mailto:${author.email}`} className="block w-full h-full">
-              Send me an email
-            </a>
+          <Button
+            variant="outline"
+            size="lg"
+            className="border-white text-white hover:!bg-white hover:!text-blue-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!author.email || !author.email.trim()}
+          >
+            {author.email && author.email.trim() ? (
+              <a href={`mailto:${author.email}`} className="block w-full h-full">
+                Send me an email
+              </a>
+            ) : (
+              <span className="block w-full h-full">
+                No email available
+              </span>
+            )}
           </Button>
         </div>
       </section>
