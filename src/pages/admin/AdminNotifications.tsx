@@ -100,12 +100,11 @@ const AdminNotifications: React.FC = () => {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Email Notifications</h1>
         <Button
-          onClick={refreshNotificationStatus}
+          onClick={() => refreshNotificationStatus(true)}
           disabled={loadingNotificationStatus}
           variant="outline"
-          icon={RefreshCw}
-          className={loadingNotificationStatus ? 'animate-spin' : ''}
         >
+          <RefreshCw className={`w-4 h-4 mr-2 ${loadingNotificationStatus ? 'animate-spin' : ''}`} />
           Refresh Status
         </Button>
       </div>

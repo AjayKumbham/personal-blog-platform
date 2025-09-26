@@ -15,7 +15,7 @@ interface UseNotificationStatusReturn {
   sendingTestNotification: boolean;
   loadingNotificationStatus: boolean;
   handleSendTestNotification: () => Promise<void>;
-  refreshNotificationStatus: () => Promise<void>;
+  refreshNotificationStatus: (forceRefresh?: boolean) => Promise<void>;
 }
 
 export const useNotificationStatus = (): UseNotificationStatusReturn => {
@@ -73,7 +73,20 @@ export const useNotificationStatus = (): UseNotificationStatusReturn => {
     }
   };
 
-  const refreshNotificationStatus = async () => {
+  const refreshNotificationStatus = async (forceRefresh = false) => {
+    // Check if we have recent data (less than 5 minutes old) and don't force refresh
+    if (!forceRefresh && notificationStatus.lastChecked) {
+      const lastChecked = new Date(notificationStatus.lastChecked);
+      const now = new Date();
+      const diffInMinutes = (now.getTime() - lastChecked.getTime()) / (1000 * 60);
+      
+      // If data is less than 5 minutes old, don't make API call
+      if (diffInMinutes < 5) {
+        console.log('Using cached notification status (less than 5 minutes old)');
+        return;
+      }
+    }
+
     setLoadingNotificationStatus(true);
     try {
       const status = await blogNotificationService.getSystemStatus();
