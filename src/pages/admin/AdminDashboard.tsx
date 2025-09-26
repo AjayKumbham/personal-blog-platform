@@ -1,10 +1,16 @@
+// React
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { PlusCircle, FileText, Eye, Edit, Users } from 'lucide-react';
-import { useAdminPosts } from '../../hooks/admin/useAdminPosts';
+
+// Third-party
+import { FileText, Eye, Edit, Users } from 'lucide-react';
+
+// Local components
 import StatsCard from '../../components/admin/shared/StatsCard';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
+
+// Hooks
+import { useAdminPosts } from '../../hooks/admin/useAdminPosts';
 
 const AdminDashboard: React.FC = () => {
   const { posts, loadingPosts, loadPosts } = useAdminPosts();
@@ -22,13 +28,9 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
+      <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <Link to="/admin/posts/new">
-          <Button icon={PlusCircle}>
-            New Post
-          </Button>
-        </Link>
+        <p className="text-gray-600 mt-1">Overview of your blog's performance and recent activity</p>
       </div>
 
       {loadingPosts ? (
@@ -62,9 +64,8 @@ const AdminDashboard: React.FC = () => {
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      post.published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                    }`}>
+                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${post.published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                      }`}>
                       {post.published ? 'Published' : 'Draft'}
                     </span>
                   </div>
