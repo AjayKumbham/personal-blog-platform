@@ -2,7 +2,7 @@
 import { useState, useCallback } from 'react';
 
 // Third-party
-import { Code2 } from 'lucide-react';
+// (No third-party imports needed)
 
 // Services
 import { settingsService } from '../../services/settingsService';
@@ -14,9 +14,17 @@ import { useToast } from '../useToast';
 // Types
 import { CareerHighlight, AdminSettingsState, StatsFormData, CareerHighlightFormData } from '../../types';
 
-// Icon mapping for dynamic icons
-const iconMap: { [key: string]: React.ComponentType<{ className?: string }> } = {
-  Code2,
+// Helper function to deduplicate stats by id and label
+const deduplicateStats = (stats: Array<{ id?: string; icon: string; label: string; value: string }>) => {
+  const seen = new Set<string>();
+  return stats.filter(stat => {
+    const key = stat.id || `${stat.label}-${stat.value}`;
+    if (seen.has(key)) {
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
 };
 
 interface UseAdminSettingsReturn {
@@ -35,8 +43,8 @@ interface UseAdminSettingsReturn {
   highlightForm: CareerHighlightFormData;
   openHighlightModal: (highlight?: CareerHighlight) => void;
   closeHighlightModal: () => void;
-  saveHighlight: () => void;
-  deleteHighlight: (id: string) => void;
+  saveHighlight: () => Promise<void>;
+  deleteHighlight: (id: string) => Promise<void>;
   updateHighlightForm: (field: string, value: string | number | string[] | { label: string; value: string }[] | { label: string; value: string }, index?: number) => void;
   // Stats
   showStatsModal: boolean;
@@ -44,8 +52,8 @@ interface UseAdminSettingsReturn {
   statsForm: StatsFormData;
   openStatsModal: (stats?: { id?: string; icon: string; label: string; value: string }) => void;
   closeStatsModal: () => void;
-  saveStat: () => void;
-  deleteStat: (id: string) => void;
+  saveStat: () => Promise<void>;
+  deleteStat: (id: string) => Promise<void>;
   updateStatsForm: (updates: Partial<StatsFormData>) => void;
 }
 
@@ -131,12 +139,12 @@ export const useAdminSettings = (): UseAdminSettingsReturn => {
         resume: data.author?.resume || '',
         skills: data.author?.skills?.join(', ') || '',
         careerHighlights: data.author?.careerHighlights || [],
-        stats: (data.author?.stats || []).map(stat => ({
-          id: stat.id || Date.now().toString(),
+        stats: deduplicateStats((data.author?.stats || []).map((stat, index) => ({
+          id: stat.id || `stat-${Date.now()}-${index}`,
           icon: typeof stat.icon === 'string' ? stat.icon : 'Code2',
           label: stat.label,
           value: stat.value
-        })),
+        }))),
         // Newsletter
         newsletterEnabled: data.newsletter?.enabled ?? true,
       });
@@ -162,8 +170,8 @@ export const useAdminSettings = (): UseAdminSettingsReturn => {
           enabled: settings.newsletterEnabled,
         },
         author: {
-          name: settings.siteName, // Use siteName as author name
-          bio: settings.siteDescription,
+          name: settings.authorName,
+          bio: settings.authorBio,
           avatar: '/personal-logo.jpg', // Default avatar
           title: settings.authorTitle,
           location: settings.authorLocation,
@@ -171,12 +179,13 @@ export const useAdminSettings = (): UseAdminSettingsReturn => {
           github: settings.github,
           twitter: settings.twitter,
           linkedin: settings.linkedin,
-          website: settings.siteUrl,
+          website: settings.website,
           resume: settings.resume,
           skills: settings.skills ? settings.skills.split(',').map(s => s.trim()).filter(s => s) : [],
           careerHighlights: settings.careerHighlights || [],
-          stats: (settings.stats || []).map(stat => ({
-            icon: iconMap[stat.icon] || Code2,
+          stats: deduplicateStats(settings.stats || []).slice(0, 4).map(stat => ({
+            id: stat.id,
+            icon: stat.icon, // Keep as string for consistency
             label: stat.label,
             value: stat.value
           })),
@@ -288,9 +297,9 @@ export const useAdminSettings = (): UseAdminSettingsReturn => {
     setEditingHighlight(null);
   };
 
-  const saveHighlight = () => {
+  const saveHighlight = async () => {
     const newHighlight = {
-      id: editingHighlight?.id || Date.now().toString(),
+      id: editingHighlight?.id || `highlight-${Date.now()}`,
       ...highlightForm,
       points: highlightForm.points.filter(p => p.trim()),
       metrics: highlightForm.metrics.filter(m => m.label.trim() && m.value.trim())
@@ -305,26 +314,71 @@ export const useAdminSettings = (): UseAdminSettingsReturn => {
       updatedHighlights = [...settings.careerHighlights, newHighlight];
     }
 
+    // Update local state first for immediate UI feedback
     setSettings(prev => ({
       ...prev,
       careerHighlights: updatedHighlights
     }));
 
-    closeHighlightModal();
-    showSuccess(
-      editingHighlight ? 'Highlight updated' : 'Highlight added',
-      `Career highlight has been ${editingHighlight ? 'updated' : 'added'} successfully.`
-    );
-  };
+    // Save to database immediately
+    try {
+      const currentSettings = await settingsService.getSiteSettings();
+      await settingsService.updateSiteSettings({
+        author: {
+          ...currentSettings.author,
+          careerHighlights: updatedHighlights
+        }
+      });
 
-  const deleteHighlight = (id: string) => {
-    if (window.confirm('Are you sure you want to delete this career highlight?')) {
-      const updatedHighlights = settings.careerHighlights.filter(h => h.id !== id);
+      closeHighlightModal();
+      showSuccess(
+        editingHighlight ? 'Highlight updated' : 'Highlight added',
+        `Career highlight has been ${editingHighlight ? 'updated' : 'added'} and saved to database.`
+      );
+    } catch (error) {
+      console.error('Error saving highlight to database:', error);
+      // Revert local state on error
       setSettings(prev => ({
         ...prev,
-        careerHighlights: updatedHighlights
+        careerHighlights: editingHighlight ? settings.careerHighlights : settings.careerHighlights.filter(h => h.id !== newHighlight.id)
       }));
-      showSuccess('Highlight deleted', 'Career highlight has been deleted successfully.');
+      showError('Failed to save highlight', 'The career highlight could not be saved to the database. Please try again.');
+    }
+  };
+
+  const deleteHighlight = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this career highlight? This action cannot be undone.')) {
+      return;
+    }
+
+    const originalHighlights = [...settings.careerHighlights];
+    const updatedHighlights = settings.careerHighlights.filter(h => h.id !== id);
+
+    // Update local state first for immediate UI feedback
+    setSettings(prev => ({
+      ...prev,
+      careerHighlights: updatedHighlights
+    }));
+
+    // Save to database immediately
+    try {
+      const currentSettings = await settingsService.getSiteSettings();
+      await settingsService.updateSiteSettings({
+        author: {
+          ...currentSettings.author,
+          careerHighlights: updatedHighlights
+        }
+      });
+
+      showSuccess('Highlight deleted', 'Career highlight has been deleted and removed from database.');
+    } catch (error) {
+      console.error('Error deleting highlight from database:', error);
+      // Revert local state on error
+      setSettings(prev => ({
+        ...prev,
+        careerHighlights: originalHighlights
+      }));
+      showError('Failed to delete highlight', 'The career highlight could not be deleted from the database. Please try again.');
     }
   };
 
@@ -377,9 +431,9 @@ export const useAdminSettings = (): UseAdminSettingsReturn => {
     setEditingStats(null);
   };
 
-  const saveStat = () => {
+  const saveStat = async () => {
     const newStat = {
-      id: editingStats?.id || Date.now().toString(),
+      id: editingStats?.id || `stat-${Date.now()}`,
       ...statsForm
     };
 
@@ -392,26 +446,81 @@ export const useAdminSettings = (): UseAdminSettingsReturn => {
       updatedStats = [...settings.stats, newStat];
     }
 
+    // Update local state first for immediate UI feedback
     setSettings(prev => ({
       ...prev,
       stats: updatedStats
     }));
 
-    closeStatsModal();
-    showSuccess(
-      editingStats ? 'Stat updated' : 'Stat added',
-      `Stat has been ${editingStats ? 'updated' : 'added'} successfully.`
-    );
-  };
+    // Save to database immediately
+    try {
+      const currentSettings = await settingsService.getSiteSettings();
+      await settingsService.updateSiteSettings({
+        author: {
+          ...currentSettings.author,
+          stats: deduplicateStats(updatedStats).slice(0, 4).map(stat => ({
+            id: stat.id,
+            icon: stat.icon,
+            label: stat.label,
+            value: stat.value
+          }))
+        }
+      });
 
-  const deleteStat = (id: string) => {
-    if (window.confirm('Are you sure you want to delete this stat?')) {
-      const updatedStats = settings.stats.filter(s => s.id !== id);
+      closeStatsModal();
+      showSuccess(
+        editingStats ? 'Stat updated' : 'Stat added',
+        `Stat has been ${editingStats ? 'updated' : 'added'} and saved to database.`
+      );
+    } catch (error) {
+      console.error('Error saving stat to database:', error);
+      // Revert local state on error
       setSettings(prev => ({
         ...prev,
-        stats: updatedStats
+        stats: editingStats ? settings.stats : settings.stats.filter(s => s.id !== newStat.id)
       }));
-      showSuccess('Stat deleted', 'Stat has been deleted successfully.');
+      showError('Failed to save stat', 'The stat could not be saved to the database. Please try again.');
+    }
+  };
+
+  const deleteStat = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this stat? This action cannot be undone.')) {
+      return;
+    }
+
+    const originalStats = [...settings.stats];
+    const updatedStats = settings.stats.filter(s => s.id !== id);
+
+    // Update local state first for immediate UI feedback
+    setSettings(prev => ({
+      ...prev,
+      stats: updatedStats
+    }));
+
+    // Save to database immediately
+    try {
+      const currentSettings = await settingsService.getSiteSettings();
+      await settingsService.updateSiteSettings({
+        author: {
+          ...currentSettings.author,
+          stats: deduplicateStats(updatedStats).slice(0, 4).map(stat => ({
+            id: stat.id,
+            icon: stat.icon,
+            label: stat.label,
+            value: stat.value
+          }))
+        }
+      });
+
+      showSuccess('Stat deleted', 'Stat has been deleted and removed from database.');
+    } catch (error) {
+      console.error('Error deleting stat from database:', error);
+      // Revert local state on error
+      setSettings(prev => ({
+        ...prev,
+        stats: originalStats
+      }));
+      showError('Failed to delete stat', 'The stat could not be deleted from the database. Please try again.');
     }
   };
 
