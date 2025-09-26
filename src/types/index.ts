@@ -42,7 +42,7 @@ export interface Author {
   careerHighlights?: CareerHighlight[];
   stats?: Array<{
     id?: string;
-    icon: React.ComponentType<{ className?: string }>; // React component
+    icon: string; // Icon name as string to match admin panel
     label: string;
     value: string;
   }>;
