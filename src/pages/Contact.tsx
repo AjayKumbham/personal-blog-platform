@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, MapPin, Linkedin, Github, Send, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
-import { useToast } from '../hooks/useToast';
+import { useToast } from '../hooks/useToastHook';
 import { settingsService } from '../services/settingsService';
 import { emailService, ContactFormData } from '../services/emailService';
 import { SiteSettings } from '../types';

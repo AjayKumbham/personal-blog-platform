@@ -7,7 +7,6 @@ import { FileText, Eye, Edit, Users } from 'lucide-react';
 // Local components
 import StatsCard from '../../components/admin/shared/StatsCard';
 import Card from '../../components/ui/Card';
-import Button from '../../components/ui/Button';
 
 // Hooks
 import { useAdminPosts } from '../../hooks/admin/useAdminPosts';

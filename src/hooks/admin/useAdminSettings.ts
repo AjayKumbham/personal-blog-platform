@@ -9,7 +9,7 @@ import { settingsService } from '../../services/settingsService';
 import { fileUploadService } from '../../services/fileUploadService';
 
 // Hooks
-import { useToast } from '../useToast';
+import { useToast } from '../useToastHook';
 
 // Types
 import { CareerHighlight, AdminSettingsState, StatsFormData, CareerHighlightFormData } from '../../types';

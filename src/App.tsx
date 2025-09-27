@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ToastProvider } from './hooks/useToast';
+import { ToastProvider } from './components/ui/ToastProvider';
 import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import Header from './components/layout/Header';

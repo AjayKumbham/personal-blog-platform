@@ -5,7 +5,7 @@ import { useState, useCallback } from 'react';
 import { blogService } from '../../services/blogService';
 
 // Hooks
-import { useToast } from '../useToast';
+import { useToast } from '../useToastHook';
 
 // Types
 import { BlogPost } from '../../types';
