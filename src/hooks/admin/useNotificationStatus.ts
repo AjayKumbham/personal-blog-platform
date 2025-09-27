@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { blogNotificationService } from '../../services/blogNotificationService';
 
 // Hooks
-import { useToast } from '../useToast';
+import { useToast } from '../useToastHook';
 
 // Types
 import { NotificationStatus } from '../../types';

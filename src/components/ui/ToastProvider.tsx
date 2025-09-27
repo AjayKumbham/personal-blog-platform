@@ -1,31 +1,10 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import Toast, { ToastProps } from '../components/ui/Toast';
-
-interface ToastContextType {
-  showToast: (toast: Omit<ToastProps, 'id' | 'onClose'>) => void;
-  showSuccess: (title: string, message?: string) => void;
-  showError: (title: string, message?: string) => void;
-  showWarning: (title: string, message?: string) => void;
-  showInfo: (title: string, message?: string) => void;
-}
-
-const ToastContext = createContext<ToastContextType | undefined>(undefined);
-
-// Hook function
-const useToast = () => {
-  const context = useContext(ToastContext);
-  if (!context) {
-    throw new Error('useToast must be used within a ToastProvider');
-  }
-  return context;
-};
+import React, { useState, ReactNode } from 'react';
+import Toast, { ToastProps } from './Toast';
+import { ToastContext } from '../../contexts/ToastContext';
 
 interface ToastProviderProps {
   children: ReactNode;
 }
-
-// Export the hook
-export { useToast };
 
 export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
   const [toasts, setToasts] = useState<ToastProps[]>([]);
