@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 
 // Third-party
-import { Plus, Edit, Trash2, Upload, FileText, X } from 'lucide-react';
+import { Plus, Edit, Trash2, Upload, FileText, X, Code2, Award, Users, Trophy, Target, Briefcase, Zap, Rocket, Calendar, Clock, Star, TrendingUp, Globe, Home, Eye, BarChart3, Settings } from 'lucide-react';
 
 // Local components
 import CareerHighlightModal from '../../components/admin/shared/CareerHighlightModal';
@@ -12,6 +12,29 @@ import Button from '../../components/ui/Button';
 
 // Hooks
 import { useAdminSettings } from '../../hooks/admin/useAdminSettings';
+
+// Icon mapping for dynamic icons
+const iconMap: { [key: string]: React.ComponentType<{ className?: string }> } = {
+  Code2,
+  Award,
+  Users,
+  Trophy,
+  Target,
+  Briefcase,
+  Zap,
+  Rocket,
+  Calendar,
+  Clock,
+  Star,
+  TrendingUp,
+  Globe,
+  Home,
+  Eye,
+  BarChart3,
+  Settings,
+  Edit,
+  FileText,
+};
 
 const AdminAbout: React.FC = () => {
   const {
@@ -86,7 +109,7 @@ const AdminAbout: React.FC = () => {
                 placeholder="Your full name"
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Professional Title
@@ -99,7 +122,7 @@ const AdminAbout: React.FC = () => {
                 placeholder="e.g., Full Stack Developer"
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Location
@@ -112,7 +135,7 @@ const AdminAbout: React.FC = () => {
                 placeholder="e.g., San Francisco, CA"
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Email
@@ -125,7 +148,7 @@ const AdminAbout: React.FC = () => {
                 placeholder="your.email@example.com"
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 GitHub URL
@@ -138,7 +161,7 @@ const AdminAbout: React.FC = () => {
                 placeholder="https://github.com/username"
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 LinkedIn URL
@@ -151,7 +174,7 @@ const AdminAbout: React.FC = () => {
                 placeholder="https://linkedin.com/in/username"
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Twitter URL
@@ -164,7 +187,7 @@ const AdminAbout: React.FC = () => {
                 placeholder="https://twitter.com/username"
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Website URL
@@ -178,7 +201,7 @@ const AdminAbout: React.FC = () => {
               />
             </div>
           </div>
-          
+
           <div className="mt-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Bio
@@ -204,9 +227,9 @@ const AdminAbout: React.FC = () => {
                   <div>
                     <p className="font-medium text-gray-900">Resume uploaded</p>
                     <p className="text-sm text-gray-600">
-                      <a 
-                        href={settings.resume} 
-                        target="_blank" 
+                      <a
+                        href={settings.resume}
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-600 hover:underline"
                       >
@@ -303,7 +326,7 @@ const AdminAbout: React.FC = () => {
               Add Highlight
             </Button>
           </div>
-          
+
           {settings.careerHighlights.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
               <p>No career highlights added yet.</p>
@@ -340,7 +363,7 @@ const AdminAbout: React.FC = () => {
                         </Button>
                       </div>
                     </div>
-                    
+
                     {highlight.points && highlight.points.length > 0 && (
                       <div className="mb-3">
                         <p className="text-sm font-medium text-gray-700 mb-1">Key Points:</p>
@@ -351,7 +374,7 @@ const AdminAbout: React.FC = () => {
                         </ul>
                       </div>
                     )}
-                    
+
                     {highlight.metrics && highlight.metrics.length > 0 && (
                       <div>
                         <p className="text-sm font-medium text-gray-700 mb-1">Metrics:</p>
@@ -392,7 +415,7 @@ const AdminAbout: React.FC = () => {
               Add Stat
             </Button>
           </div>
-          
+
           {settings.stats.length === 0 ? (
             <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
               <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -410,39 +433,39 @@ const AdminAbout: React.FC = () => {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                {settings.stats.map((stat, index) => (
-                  <div key={stat.id || index} className="group relative bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 hover:shadow-md transition-all duration-200">
-                    {/* Action buttons */}
-                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      <div className="flex items-center gap-1">
-                        <button
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {settings.stats.map((stat) => (
+                  <div key={stat.id} className="border border-gray-200 rounded-lg p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                          {(() => {
+                            const IconComponent = iconMap[stat.icon] || Award;
+                            return <IconComponent className="w-4 h-4 text-blue-600" />;
+                          })()}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="font-semibold text-gray-900 truncate">{stat.value}</p>
+                          <p className="text-sm text-gray-600 truncate">{stat.label}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 flex-shrink-0 ml-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={() => openStatsModal(stat)}
-                          className="p-1.5 bg-white rounded-lg shadow-sm hover:bg-gray-50 transition-colors"
-                          title="Edit stat"
+                          icon={Edit}
                         >
-                          <Edit className="w-3.5 h-3.5 text-gray-600" />
-                        </button>
-                        <button
+                          Edit
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={() => deleteStat(stat.id!)}
-                          className="p-1.5 bg-white rounded-lg shadow-sm hover:bg-red-50 hover:text-red-600 transition-colors"
-                          title="Delete stat"
+                          icon={Trash2}
                         >
-                          <Trash2 className="w-3.5 h-3.5 text-gray-600" />
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Stat content */}
-                    <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <span className="text-blue-600 text-sm font-bold">
-                          {stat.icon}
-                        </span>
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-2xl font-bold text-gray-900 mb-1 truncate">{stat.value}</p>
-                        <p className="text-sm text-gray-600 leading-tight">{stat.label}</p>
+                          Delete
+                        </Button>
                       </div>
                     </div>
                   </div>
