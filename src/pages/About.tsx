@@ -163,24 +163,72 @@ const About: React.FC = () => {
                 const iconName = typeof stat.icon === 'string' ? stat.icon : 'Award';
 
                 return (
-                  <Card key={stat.id || index} className="text-center p-6 hover:shadow-lg transition-shadow duration-200">
-                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <DynamicIcon iconName={iconName} className="w-6 h-6 text-blue-600" />
+                  <div
+                    key={stat.id || index}
+                    className="group relative bg-blue-50 rounded-2xl border border-blue-100 shadow-sm p-8 text-center hover:bg-blue-100 hover:border-blue-200 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 ease-out overflow-hidden"
+                  >
+                    {/* Subtle gradient background on hover */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-indigo-100 opacity-0 group-hover:opacity-70 transition-opacity duration-300" />
+                    
+                    {/* Accent bar at top */}
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    
+                    {/* Content */}
+                    <div className="relative z-10">
+                      {/* Icon with enhanced styling */}
+                      <div className="relative mx-auto mb-6 w-16 h-16">
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl opacity-10 group-hover:opacity-20 transition-opacity duration-300" />
+                        <div className="relative w-full h-full bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                          <DynamicIcon iconName={iconName} className="w-8 h-8 text-white" />
+                        </div>
+                      </div>
+
+                      {/* Value with enhanced typography */}
+                      <div className="text-3xl font-extrabold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors duration-300 tabular-nums">
+                        {stat.value}
+                      </div>
+                      
+                      {/* Label */}
+                      <div className="text-sm font-medium text-gray-600 group-hover:text-gray-700 transition-colors duration-300 uppercase tracking-wide">
+                        {stat.label}
+                      </div>
                     </div>
-                    <div className="text-3xl font-bold text-gray-900 mb-2">{stat.value}</div>
-                    <div className="text-gray-600">{stat.label}</div>
-                  </Card>
+                  </div>
                 );
               } else {
-                // Show empty stat slot with "No data"
+                // Enhanced empty state
                 return (
-                  <Card key={`empty-${index}`} className="text-center p-6 bg-gray-50 border-dashed border-2 border-gray-200">
-                    <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Award className="w-6 h-6 text-gray-400" />
+                  <div
+                    key={`empty-${index}`}
+                    className="relative bg-gray-100/80 backdrop-blur-sm rounded-2xl border-2 border-dashed border-gray-300/70 shadow-sm p-8 text-center hover:border-gray-400/80 hover:bg-gray-200/60 transition-all duration-300 overflow-hidden"
+                  >
+                    {/* Subtle pattern for empty state */}
+                    <div className="absolute inset-0 opacity-[0.02]">
+                      <div className="absolute inset-0" style={{
+                        backgroundImage: `radial-gradient(circle at 1px 1px, rgba(0,0,0,0.15) 1px, transparent 0)`,
+                        backgroundSize: '20px 20px'
+                      }} />
                     </div>
-                    <div className="text-3xl font-bold text-gray-400 mb-2">--</div>
-                    <div className="text-gray-400">No data</div>
-                  </Card>
+
+                    <div className="relative z-10">
+                      {/* Empty icon */}
+                      <div className="relative mx-auto mb-6 w-16 h-16">
+                        <div className="w-full h-full bg-gray-200 rounded-2xl flex items-center justify-center">
+                          <Award className="w-8 h-8 text-gray-400" />
+                        </div>
+                      </div>
+
+                      {/* Empty value */}
+                      <div className="text-3xl font-extrabold text-gray-300 mb-2 tabular-nums">
+                        --
+                      </div>
+                      
+                      {/* Empty label */}
+                      <div className="text-sm font-medium text-gray-400 uppercase tracking-wide">
+                        No data
+                      </div>
+                    </div>
+                  </div>
                 );
               }
             })}
