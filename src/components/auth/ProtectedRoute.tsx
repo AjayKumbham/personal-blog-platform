@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
 interface ProtectedRouteProps {
@@ -8,6 +8,7 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { user, loading } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -18,7 +19,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }
 
   if (!user) {
-    return <Navigate to="/admin/login" replace />;
+    // Preserve the secret query parameter when redirecting to login
+    const searchParams = new URLSearchParams(location.search);
+    const loginPath = searchParams.toString() 
+      ? `/admin/login?${searchParams.toString()}` 
+      : '/admin/login';
+    
+    return <Navigate to={loginPath} replace />;
   }
 
   return <>{children}</>;
