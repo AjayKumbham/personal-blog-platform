@@ -10,6 +10,7 @@ import Button from '../ui/Button';
 
 // Hooks
 import { useAuth } from '../../hooks/useAuth';
+import { useAdminNavigation } from '../../hooks/useAdminNavigation';
 
 // Types
 import { NavigationItem } from '../../types';
@@ -18,6 +19,7 @@ const AdminSidebar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { signOut } = useAuth();
+  const { navigateToAdmin, getSecretParam } = useAdminNavigation();
 
   const navigation: NavigationItem[] = [
     { id: 'dashboard', name: 'Dashboard', icon: BarChart3, path: '/admin/dashboard' },
@@ -30,7 +32,10 @@ const AdminSidebar: React.FC = () => {
   const handleLogout = async () => {
     try {
       await signOut();
-      navigate('/admin/login');
+      // Preserve secret parameter when redirecting to login
+      const secret = getSecretParam();
+      const loginPath = secret ? `/admin/login?secret=${secret}` : '/admin/login';
+      navigate(loginPath);
     } catch (error) {
       console.error('Error signing out:', error);
     }
@@ -52,21 +57,26 @@ const AdminSidebar: React.FC = () => {
           <div className="mb-6">
             <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Admin Panel</h3>
             <ul className="space-y-2">
-              {navigation.map((item) => (
-                <li key={item.id}>
-                  <Link
-                    to={item.path}
-                    className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
-                      isActiveRoute(item.path)
-                        ? 'bg-blue-100 text-blue-700'
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}
-                  >
-                    <item.icon className="w-5 h-5 mr-3" />
-                    {item.name}
-                  </Link>
-                </li>
-              ))}
+              {navigation.map((item) => {
+                const secret = getSecretParam();
+                const linkPath = secret ? `${item.path}?secret=${secret}` : item.path;
+                
+                return (
+                  <li key={item.id}>
+                    <Link
+                      to={linkPath}
+                      className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+                        isActiveRoute(item.path)
+                          ? 'bg-blue-100 text-blue-700'
+                          : 'text-gray-700 hover:bg-gray-100'
+                      }`}
+                    >
+                      <item.icon className="w-5 h-5 mr-3" />
+                      {item.name}
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </div>
 
