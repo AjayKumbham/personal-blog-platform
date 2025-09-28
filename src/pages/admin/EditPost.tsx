@@ -7,6 +7,7 @@ import { ArrowLeft, Upload, Save } from 'lucide-react';
 import { blogService } from '../../services/blogService';
 import { settingsService } from '../../services/settingsService';
 import { publishToHashnode, publishToDevTo } from '../../services/api';
+import { useAdminNavigation } from '../../hooks/useAdminNavigation';
 import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
 
@@ -25,6 +26,7 @@ type FormData = yup.InferType<typeof schema>;
 
 const EditPost: React.FC = () => {
   const navigate = useNavigate();
+  const { navigateToAdmin } = useAdminNavigation();
   const { id } = useParams<{ id: string }>();
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -173,7 +175,7 @@ const EditPost: React.FC = () => {
         }
       }
 
-      navigate('/admin');
+      navigateToAdmin('/admin/posts');
     } catch (error) {
       console.error('Error updating post:', error);
       alert('Error updating post');
@@ -273,11 +275,11 @@ const EditPost: React.FC = () => {
         <div className="mb-8">
           <Button
             variant="ghost"
-            onClick={() => navigate('/admin')}
+            onClick={() => navigateToAdmin('/admin/posts')}
             icon={ArrowLeft}
             className="mb-4"
           >
-            Back to Dashboard
+            Back to Posts
           </Button>
           <h1 className="text-3xl font-bold text-gray-900">Edit Post</h1>
         </div>

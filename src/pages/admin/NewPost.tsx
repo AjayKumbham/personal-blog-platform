@@ -7,6 +7,7 @@ import { ArrowLeft, Upload, Save } from 'lucide-react';
 import { blogService } from '../../services/blogService';
 import { settingsService } from '../../services/settingsService';
 import { publishToHashnode, publishToDevTo } from '../../services/api';
+import { useAdminNavigation } from '../../hooks/useAdminNavigation';
 import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
 
@@ -25,6 +26,7 @@ type FormData = yup.InferType<typeof schema>;
 
 const NewPost: React.FC = () => {
   const navigate = useNavigate();
+  const { navigateToAdmin } = useAdminNavigation();
   const [loading, setLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [coverImage, setCoverImage] = useState<File | null>(null);
@@ -232,7 +234,7 @@ const NewPost: React.FC = () => {
         }
       }
 
-      navigate('/admin');
+      navigateToAdmin('/admin/posts');
     } catch (error) {
       console.error('Error creating post:', error);
       alert('Error creating post');
@@ -247,11 +249,11 @@ const NewPost: React.FC = () => {
         <div className="mb-8">
           <Button
             variant="ghost"
-            onClick={() => navigate('/admin')}
+            onClick={() => navigateToAdmin('/admin/posts')}
             icon={ArrowLeft}
             className="mb-4"
           >
-            Back to Dashboard
+            Back to Posts
           </Button>
           <h1 className="text-3xl font-bold text-gray-900">Create New Post</h1>
         </div>

@@ -2,7 +2,6 @@
 import React, { useEffect } from 'react';
 
 // Third-party
-import { Link } from 'react-router-dom';
 import {
   PlusCircle,
   Edit,
@@ -20,6 +19,7 @@ import Button from '../../components/ui/Button';
 
 // Hooks
 import { useAdminPosts } from '../../hooks/admin/useAdminPosts';
+import { useAdminNavigation } from '../../hooks/useAdminNavigation';
 
 const AdminPosts: React.FC = () => {
   const {
@@ -29,6 +29,7 @@ const AdminPosts: React.FC = () => {
     handleDeletePost,
     togglePublished
   } = useAdminPosts();
+  const { navigateToAdmin } = useAdminNavigation();
 
   useEffect(() => {
     loadPosts();
@@ -58,11 +59,13 @@ const AdminPosts: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900">Posts Management</h1>
           <p className="text-gray-600 mt-1">Create, edit, and manage your blog posts</p>
         </div>
-        <Link to="/admin/posts/new" className="w-full sm:w-auto">
-          <Button icon={PlusCircle} className="w-full sm:w-auto">
-            New Post
-          </Button>
-        </Link>
+        <Button 
+          icon={PlusCircle} 
+          className="w-full sm:w-auto"
+          onClick={() => navigateToAdmin('/admin/posts/new')}
+        >
+          New Post
+        </Button>
       </div>
 
       {posts.length === 0 ? (
@@ -75,11 +78,13 @@ const AdminPosts: React.FC = () => {
             <p className="text-gray-600 mb-6 max-w-md mx-auto">
               Get started by creating your first blog post. Share your thoughts, tutorials, or insights with your audience.
             </p>
-            <Link to="/admin/posts/new">
-              <Button icon={PlusCircle} size="lg">
-                Create Your First Post
-              </Button>
-            </Link>
+            <Button 
+              icon={PlusCircle} 
+              size="lg"
+              onClick={() => navigateToAdmin('/admin/posts/new')}
+            >
+              Create Your First Post
+            </Button>
           </div>
         </Card>
       ) : (
@@ -192,13 +197,13 @@ const AdminPosts: React.FC = () => {
                         )}
                       </button>
 
-                      <Link
-                        to={`/admin/posts/edit/${post.id}`}
+                      <button
+                        onClick={() => navigateToAdmin(`/admin/posts/edit/${post.id}`)}
                         className="inline-flex items-center justify-center px-3 py-2 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 transition-colors"
                       >
                         <Edit className="w-4 h-4 mr-1" />
                         Edit
-                      </Link>
+                      </button>
 
                       <button
                         onClick={() => handleDeletePost(post.id)}
