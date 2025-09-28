@@ -20,7 +20,18 @@ export default defineConfig({
           forms: ['react-hook-form', '@hookform/resolvers', 'yup'],
           supabase: ['@supabase/supabase-js'],
           icons: ['lucide-react'],
-          utils: ['date-fns']
+          utils: ['date-fns'],
+          // Separate admin chunk for lazy loading
+          admin: [
+            './src/pages/admin/AdminDashboard',
+            './src/pages/admin/AdminPosts',
+            './src/pages/admin/AdminNotifications',
+            './src/pages/admin/AdminAbout',
+            './src/pages/admin/AdminSettings',
+            './src/pages/admin/NewPost',
+            './src/pages/admin/EditPost',
+            './src/components/admin/AdminLayout'
+          ]
         }
       }
     },

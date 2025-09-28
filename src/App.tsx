@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastProvider } from './components/ui/ToastProvider';
 import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import SecretProtectedRoute from './components/auth/SecretProtectedRoute';
+import AdminLoadingSpinner from './components/admin/AdminLoadingSpinner';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import Home from './pages/Home';
@@ -10,16 +12,20 @@ import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import About from './pages/About';
 import Contact from './pages/Contact';
-import AdminLogin from './pages/admin/AdminLogin';
-import AdminLayout from './components/admin/AdminLayout';
-import AdminDashboard from './pages/admin/AdminDashboard';
-import AdminPosts from './pages/admin/AdminPosts';
-import AdminNotifications from './pages/admin/AdminNotifications';
-import AdminAbout from './pages/admin/AdminAbout';
-import AdminSettings from './pages/admin/AdminSettings';
-import NewPost from './pages/admin/NewPost';
-import EditPost from './pages/admin/EditPost';
 import Unsubscribe from './pages/Unsubscribe';
+
+// Lazy load admin components to reduce initial bundle size
+import {
+  AdminLogin,
+  AdminLayout,
+  AdminDashboard,
+  AdminPosts,
+  AdminNotifications,
+  AdminAbout,
+  AdminSettings,
+  NewPost,
+  EditPost
+} from './components/admin/LazyAdminComponents';
 
 function App() {
   return (
@@ -28,59 +34,93 @@ function App() {
         <Router>
           <div className="min-h-screen flex flex-col">
           <Routes>
-          {/* Admin routes without header/footer */}
-          <Route path="/admin/login" element={<AdminLogin />} />
+          {/* Admin routes with secret protection and lazy loading */}
+          <Route path="/admin/login" element={
+            <SecretProtectedRoute>
+              <Suspense fallback={<AdminLoadingSpinner />}>
+                <AdminLogin />
+              </Suspense>
+            </SecretProtectedRoute>
+          } />
           
-          {/* Redirect /admin to /admin/dashboard */}
+          {/* Redirect /admin to /admin/dashboard with secret preservation */}
           <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
           
-          {/* Admin dashboard routes with AdminLayout */}
+          {/* Admin dashboard routes with secret protection, auth protection, and lazy loading */}
           <Route path="/admin/dashboard" element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <AdminDashboard />
-              </AdminLayout>
-            </ProtectedRoute>
+            <SecretProtectedRoute>
+              <ProtectedRoute>
+                <Suspense fallback={<AdminLoadingSpinner />}>
+                  <AdminLayout>
+                    <AdminDashboard />
+                  </AdminLayout>
+                </Suspense>
+              </ProtectedRoute>
+            </SecretProtectedRoute>
           } />
           <Route path="/admin/posts" element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <AdminPosts />
-              </AdminLayout>
-            </ProtectedRoute>
+            <SecretProtectedRoute>
+              <ProtectedRoute>
+                <Suspense fallback={<AdminLoadingSpinner />}>
+                  <AdminLayout>
+                    <AdminPosts />
+                  </AdminLayout>
+                </Suspense>
+              </ProtectedRoute>
+            </SecretProtectedRoute>
           } />
           <Route path="/admin/notifications" element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <AdminNotifications />
-              </AdminLayout>
-            </ProtectedRoute>
+            <SecretProtectedRoute>
+              <ProtectedRoute>
+                <Suspense fallback={<AdminLoadingSpinner />}>
+                  <AdminLayout>
+                    <AdminNotifications />
+                  </AdminLayout>
+                </Suspense>
+              </ProtectedRoute>
+            </SecretProtectedRoute>
           } />
           <Route path="/admin/about" element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <AdminAbout />
-              </AdminLayout>
-            </ProtectedRoute>
+            <SecretProtectedRoute>
+              <ProtectedRoute>
+                <Suspense fallback={<AdminLoadingSpinner />}>
+                  <AdminLayout>
+                    <AdminAbout />
+                  </AdminLayout>
+                </Suspense>
+              </ProtectedRoute>
+            </SecretProtectedRoute>
           } />
           <Route path="/admin/settings" element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <AdminSettings />
-              </AdminLayout>
-            </ProtectedRoute>
+            <SecretProtectedRoute>
+              <ProtectedRoute>
+                <Suspense fallback={<AdminLoadingSpinner />}>
+                  <AdminLayout>
+                    <AdminSettings />
+                  </AdminLayout>
+                </Suspense>
+              </ProtectedRoute>
+            </SecretProtectedRoute>
           } />
           
           {/* Admin post management routes */}
           <Route path="/admin/posts/new" element={
-            <ProtectedRoute>
-              <NewPost />
-            </ProtectedRoute>
+            <SecretProtectedRoute>
+              <ProtectedRoute>
+                <Suspense fallback={<AdminLoadingSpinner />}>
+                  <NewPost />
+                </Suspense>
+              </ProtectedRoute>
+            </SecretProtectedRoute>
           } />
           <Route path="/admin/posts/edit/:id" element={
-            <ProtectedRoute>
-              <EditPost />
-            </ProtectedRoute>
+            <SecretProtectedRoute>
+              <ProtectedRoute>
+                <Suspense fallback={<AdminLoadingSpinner />}>
+                  <EditPost />
+                </Suspense>
+              </ProtectedRoute>
+            </SecretProtectedRoute>
           } />
           
           {/* Public routes with header/footer */}
