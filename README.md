@@ -12,7 +12,7 @@
 
 ## 🌐 Live Site
 
-> 🚀 Visit the platform live: [blog-ajaykumbham.vercel.app](https://blog-ajaykumbham.vercel.app/) — Explore modern blogging, beautiful UI, and powerful admin features in action!
+### 🚀 Visit the platform live: [blog-ajaykumbham.vercel.app](https://blog-ajaykumbham.vercel.app/) 
 
 
 ## ✨ Features
