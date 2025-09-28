@@ -9,9 +9,11 @@
 
 > A modern blogging platform built with React, TypeScript, and Supabase for developers who want to share their technical knowledge.
 
-## 🌐 Live Demo
+## 🌐 Live Site
 
-![Coming Soon](https://img.shields.io/badge/Live%20Demo-Coming%20Soon-lightgrey)
+[![Live Site](https://img.shields.io/badge/Live%20Demo-Visit%20Now-brightgreen?style=for-the-badge&logo=vercel)](https://blog-ajaykumbham.vercel.app/)
+
+> 🚀 Experience the platform live: [blog-ajaykumbham.vercel.app](https://blog-ajaykumbham.vercel.app/) — Explore modern blogging, beautiful UI, and powerful admin features in action!
 
 
 ## ✨ Features
