@@ -111,6 +111,7 @@ src/
 ## 📚 Documentation
 
 - **[Setup Guide](./SETUP.md)** - Complete installation and configuration
+- **[Admin Access Guide](./ADMIN_ACCESS.md)** - How to access the admin panel securely
 - **[Contributing](./CONTRIBUTING.md)** - Development workflow and guidelines
 - **[Code of Conduct](./CODE_OF_CONDUCT.md)** - Community standards
 - **[License](./LICENSE.md)** - MIT License terms
