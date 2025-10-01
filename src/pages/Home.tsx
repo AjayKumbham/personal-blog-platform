@@ -1,7 +1,8 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowRight, Code2, Lightbulb, Zap } from 'lucide-react';
+import { useToast } from '../hooks/useToastHook';
 import { blogService } from '../services/blogService';
 import { BlogPost } from '../types';
 import BlogCard from '../components/blog/BlogCard';
@@ -12,10 +13,32 @@ import NewsletterSignup from '../components/newsletter/NewsletterSignup';
 const Home: React.FC = () => {
   const [recentPosts, setRecentPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { showSuccess } = useToast();
 
   useEffect(() => {
     loadData();
-  }, []);
+    
+    // Check for subscription confirmation
+    if (searchParams.get('subscribed') === 'true') {
+      showSuccess(
+        'Subscription Confirmed!',
+        'Welcome to our newsletter! You\'ll receive updates about web development and programming.'
+      );
+      // Clean up URL parameters
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete('subscribed');
+      newParams.delete('email');
+      setSearchParams(newParams, { replace: true });
+    }
+
+    // Handle email confirmation
+    const confirmToken = searchParams.get('confirm');
+    const confirmEmail = searchParams.get('email');
+    if (confirmToken && confirmEmail) {
+      handleEmailConfirmation(confirmToken, confirmEmail);
+    }
+  }, [searchParams, setSearchParams]);
 
   const loadData = async () => {
     try {
@@ -25,6 +48,39 @@ const Home: React.FC = () => {
       console.error('Error loading data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleEmailConfirmation = async (_token: string, email: string) => {
+    try {
+      // Add the confirmed email to Brevo list
+      const response = await fetch('https://api.brevo.com/v3/contacts', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'api-key': import.meta.env.VITE_BREVO_API_KEY
+        },
+        body: JSON.stringify({
+          email: decodeURIComponent(email),
+          listIds: [parseInt(import.meta.env.VITE_BREVO_LIST_ID)],
+          updateEnabled: true
+        })
+      });
+
+      if (response.ok) {
+        showSuccess(
+          'Subscription Confirmed!',
+          'Welcome to our newsletter! You\'ll receive updates about web development and programming.'
+        );
+        // Clean up URL parameters
+        const newParams = new URLSearchParams(searchParams);
+        newParams.delete('confirm');
+        newParams.delete('email');
+        setSearchParams(newParams, { replace: true });
+      }
+    } catch (error) {
+      console.error('Email confirmation error:', error);
     }
   };
 
