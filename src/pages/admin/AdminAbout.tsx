@@ -81,22 +81,23 @@ const AdminAbout: React.FC = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">About Content Management</h1>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">About Content Management</h1>
         <Button
           onClick={handleSaveSettings}
           disabled={savingSettings}
           loading={savingSettings}
+          className="w-full sm:w-auto"
         >
           Save Changes
         </Button>
       </div>
 
-      <div className="space-y-8">
+      <div className="space-y-6 sm:space-y-8">
         {/* Author Information Section */}
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Author Information</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card className="p-4 sm:p-6">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Author Information</h3>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Full Name
@@ -217,8 +218,8 @@ const AdminAbout: React.FC = () => {
         </Card>
 
         {/* Resume Section */}
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Resume</h3>
+        <Card className="p-4 sm:p-6">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Resume</h3>
           <div className="space-y-4">
             {settings.resume ? (
               <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
@@ -295,8 +296,8 @@ const AdminAbout: React.FC = () => {
         </Card>
 
         {/* Skills Section */}
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Skills</h3>
+        <Card className="p-4 sm:p-6">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Skills</h3>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Skills (comma-separated)
@@ -315,13 +316,14 @@ const AdminAbout: React.FC = () => {
         </Card>
 
         {/* Career Highlights Section */}
-        <Card className="p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Career Highlights</h3>
+        <Card className="p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900">Career Highlights</h3>
             <Button
               onClick={() => openHighlightModal()}
               icon={Plus}
               size="sm"
+              className="w-full sm:w-auto"
             >
               Add Highlight
             </Button>
@@ -397,10 +399,10 @@ const AdminAbout: React.FC = () => {
         </Card>
 
         {/* Stats Section */}
-        <Card className="p-6">
+        <Card className="p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">Statistics</h3>
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900">Statistics</h3>
               <p className="text-sm text-gray-600 mt-1">
                 Add up to 4 key statistics to showcase on your about page
               </p>
@@ -433,7 +435,7 @@ const AdminAbout: React.FC = () => {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {settings.stats.map((stat) => (
                   <div key={stat.id} className="border border-gray-200 rounded-lg p-4">
                     <div className="flex justify-between items-start mb-2">
