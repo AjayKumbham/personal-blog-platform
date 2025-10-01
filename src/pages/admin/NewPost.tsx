@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -25,7 +25,6 @@ const schema = yup.object({
 type FormData = yup.InferType<typeof schema>;
 
 const NewPost: React.FC = () => {
-  const navigate = useNavigate();
   const { navigateToAdmin } = useAdminNavigation();
   const [loading, setLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
