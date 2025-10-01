@@ -97,12 +97,13 @@ const AdminNotifications: React.FC = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Email Notifications</h1>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Email Notifications</h1>
         <Button
           onClick={() => refreshNotificationStatus(true)}
           disabled={loadingNotificationStatus}
           variant="outline"
+          className="w-full sm:w-auto"
         >
           <RefreshCw className={`w-4 h-4 mr-2 ${loadingNotificationStatus ? 'animate-spin' : ''}`} />
           Refresh Status
@@ -110,11 +111,11 @@ const AdminNotifications: React.FC = () => {
       </div>
 
       {/* System Status Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
         {/* System Status Card */}
-        <Card className="p-6">
+        <Card className="p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">System Status</h3>
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900">System Status</h3>
             {getStatusIcon()}
           </div>
           <div className="space-y-2">
@@ -129,10 +130,10 @@ const AdminNotifications: React.FC = () => {
         </Card>
 
         {/* Subscriber Count Card */}
-        <Card className="p-6">
+        <Card className="p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Subscribers</h3>
-            <Users className="h-6 w-6 text-blue-500" />
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900">Subscribers</h3>
+            <Users className="h-5 h-5 sm:h-6 sm:w-6 text-blue-500" />
           </div>
           <div className="space-y-2">
             <div className="text-3xl font-bold text-gray-900">
@@ -143,10 +144,10 @@ const AdminNotifications: React.FC = () => {
         </Card>
 
         {/* Configuration Card */}
-        <Card className="p-6">
+        <Card className="p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Configuration</h3>
-            <Settings className="h-6 w-6 text-gray-500" />
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900">Configuration</h3>
+            <Settings className="h-5 h-5 sm:h-6 sm:w-6 text-gray-500" />
           </div>
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -174,8 +175,8 @@ const AdminNotifications: React.FC = () => {
       </div>
 
       {/* Detailed Status Information */}
-      <Card className="p-6 mb-8">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">System Details</h3>
+      <Card className="p-4 sm:p-6 mb-6 sm:mb-8">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">System Details</h3>
         
         <div className="space-y-4">
           {/* Configuration Status */}
@@ -238,8 +239,8 @@ const AdminNotifications: React.FC = () => {
       </Card>
 
       {/* Test Notification Section */}
-      <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Test Notification</h3>
+      <Card className="p-4 sm:p-6">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Test Notification</h3>
         
         <div className="space-y-4">
           <p className="text-gray-600">
@@ -247,12 +248,12 @@ const AdminNotifications: React.FC = () => {
             This will send a sample blog post notification to all active subscribers.
           </p>
           
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <Button
               onClick={handleSendTestNotification}
               disabled={sendingTestNotification || !notificationStatus.configured}
               icon={Send}
-              className={sendingTestNotification ? 'opacity-75' : ''}
+              className={`w-full sm:w-auto ${sendingTestNotification ? 'opacity-75' : ''}`}
             >
               {sendingTestNotification ? 'Sending...' : 'Send Test Notification'}
             </Button>
