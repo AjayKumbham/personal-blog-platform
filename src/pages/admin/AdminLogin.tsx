@@ -87,18 +87,18 @@ const AdminLogin: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8">
-        <div className="text-center mb-8">
-          <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-            <Lock className="w-7 h-7 text-gray-600" />
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-6 sm:p-8">
+        <div className="text-center mb-6 sm:mb-8">
+          <div className="mx-auto w-14 h-14 sm:w-16 sm:h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+            <Lock className="w-6 h-6 sm:w-7 sm:h-7 text-gray-600" />
           </div>
-          <h1 className="text-2xl font-semibold text-gray-900 mb-2">Admin Login</h1>
+          <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2">Admin Login</h1>
           <p className="text-gray-600 text-sm">
             Sign in to access the admin dashboard
           </p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-6">
+        <form onSubmit={handleLogin} className="space-y-4 sm:space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
               Email
