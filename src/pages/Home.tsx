@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowRight, Code2, Lightbulb, Zap } from 'lucide-react';
 import { useToast } from '../hooks/useToastHook';
@@ -16,41 +16,7 @@ const Home: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { showSuccess } = useToast();
 
-  useEffect(() => {
-    loadData();
-
-    // Handle email confirmation
-    const confirmToken = searchParams.get('confirm');
-    const confirmEmail = searchParams.get('email');
-    if (confirmToken && confirmEmail) {
-      handleEmailConfirmation(confirmToken, confirmEmail);
-    }
-    // Check for subscription confirmation (fallback)
-    else if (searchParams.get('subscribed') === 'true') {
-      showSuccess(
-        'Subscription Confirmed!',
-        'You\'ll receive notifications whenever I publish new blog posts.'
-      );
-      // Clean up URL parameters
-      const newParams = new URLSearchParams(searchParams);
-      newParams.delete('subscribed');
-      newParams.delete('email');
-      setSearchParams(newParams, { replace: true });
-    }
-  }, [searchParams, setSearchParams]);
-
-  const loadData = async () => {
-    try {
-      const posts = await blogService.getPublishedPosts();
-      setRecentPosts(posts.slice(0, 6));
-    } catch (error) {
-      console.error('Error loading data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleEmailConfirmation = async (_token: string, email: string) => {
+  const handleEmailConfirmation = useCallback(async (_token: string, email: string) => {
     try {
       // Add the confirmed email to Brevo list
       const response = await fetch('https://api.brevo.com/v3/contacts', {
@@ -80,6 +46,40 @@ const Home: React.FC = () => {
       }
     } catch (error) {
       console.error('Email confirmation error:', error);
+    }
+  }, [showSuccess, searchParams, setSearchParams]);
+
+  useEffect(() => {
+    loadData();
+
+    // Handle email confirmation
+    const confirmToken = searchParams.get('confirm');
+    const confirmEmail = searchParams.get('email');
+    if (confirmToken && confirmEmail) {
+      handleEmailConfirmation(confirmToken, confirmEmail);
+    }
+    // Check for subscription confirmation (fallback)
+    else if (searchParams.get('subscribed') === 'true') {
+      showSuccess(
+        'Subscription Confirmed!',
+        'You\'ll receive notifications whenever I publish new blog posts.'
+      );
+      // Clean up URL parameters
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete('subscribed');
+      newParams.delete('email');
+      setSearchParams(newParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams, handleEmailConfirmation, showSuccess]);
+
+  const loadData = async () => {
+    try {
+      const posts = await blogService.getPublishedPosts();
+      setRecentPosts(posts.slice(0, 6));
+    } catch (error) {
+      console.error('Error loading data:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
