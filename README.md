@@ -12,7 +12,7 @@
 
 ## 🌐 Live Site
 
-### 🚀 Visit the platform live: [blog-ajaykumbham.vercel.app](https://blog-ajaykumbham.vercel.app/) 
+### 🚀 Visit the platform live: Coming soon
 
 
 ## ✨ Features
