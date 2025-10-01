@@ -104,9 +104,11 @@ const About: React.FC = () => {
                 <MapPin className="w-5 h-5 mr-2" />
                 {author.location}
               </div>
-              <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-                {author.bio}
-              </p>
+              <div className="text-xl text-gray-300 mb-8 leading-relaxed space-y-4">
+                {author.bio.split('\n').filter(paragraph => paragraph.trim()).map((paragraph, index) => (
+                  <p key={index}>{paragraph.trim()}</p>
+                ))}
+              </div>
               <div className="flex flex-col sm:flex-row flex-wrap gap-4">
                 <Button
                   size="lg"
@@ -246,7 +248,9 @@ const About: React.FC = () => {
                 <Card className="p-8">
                   <h3 className="text-2xl font-bold text-gray-900 mb-6">My Story</h3>
                   <div className="space-y-4 text-gray-700">
-                    <p>{settings.author.bio}</p>
+                    {settings.author.bio.split('\n').filter(paragraph => paragraph.trim()).map((paragraph, index) => (
+                      <p key={index}>{paragraph.trim()}</p>
+                    ))}
                   </div>
                 </Card>
               )}
