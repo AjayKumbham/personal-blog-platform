@@ -49,36 +49,99 @@ const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
       return;
     }
 
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setStatus('error');
-      setMessage('Please enter a valid email address');
-      return;
-    }
-
     setStatus('loading');
     setMessage('');
 
     try {
-      // Submit to Brevo form endpoint
-      const formData = new FormData();
-      formData.append('EMAIL', email);
-      formData.append('email_address_check', '');
-      formData.append('locale', 'en');
+      // Send manual confirmation email using SMTP API
+      const confirmationToken = btoa(email.trim() + Date.now()).replace(/[^a-zA-Z0-9]/g, '');
+      const confirmationUrl = `${window.location.origin}?confirm=${confirmationToken}&email=${encodeURIComponent(email.trim())}`;
 
-      await fetch('https://62abc80e.sibforms.com/serve/MUIFADUYWcA1EWsi-aIpRk1Sw_-bGpnLmFTKAJo8j0sMvtXEnerHZxASAv9N08xno9ynbAHw-i3V83WDAWlKN_Tgu_5zg7zjX9kwX-yc1I_4f1HroxhpDK-hFY1ZUr7klgegYAZcG_pjjtv_0KDhCL2J-gaC8eLX8iqCvc0ohi4l9qMV5MQLxG9Y1YS-_qp0hFRujt7PQ36uWhyJ', {
+      const emailResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
         method: 'POST',
-        body: formData,
-        mode: 'no-cors' // Brevo handles CORS, we use no-cors to avoid issues
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'api-key': import.meta.env.VITE_BREVO_API_KEY
+        },
+        body: JSON.stringify({
+          sender: {
+            name: 'Kumbham Ajay Goud',
+            email: import.meta.env.VITE_SENDER_EMAIL || 'ajaygoud.kumbham@gmail.com'
+          },
+          to: [{ email: email.trim() }],
+          subject: 'Confirm your newsletter subscription',
+          htmlContent: `
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Confirm Newsletter Subscription</title>
+            </head>
+            <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f8fafc;">
+              <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px 30px; text-align: center;">
+                  <h1 style="margin: 0; font-size: 28px; font-weight: 700;">📧 Confirm Your Subscription</h1>
+                  <p style="margin: 10px 0 0 0; opacity: 0.9; font-size: 16px;">You're almost there!</p>
+                </div>
+                
+                <div style="padding: 40px 30px; text-align: center;">
+                  <h2 style="color: #1a202c; margin-bottom: 20px;">Welcome to our newsletter!</h2>
+                  <p style="color: #4a5568; font-size: 16px; margin-bottom: 30px;">
+                    Thank you for subscribing to our newsletter. To complete your subscription and start receiving updates about web development, programming tutorials, and tech insights, please click the button below.
+                  </p>
+                  
+                  <a href="${confirmationUrl}" 
+                     style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; padding: 15px 30px; border-radius: 8px; font-weight: 600; font-size: 16px; margin: 20px 0;">
+                    Confirm Subscription
+                  </a>
+                  
+                  <p style="color: #718096; font-size: 14px; margin-top: 30px;">
+                    If you didn't subscribe to this newsletter, you can safely ignore this email.
+                  </p>
+                  
+                  <p style="color: #718096; font-size: 12px; margin-top: 20px;">
+                    Or copy and paste this link in your browser:<br>
+                    <span style="word-break: break-all;">${confirmationUrl}</span>
+                  </p>
+                </div>
+                
+                <div style="background-color: #f7fafc; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0;">
+                  <p style="margin: 0; color: #718096; font-size: 12px;">
+                    © ${new Date().getFullYear()} Kumbham Ajay Goud. All rights reserved.
+                  </p>
+                </div>
+              </div>
+            </body>
+            </html>
+          `,
+          textContent: `
+Confirm Your Newsletter Subscription
+
+Thank you for subscribing to our newsletter! To complete your subscription and start receiving updates, please visit:
+
+${confirmationUrl}
+
+If you didn't subscribe to this newsletter, you can safely ignore this email.
+
+© ${new Date().getFullYear()} Kumbham Ajay Goud. All rights reserved.
+          `
+        })
       });
 
-      // Since we're using no-cors, we can't read the response
-      // But if we get here without error, assume success
-      setStatus('success');
-      setMessage('Please check your email to confirm your subscription.');
-      setEmail('');
+      console.log('Confirmation email response:', { status: emailResponse.status });
 
+      if (emailResponse.ok) {
+        setStatus('success');
+        setMessage('Please check your email to confirm your subscription.');
+        setEmail('');
+      } else {
+        const errorData = await emailResponse.json();
+        console.error('Failed to send confirmation email:', errorData);
+        setStatus('error');
+        setMessage('Failed to send confirmation email. Please try again.');
+      }
     } catch (error) {
       console.error('Newsletter subscription error:', error);
       setStatus('error');

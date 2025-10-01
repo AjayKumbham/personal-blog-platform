@@ -58,6 +58,7 @@ class NewsletterService {
         };
       }
 
+      // First, try to add contact to the list - Brevo will handle DOI automatically if configured
       const response = await fetch(`${this.apiUrl}/contacts`, {
         method: 'POST',
         headers: {
@@ -73,26 +74,32 @@ class NewsletterService {
             ...subscription.attributes
           },
           listIds: [this.listId],
-          updateEnabled: true // Update if contact already exists
+          updateEnabled: false, // Don't update existing contacts to trigger DOI
+          emailBlacklisted: false,
+          smsBlacklisted: false
         })
       });
 
       const data = await response.json();
+      console.log('Brevo API Response:', { status: response.status, data });
 
       if (response.ok) {
         return {
           success: true,
-          message: 'Successfully subscribed! Please check your email to confirm.'
+          message: 'Please check your email to confirm your subscription.'
         };
       } else {
         // Handle specific Brevo error codes
-        if (response.status === 400 && data.code === 'duplicate_parameter') {
-          return {
-            success: true,
-            message: 'You are already subscribed to our newsletter!'
-          };
+        if (response.status === 400) {
+          if (data.code === 'duplicate_parameter' || data.message?.includes('already exists')) {
+            return {
+              success: true,
+              message: 'You are already subscribed to our newsletter!'
+            };
+          }
         }
 
+        console.error('Brevo subscription failed:', data);
         return {
           success: false,
           message: 'Subscription failed. Please try again.',
@@ -402,6 +409,117 @@ Visit website: ${blogData.siteUrl}
     } catch (error) {
       console.error('Error checking sender status:', error);
       return { verified: false, senders: [], currentSender: import.meta.env.VITE_SENDER_EMAIL || 'ajaygoud.kumbham@gmail.com' };
+    }
+  }
+
+  // Send manual confirmation email
+  private async sendConfirmationEmail(email: string): Promise<void> {
+    try {
+      const confirmationUrl = `${window.location.origin}?subscribed=true&email=${encodeURIComponent(email)}`;
+      
+      const emailContent = {
+        sender: {
+          name: 'Newsletter',
+          email: import.meta.env.VITE_SENDER_EMAIL || 'ajaygoud.kumbham@gmail.com'
+        },
+        to: [{ email }],
+        subject: 'Confirm your newsletter subscription',
+        htmlContent: `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Confirm Newsletter Subscription</title>
+          </head>
+          <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f8fafc;">
+            <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+              <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px 30px; text-align: center;">
+                <h1 style="margin: 0; font-size: 28px; font-weight: 700;">📧 Confirm Your Subscription</h1>
+                <p style="margin: 10px 0 0 0; opacity: 0.9; font-size: 16px;">You're almost there!</p>
+              </div>
+              
+              <div style="padding: 40px 30px; text-align: center;">
+                <h2 style="color: #1a202c; margin-bottom: 20px;">Welcome to our newsletter!</h2>
+                <p style="color: #4a5568; font-size: 16px; margin-bottom: 30px;">
+                  Thank you for subscribing to our newsletter. To complete your subscription and start receiving updates, please click the button below.
+                </p>
+                
+                <a href="${confirmationUrl}" 
+                   style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; padding: 15px 30px; border-radius: 8px; font-weight: 600; font-size: 16px; margin: 20px 0;">
+                  Confirm Subscription
+                </a>
+                
+                <p style="color: #718096; font-size: 14px; margin-top: 30px;">
+                  If you didn't subscribe to this newsletter, you can safely ignore this email.
+                </p>
+              </div>
+              
+              <div style="background-color: #f7fafc; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0;">
+                <p style="margin: 0; color: #718096; font-size: 12px;">
+                  © ${new Date().getFullYear()} Newsletter. All rights reserved.
+                </p>
+              </div>
+            </div>
+          </body>
+          </html>
+        `,
+        textContent: `
+Confirm Your Newsletter Subscription
+
+Thank you for subscribing to our newsletter! To complete your subscription and start receiving updates, please visit:
+
+${confirmationUrl}
+
+If you didn't subscribe to this newsletter, you can safely ignore this email.
+
+© ${new Date().getFullYear()} Newsletter. All rights reserved.
+        `
+      };
+
+      await fetch(`${this.apiUrl}/smtp/email`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'api-key': this.apiKey
+        },
+        body: JSON.stringify(emailContent)
+      });
+    } catch (error) {
+      console.error('Failed to send confirmation email:', error);
+      // Don't throw error as the subscription was successful
+    }
+  }
+
+  // Check list configuration and DOI settings
+  async checkListConfiguration(): Promise<{ hasDoubleOptIn: boolean; listInfo: unknown }> {
+    if (!this.apiKey) {
+      return { hasDoubleOptIn: false, listInfo: null };
+    }
+
+    try {
+      const response = await fetch(`${this.apiUrl}/contacts/lists/${this.listId}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'api-key': this.apiKey
+        }
+      });
+
+      if (response.ok) {
+        const listInfo = await response.json();
+        return {
+          hasDoubleOptIn: listInfo.dynamicList === false, // Static lists can have DOI
+          listInfo
+        };
+      } else {
+        console.error('Failed to fetch list configuration');
+        return { hasDoubleOptIn: false, listInfo: null };
+      }
+    } catch (error) {
+      console.error('Error checking list configuration:', error);
+      return { hasDoubleOptIn: false, listInfo: null };
     }
   }
 
