@@ -70,7 +70,7 @@ const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
             email: import.meta.env.VITE_SENDER_EMAIL || 'ajaygoud.kumbham@gmail.com'
           },
           to: [{ email: email.trim() }],
-          subject: 'Confirm your newsletter subscription',
+          subject: 'Confirm your blog subscription',
           htmlContent: `
             <!DOCTYPE html>
             <html>
@@ -87,9 +87,9 @@ const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
                 </div>
                 
                 <div style="padding: 40px 30px; text-align: center;">
-                  <h2 style="color: #1a202c; margin-bottom: 20px;">Welcome to our newsletter!</h2>
+                  <h2 style="color: #1a202c; margin-bottom: 20px;">Welcome to my blog!</h2>
                   <p style="color: #4a5568; font-size: 16px; margin-bottom: 30px;">
-                    Thank you for subscribing to our newsletter. To complete your subscription and start receiving updates about web development, programming tutorials, and tech insights, please click the button below.
+                    Thank you for subscribing! To complete your subscription and start receiving notifications whenever I publish new blog posts, please click the button below.
                   </p>
                   
                   <a href="${confirmationUrl}" 
@@ -98,7 +98,7 @@ const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
                   </a>
                   
                   <p style="color: #718096; font-size: 14px; margin-top: 30px;">
-                    If you didn't subscribe to this newsletter, you can safely ignore this email.
+                    If you didn't subscribe to blog notifications, you can safely ignore this email.
                   </p>
                   
                   <p style="color: #718096; font-size: 12px; margin-top: 20px;">
@@ -117,13 +117,13 @@ const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
             </html>
           `,
           textContent: `
-Confirm Your Newsletter Subscription
+Confirm Your Blog Subscription
 
-Thank you for subscribing to our newsletter! To complete your subscription and start receiving updates, please visit:
+Thank you for subscribing! To complete your subscription and start receiving notifications whenever I publish new blog posts, please visit:
 
 ${confirmationUrl}
 
-If you didn't subscribe to this newsletter, you can safely ignore this email.
+If you didn't subscribe to blog notifications, you can safely ignore this email.
 
 © ${new Date().getFullYear()} Kumbham Ajay Goud. All rights reserved.
           `
