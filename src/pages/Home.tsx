@@ -18,25 +18,24 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     loadData();
-    
-    // Check for subscription confirmation
-    if (searchParams.get('subscribed') === 'true') {
-      showSuccess(
-        'Subscription Confirmed!',
-        'Welcome to our newsletter! You\'ll receive updates about web development and programming.'
-      );
-      // Clean up URL parameters
-      const newParams = new URLSearchParams(searchParams);
-      newParams.delete('subscribed');
-      newParams.delete('email');
-      setSearchParams(newParams, { replace: true });
-    }
 
     // Handle email confirmation
     const confirmToken = searchParams.get('confirm');
     const confirmEmail = searchParams.get('email');
     if (confirmToken && confirmEmail) {
       handleEmailConfirmation(confirmToken, confirmEmail);
+    }
+    // Check for subscription confirmation (fallback)
+    else if (searchParams.get('subscribed') === 'true') {
+      showSuccess(
+        'Subscription Confirmed!',
+        'You\'ll receive notifications whenever I publish new blog posts.'
+      );
+      // Clean up URL parameters
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete('subscribed');
+      newParams.delete('email');
+      setSearchParams(newParams, { replace: true });
     }
   }, [searchParams, setSearchParams]);
 
@@ -70,8 +69,8 @@ const Home: React.FC = () => {
 
       if (response.ok) {
         showSuccess(
-          'Subscription Confirmed!',
-          'Welcome to our newsletter! You\'ll receive updates about web development and programming.'
+          'Newsletter Subscription Confirmed!',
+          'You\'ll receive notifications whenever I publish new blog posts.'
         );
         // Clean up URL parameters
         const newParams = new URLSearchParams(searchParams);
@@ -107,7 +106,7 @@ const Home: React.FC = () => {
               </span>
             </h1>
             <p className="text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed backdrop-blur-sm bg-white/5 rounded-lg p-4 border border-white/10">
-              A comprehensive space to explore software development, emerging technologies, programming techniques, and industry trends.
+              A comprehensive space to explore emerging technologies, innovative techniques, and industry trends.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center relative z-20">
               <Button size="lg" className="text-lg px-8 py-4 bg-blue-600 hover:bg-blue-700 transform hover:scale-105 transition-all duration-300 shadow-2xl hover:shadow-blue-500/25">
@@ -138,7 +137,7 @@ const Home: React.FC = () => {
               What You'll Find Here
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Deep dives into modern web development, practical tutorials, and insights from real-world projects.
+              Deep dives into technology, practical tutorials, and insights from real-world projects.
             </p>
           </div>
 
@@ -149,7 +148,7 @@ const Home: React.FC = () => {
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Technical Deep Dives</h3>
               <p className="text-gray-600">
-                Comprehensive tutorials and guides on React, TypeScript, and modern web technologies.
+                Comprehensive tutorials and guides on modern technologies and frameworks.
               </p>
             </div>
 
@@ -217,7 +216,7 @@ const Home: React.FC = () => {
             Stay Updated
           </h2>
           <p className="text-xl text-blue-100 mb-8">
-            Get notified when I publish new articles about web development and programming.
+            Get notified when I publish new articles.
           </p>
 
           <NewsletterSignup />
