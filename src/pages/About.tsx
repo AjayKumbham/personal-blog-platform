@@ -104,11 +104,9 @@ const About: React.FC = () => {
                 <MapPin className="w-5 h-5 mr-2" />
                 {author.location}
               </div>
-              <div className="text-xl text-gray-300 mb-8 leading-relaxed space-y-4">
-                {author.bio.split('\n').filter(paragraph => paragraph.trim()).map((paragraph, index) => (
-                  <p key={index}>{paragraph.trim()}</p>
-                ))}
-              </div>
+              <p className="text-xl text-gray-300 mb-8 leading-relaxed">
+                {settings.siteDescription || 'Welcome to my professional portfolio and blog.'}
+              </p>
               <div className="flex flex-col sm:flex-row flex-wrap gap-4">
                 <Button
                   size="lg"
