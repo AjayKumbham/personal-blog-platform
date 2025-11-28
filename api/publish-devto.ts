@@ -12,6 +12,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: 'API key is required' });
     }
 
+    // Dev.to tag requirements: max 4 tags, lowercase, no special chars except hyphen
+    const formattedTags = post.tags
+      .slice(0, 4) // Max 4 tags
+      .map(tag => tag.toLowerCase().replace(/[^a-z0-9]+/g, '').substring(0, 30)); // Max 30 chars per tag
+
     const response = await fetch('https://dev.to/api/articles', {
       method: 'POST',
       headers: {
@@ -22,9 +27,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         article: {
           title: post.title,
           body_markdown: post.content,
-          tags: post.tags,
+          tags: formattedTags,
           published: true,
-          main_image: post.coverImage,
+          main_image: post.coverImage || undefined,
           canonical_url: siteUrl ? `${siteUrl}/blog/${post.slug}` : undefined
         }
       })
