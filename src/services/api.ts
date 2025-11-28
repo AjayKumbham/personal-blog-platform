@@ -60,29 +60,36 @@ export const publishToDevTo = async (post: BlogPost, apiKey: string, siteUrl?: s
       throw new Error('Dev.to API key is required');
     }
 
-    const response = await fetch('https://dev.to/api/articles', {
+    // In production, use serverless function to avoid CORS
+    // In development, you'll need to run: vercel dev
+    const isDev = import.meta.env.DEV;
+    
+    if (isDev) {
+      console.warn('⚠️ Dev.to publishing in development requires running "vercel dev" instead of "npm run dev"');
+      console.warn('⚠️ Skipping Dev.to publish in local development. Deploy to test.');
+      return { skipped: true, message: 'Dev.to publish skipped in local development' };
+    }
+
+    const response = await fetch('/api/publish-devto', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'api-key': apiKey,
       },
       body: JSON.stringify({
-        article: {
-          title: post.title,
-          body_markdown: post.content,
-          tags: post.tags,
-          published: true,
-          main_image: post.coverImage,
-          canonical_url: siteUrl ? `${siteUrl}/blog/${post.slug}` : undefined
-        }
+        post,
+        apiKey,
+        siteUrl
       })
     });
     
+    const result = await response.json();
+    
     if (!response.ok) {
-      throw new Error('Failed to publish to Dev.to');
+      console.error('Dev.to API error:', result);
+      throw new Error(result.error || 'Failed to publish to Dev.to');
     }
     
-    return await response.json();
+    return result;
   } catch (error) {
     console.error('Dev.to publish error:', error);
     throw error;
