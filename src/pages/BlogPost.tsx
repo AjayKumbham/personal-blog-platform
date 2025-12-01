@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Calendar, Clock, Tag, ArrowLeft, Share2 } from 'lucide-react';
 import { format } from 'date-fns';
+import { marked } from 'marked';
 import { blogService } from '../services/blogService';
 import { BlogPost as BlogPostType } from '../types';
 import Button from '../components/ui/Button';
@@ -80,88 +81,14 @@ const BlogPost: React.FC = () => {
   };
 
   const formatContent = (content: string) => {
-    const lines = content.split('\n');
-    const elements: JSX.Element[] = [];
-    let inCodeBlock = false;
-    let codeBlockContent = '';
-    let codeBlockLanguage = '';
-    
-    lines.forEach((line, index) => {
-      if (line.startsWith('```')) {
-        if (inCodeBlock) {
-          // End code block
-          elements.push(
-            <div key={`code-${index}`} className="my-6">
-              <div className="bg-gray-800 text-gray-100 rounded-t-lg px-4 py-2 text-sm font-mono">
-                {codeBlockLanguage || 'code'}
-              </div>
-              <pre className="bg-gray-900 text-gray-100 p-4 rounded-b-lg overflow-x-auto">
-                <code className="text-sm font-mono leading-relaxed">{codeBlockContent}</code>
-              </pre>
-            </div>
-          );
-          inCodeBlock = false;
-          codeBlockContent = '';
-          codeBlockLanguage = '';
-        } else {
-          // Start code block
-          inCodeBlock = true;
-          codeBlockLanguage = line.slice(3).trim();
-        }
-        return;
-      }
-      
-      if (inCodeBlock) {
-        codeBlockContent += line + '\n';
-        return;
-      }
-      
-      if (line.startsWith('# ')) {
-        elements.push(
-          <h1 key={index} className="text-4xl font-bold text-gray-900 mt-12 mb-6 leading-tight">
-            {line.slice(2)}
-          </h1>
-        );
-      } else if (line.startsWith('## ')) {
-        elements.push(
-          <h2 key={index} className="text-3xl font-bold text-gray-900 mt-10 mb-5 leading-tight">
-            {line.slice(3)}
-          </h2>
-        );
-      } else if (line.startsWith('### ')) {
-        elements.push(
-          <h3 key={index} className="text-2xl font-bold text-gray-900 mt-8 mb-4 leading-tight">
-            {line.slice(4)}
-          </h3>
-        );
-      } else if (line.startsWith('- ')) {
-        elements.push(
-          <ul key={index} className="ml-6 mb-2">
-            <li className="text-gray-700 leading-relaxed list-disc">
-              {line.slice(2)}
-            </li>
-          </ul>
-        );
-      } else if (line.startsWith('`') && line.endsWith('`') && line.length > 2) {
-        elements.push(
-          <p key={index} className="mb-4">
-            <code className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-mono">
-              {line.slice(1, -1)}
-            </code>
-          </p>
-        );
-      } else if (line.trim() === '') {
-        elements.push(<div key={index} className="mb-4" />);
-      } else if (line.trim() !== '') {
-        elements.push(
-          <p key={index} className="mb-6 text-gray-700 leading-relaxed text-lg">
-            {line}
-          </p>
-        );
-      }
+    // Configure marked options
+    marked.setOptions({
+      breaks: true,
+      gfm: true,
     });
     
-    return elements;
+    const html = marked(content);
+    return html;
   };
 
   return (
@@ -235,11 +162,10 @@ const BlogPost: React.FC = () => {
       {/* Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         <Card className="p-8 md:p-12">
-          <div className="prose prose-xl max-w-none">
-            <div className="blog-content">
-              {formatContent(post.content)}
-            </div>
-          </div>
+          <div 
+            className="prose prose-xl max-w-none blog-content"
+            dangerouslySetInnerHTML={{ __html: formatContent(post.content) }}
+          />
         </Card>
 
         {/* Related Posts */}
