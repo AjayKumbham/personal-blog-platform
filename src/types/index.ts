@@ -37,6 +37,8 @@ export interface Author {
   twitter: string;
   linkedin: string;
   website: string;
+  hashnode?: string;
+  devto?: string;
   resume?: string; // URL to resume file
   skills?: string[];
   careerHighlights?: CareerHighlight[];
@@ -110,6 +112,8 @@ export interface AdminSettingsState {
   linkedin: string;
   twitter: string;
   website: string;
+  hashnode: string;
+  devto: string;
   resume: string;
   skills: string;
   careerHighlights: CareerHighlight[];
