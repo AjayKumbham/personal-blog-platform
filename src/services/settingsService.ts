@@ -64,6 +64,8 @@ export const settingsService = {
         twitter: '',
         linkedin: '',
         website: '',
+        hashnode: '',
+        devto: '',
         resume: '',
         skills: [],
         careerHighlights: [],
