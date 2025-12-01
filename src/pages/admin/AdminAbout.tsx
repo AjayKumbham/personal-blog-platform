@@ -191,6 +191,32 @@ const AdminAbout: React.FC = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
+                Hashnode URL
+              </label>
+              <input
+                type="url"
+                value={settings.hashnode}
+                onChange={(e) => setSettings(prev => ({ ...prev, hashnode: e.target.value }))}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="https://hashnode.com/@username"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Dev.to URL
+              </label>
+              <input
+                type="url"
+                value={settings.devto}
+                onChange={(e) => setSettings(prev => ({ ...prev, devto: e.target.value }))}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="https://dev.to/username"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Website URL
               </label>
               <input
