@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { ArrowLeft, Upload, Save } from 'lucide-react';
+import { marked } from 'marked';
 import { blogService } from '../../services/blogService';
 import { settingsService } from '../../services/settingsService';
 import { publishToHashnode, publishToDevTo } from '../../services/api';
@@ -18,11 +19,20 @@ const schema = yup.object({
   content: yup.string().required('Content is required'),
   tags: yup.string().required('Tags are required'),
   readTime: yup.number().positive('Read time must be positive').required('Read time is required'),
-  featured: yup.boolean(),
-  published: yup.boolean(),
+  featured: yup.boolean().default(false),
+  published: yup.boolean().default(false),
 });
 
-type FormData = yup.InferType<typeof schema>;
+type FormData = {
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  tags: string;
+  readTime: number;
+  featured: boolean;
+  published: boolean;
+};
 
 const EditPost: React.FC = () => {
   const { navigateToAdmin } = useAdminNavigation();
@@ -118,7 +128,7 @@ const EditPost: React.FC = () => {
         readTime: data.readTime,
         featured: data.featured,
         published: data.published,
-        coverImage: finalCoverImageUrl || null,
+        coverImage: finalCoverImageUrl || undefined,
       });
 
       // Auto-publish to external platforms if enabled and post is published
@@ -184,80 +194,14 @@ const EditPost: React.FC = () => {
   };
 
   const formatPreviewContent = (content: string) => {
-    if (!content) return [];
+    if (!content) return '';
     
-    const lines = content.split('\n');
-    const elements: JSX.Element[] = [];
-    let inCodeBlock = false;
-    let codeBlockContent = '';
-    let codeBlockLanguage = '';
-    
-    lines.forEach((line, index) => {
-      if (line.startsWith('```')) {
-        if (inCodeBlock) {
-          elements.push(
-            <div key={`code-${index}`} className="my-4">
-              <div className="bg-gray-800 text-gray-100 rounded-t-lg px-3 py-2 text-xs font-mono">
-                {codeBlockLanguage || 'code'}
-              </div>
-              <pre className="bg-gray-900 text-gray-100 p-3 rounded-b-lg overflow-x-auto">
-                <code className="text-xs font-mono leading-relaxed">{codeBlockContent}</code>
-              </pre>
-            </div>
-          );
-          inCodeBlock = false;
-          codeBlockContent = '';
-          codeBlockLanguage = '';
-        } else {
-          inCodeBlock = true;
-          codeBlockLanguage = line.slice(3).trim();
-        }
-        return;
-      }
-      
-      if (inCodeBlock) {
-        codeBlockContent += line + '\n';
-        return;
-      }
-      
-      if (line.startsWith('# ')) {
-        elements.push(
-          <h1 key={index} className="text-2xl font-bold text-gray-900 mt-6 mb-3 leading-tight">
-            {line.slice(2)}
-          </h1>
-        );
-      } else if (line.startsWith('## ')) {
-        elements.push(
-          <h2 key={index} className="text-xl font-bold text-gray-900 mt-5 mb-2 leading-tight">
-            {line.slice(3)}
-          </h2>
-        );
-      } else if (line.startsWith('### ')) {
-        elements.push(
-          <h3 key={index} className="text-lg font-bold text-gray-900 mt-4 mb-2 leading-tight">
-            {line.slice(4)}
-          </h3>
-        );
-      } else if (line.startsWith('- ')) {
-        elements.push(
-          <ul key={index} className="ml-4 mb-2">
-            <li className="text-gray-700 leading-relaxed list-disc text-sm">
-              {line.slice(2)}
-            </li>
-          </ul>
-        );
-      } else if (line.trim() === '') {
-        elements.push(<div key={index} className="mb-2" />);
-      } else if (line.trim() !== '') {
-        elements.push(
-          <p key={index} className="mb-3 text-gray-700 leading-relaxed text-sm">
-            {line}
-          </p>
-        );
-      }
+    marked.setOptions({
+      breaks: true,
+      gfm: true,
     });
     
-    return elements;
+    return marked(content);
   };
 
   if (initialLoading) {
@@ -391,8 +335,10 @@ const EditPost: React.FC = () => {
                           className="w-full h-64 object-cover rounded-lg mb-6"
                         />
                       )}
-                      <div className="prose max-w-none">
-                        {content ? formatPreviewContent(content) : (
+                      <div className="prose max-w-none blog-content">
+                        {content ? (
+                          <div dangerouslySetInnerHTML={{ __html: formatPreviewContent(content) }} />
+                        ) : (
                           <p className="text-gray-500 italic">Start writing to see preview...</p>
                         )}
                       </div>
