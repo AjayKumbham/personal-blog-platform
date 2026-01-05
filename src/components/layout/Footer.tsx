@@ -5,7 +5,7 @@ const Footer: React.FC = () => {
   // Static author information
   const author = {
     name: 'Kumbham Ajay Goud',
-    bio: 'Passionate Full-Stack Developer specializing in React, TypeScript, and modern web technologies. I create scalable applications and contribute to open-source projects while mentoring the next generation of developers.',
+    bio: 'Final-year Computer Science student specializing in building scalable applications and contributing to real-world engineering projects.',
     github: 'https://github.com/AjayKumbham',
     website: 'https://ajaykumbham-portfolio.vercel.app',
     email: 'ajaygoud.kumbham@gmail.com'

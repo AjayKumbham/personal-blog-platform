@@ -1,5 +1,5 @@
 // React
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 // Third-party
 import { Plus, Edit, Trash2, Upload, FileText, X, Code2, Award, Users, Trophy, Target, Briefcase, Zap, Rocket, Calendar, Clock, Star, TrendingUp, Globe, Home, Eye, BarChart3, Settings } from 'lucide-react';
@@ -66,6 +66,10 @@ const AdminAbout: React.FC = () => {
     deleteStat,
     updateStatsForm,
   } = useAdminSettings();
+
+  // Refs for file inputs
+  const uploadInputRef = useRef<HTMLInputElement>(null);
+  const replaceInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     loadSettings();
@@ -266,23 +270,23 @@ const AdminAbout: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <label className="cursor-pointer">
-                    <input
-                      type="file"
-                      accept=".pdf,.doc,.docx"
-                      onChange={handleResumeUpload}
-                      className="hidden"
-                      disabled={uploadingResume}
-                    />
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={uploadingResume}
-                      loading={uploadingResume}
-                    >
-                      Replace
-                    </Button>
-                  </label>
+                  <input
+                    ref={replaceInputRef}
+                    type="file"
+                    accept=".pdf,.doc,.docx"
+                    onChange={handleResumeUpload}
+                    className="hidden"
+                    disabled={uploadingResume}
+                  />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={uploadingResume}
+                    loading={uploadingResume}
+                    onClick={() => replaceInputRef.current?.click()}
+                  >
+                    Replace
+                  </Button>
                   <Button
                     variant="outline"
                     size="sm"
@@ -297,22 +301,22 @@ const AdminAbout: React.FC = () => {
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                 <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <p className="text-gray-600 mb-4">No resume uploaded</p>
-                <label className="cursor-pointer">
-                  <input
-                    type="file"
-                    accept=".pdf,.doc,.docx"
-                    onChange={handleResumeUpload}
-                    className="hidden"
-                    disabled={uploadingResume}
-                  />
-                  <Button
-                    disabled={uploadingResume}
-                    loading={uploadingResume}
-                    icon={Upload}
-                  >
-                    Upload Resume
-                  </Button>
-                </label>
+                <input
+                  ref={uploadInputRef}
+                  type="file"
+                  accept=".pdf,.doc,.docx"
+                  onChange={handleResumeUpload}
+                  className="hidden"
+                  disabled={uploadingResume}
+                />
+                <Button
+                  disabled={uploadingResume}
+                  loading={uploadingResume}
+                  icon={Upload}
+                  onClick={() => uploadInputRef.current?.click()}
+                >
+                  Upload Resume
+                </Button>
                 <p className="text-sm text-gray-500 mt-2">
                   Supported formats: PDF, DOC, DOCX (max 5MB)
                 </p>
