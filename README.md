@@ -6,14 +6,14 @@
 [![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?logo=supabase&logoColor=white)](https://supabase.com/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
-[![Live Site](https://img.shields.io/badge/Live%20Site-blog--ajaykumbham.vercel.app-brightgreen)](https://blog-ajaykumbham.vercel.app/)
+[![Live Site](https://img.shields.io/badge/Live%20Site-ajaykumbham--blog.vercel.app-brightgreen)](https://ajaykumbham-blog.vercel.app/)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/AjayKumbham/personal-blog-platform)
 
 > A modern blogging platform built with React, TypeScript, and Supabase for developers who want to share their technical knowledge.
 
 ## 🌐 Live Site
 
-### 🚀 Visit the platform live: [blog-ajaykumbham.vercel.app](https://blog-ajaykumbham.vercel.app/) 
+### 🚀 Visit the platform live: [ajaykumbham-blog.vercel.app](https://ajaykumbham-blog.vercel.app/) 
 
 
 ## ✨ Features
