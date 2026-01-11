@@ -2,7 +2,7 @@
 
 Complete setup instructions for the Professional Developer Blog Platform.
 
-## 🔧 Prerequisites
+## Prerequisites
 
 - **Node.js** (v18 or higher)
 - **npm** 
@@ -10,7 +10,7 @@ Complete setup instructions for the Professional Developer Blog Platform.
 - **Supabase account** - [supabase.com](https://supabase.com/)
 - **Brevo account** - [brevo.com](https://www.brevo.com/)
 
-## 🚀 Installation
+## Installation
 
 1. **Clone the repository**
    ```bash
@@ -39,7 +39,7 @@ Complete setup instructions for the Professional Developer Blog Platform.
    VITE_SENDER_EMAIL=your-verified-email@domain.com
    ```
 
-## 🗄️ Database Setup
+## Database Setup
 
 ### 1. Create Supabase Project
 1. Sign up at [supabase.com](https://supabase.com/)
@@ -237,7 +237,7 @@ CREATE POLICY "Authenticated users can delete uploads" ON storage.objects
 2. Click **Add user** and enter your email/password
 3. Confirm the user
 
-## 📧 Email Configuration
+## Email Configuration
 
 ### 1. Contact Form (FormSubmit)
 The contact form uses FormSubmit for reliable email delivery without backend setup:
@@ -263,7 +263,7 @@ For automated blog notifications and newsletter management:
    - `VITE_BREVO_LIST_ID` - Your list ID (usually 1 for first list)
    - `VITE_SENDER_EMAIL` - Your verified sender email
 
-## 💻 Development
+## Development
 
 ### Start Development Server
 ```bash
@@ -291,7 +291,7 @@ npm run type-check   # TypeScript checking
 npm run lint         # Code linting
 ```
 
-## 🌐 Production Deployment
+## Production Deployment
 
 ### Vercel (Recommended)
 1. Install Vercel CLI: `npm install -g vercel`
@@ -314,7 +314,7 @@ Make sure to set all these in your deployment platform:
 - `VITE_BREVO_LIST_ID` - Brevo contact list ID
 - `VITE_SENDER_EMAIL` - Verified sender email for Brevo
 
-## 🔧 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -362,7 +362,7 @@ npm install
    - Environment details
    - Screenshots if applicable
 
-## 🎯 Next Steps
+## Next Steps
 
 After successful setup:
 1. Customize site branding and content in admin settings

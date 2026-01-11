@@ -10,7 +10,7 @@ We pledge to act and interact in ways that contribute to an open, welcoming, div
 
 Examples of behavior that contributes to a positive environment for our community include:
 
-### ✅ Positive Behaviors
+### Positive Behaviors
 
 - **Demonstrating empathy and kindness** toward other people
 - **Being respectful** of differing opinions, viewpoints, and experiences
@@ -22,7 +22,7 @@ Examples of behavior that contributes to a positive environment for our communit
 - **Celebrating others' achievements** and contributions
 - **Providing constructive code reviews** that help improve the project
 
-### ❌ Unacceptable Behaviors
+### Unacceptable Behaviors
 
 Examples of unacceptable behavior include:
 
@@ -180,4 +180,4 @@ We value your input and want to ensure our community remains welcoming and produ
 
 ---
 
-**Remember**: We're all here because we love building great software together. Let's keep it positive, constructive, and fun! 🚀
+**Remember**: We're all here because we love building great software together. Let's keep it positive, constructive, and fun!

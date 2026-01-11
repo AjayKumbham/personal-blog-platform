@@ -2,7 +2,7 @@
 
 Thank you for your interest in contributing! This guide will help you get started with contributing to this React/TypeScript blog platform.
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Node.js (v18+)
@@ -28,7 +28,7 @@ Thank you for your interest in contributing! This guide will help you get starte
    npm run dev
    ```
 
-## 🔄 Development Workflow
+## Development Workflow
 
 ### Branch Strategy
 - `main` - Production ready code
@@ -42,7 +42,7 @@ Thank you for your interest in contributing! This guide will help you get starte
 3. Commit with clear messages: `git commit -m "Add feature: description"`
 4. Push and create a Pull Request
 
-## 📝 What We're Looking For
+## What We're Looking For
 
 ### High Priority
 - Bug fixes for reported issues
@@ -62,7 +62,7 @@ Thank you for your interest in contributing! This guide will help you get starte
 - Documentation improvements
 - Developer experience enhancements
 
-## 🔍 Pull Request Guidelines
+## Pull Request Guidelines
 
 ### Before Submitting
 - [ ] Test your changes locally
@@ -78,7 +78,7 @@ Thank you for your interest in contributing! This guide will help you get starte
 - Screenshots for UI changes
 - One feature/fix per PR
 
-## 🎨 Code Style Guidelines
+## Code Style Guidelines
 
 ### TypeScript
 ```typescript
@@ -127,7 +127,7 @@ const Button: React.FC<ButtonProps> = ({ children, onClick, variant = 'primary' 
 - Services: `camelCase.ts` (e.g., `blogService.ts`)
 - Types: `camelCase.ts` (e.g., `index.ts`)
 
-## 🐛 Reporting Issues
+## Reporting Issues
 
 ### Bug Reports
 Include:
@@ -144,7 +144,7 @@ Include:
 - Implementation suggestions
 - Impact on existing functionality
 
-## 📚 Documentation
+## Documentation
 
 ### Code Comments
 ```typescript
@@ -165,7 +165,7 @@ When adding features:
 - Add new environment variables to .env.example
 - Include setup instructions if needed
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 src/
@@ -181,7 +181,7 @@ src/
 └── lib/                 # Utilities and configurations
 ```
 
-## 🔧 Available Scripts
+## Available Scripts
 
 ```bash
 npm run dev          # Start development server
@@ -191,18 +191,18 @@ npm run type-check   # TypeScript checking
 npm run lint         # ESLint linting
 ```
 
-## 📞 Getting Help
+## Getting Help
 
 1. Check existing documentation
 2. Search closed issues for similar questions
 3. Create a new issue for specific problems
 4. Contact maintainers: ajaygoud.kumbham@gmail.com
 
-## 🏆 Recognition
+## Recognition
 
 Contributors are recognized in:
 - README.md contributors section
 - Release notes for significant contributions
 - GitHub contributors page
 
-Thank you for helping make this project better! 🚀
+Thank you for helping make this project better!
