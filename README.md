@@ -9,7 +9,7 @@
 
 A modern, full-stack blogging platform built with React, TypeScript, and Supabase. Designed for developers to share technical knowledge with a focus on performance, security, and user experience.
 
-**Live Demo:** [ajaykumbham-blog.vercel.app](https://ajaykumbham-blog.vercel.app/)
+**Live Site:** [ajaykumbham-blog.vercel.app](https://ajaykumbham-blog.vercel.app/)
 
 ## Screenshots
 
