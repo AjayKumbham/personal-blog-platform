@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import { Analytics } from "@vercel/analytics/react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastProvider } from './components/ui/ToastProvider';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -146,6 +147,7 @@ function App() {
           </div>
         </Router>
       </ToastProvider>
+      <Analytics />
     </ErrorBoundary>
   );
 }

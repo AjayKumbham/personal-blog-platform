@@ -18,11 +18,16 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test:load": "k6 run k6/load-test.js",
+    "test:smoke": "k6 run k6/smoke-test.js",
+    "test:stress": "k6 run k6/stress-test.js",
+    "test:api": "k6 run k6/api-test.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
     "@supabase/supabase-js": "^2.53.0",
+    "@vercel/analytics": "^1.6.1",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.344.0",
     "marked": "^17.0.1",
