@@ -26,3 +26,12 @@ dist-ssr
 .kiro
 .qodo
 .vscode
+
+# k6 load test results
+k6/*.html
+k6/*.json
+k6/summary.json
+k6/results.html
+k6/smoke-results.html
+k6/stress-results.html
+k6/api-results.html
